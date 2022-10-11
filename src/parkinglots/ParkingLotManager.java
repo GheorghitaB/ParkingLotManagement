@@ -2,24 +2,14 @@ package parkinglots;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
-import exceptions.FullParkingLotException;
-import exceptions.InvalidParkingSpotName;
-import exceptions.InvalidParkingSpotSelection;
-import exceptions.UnknownParkingStrategy;
-import exceptions.UnknownVehicleType;
+import exceptions.*;
 import parkingspots.ParkingSpot;
-import parkingspots.ParkingSpotFactory;
 import parkingspots.ParkingSpotType;
 import parkingstrategies.*;
 import tickets.Ticket;
 import users.User;
-import users.UserFactory;
-import users.UserType;
 import vehicles.Vehicle;
-import vehicles.VehicleFactory;
-import vehicles.VehicleType;
 
 public class ParkingLotManager{
 	private Map<ParkingSpotType, Integer> availableParkingSpots;
@@ -40,7 +30,8 @@ public class ParkingLotManager{
 			Ticket ticket = park(user, vehicle, parkingSpot);
 			ticket.printTicket();
 		} catch (Exception e) {
-			e.printStackTrace();
+			ExceptionHandler handler = new ExceptionHandler();
+			handler.handleException(e);
 		}
 	}
 

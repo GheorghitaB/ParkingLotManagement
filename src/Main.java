@@ -17,5 +17,6 @@ public class Main {
         ParkingLotManager parkingLotManager = new ParkingLotManager();
         parkingLotManager.acceptForParking(user, vehicle, smallPS);
         parkingLotManager.acceptForParking(user, vehicle, mediumPS);
+        parkingLotManager.acceptForParking(user, vehicle, mediumPS);
     }
 }
