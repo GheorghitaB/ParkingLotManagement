@@ -13,11 +13,13 @@ import vehicles.Vehicle;
 
 public class ParkingLotManager{
 	private Map<ParkingSpotType, Integer> availableParkingSpots;
+	private ExceptionHandler handler;
 
 	public ParkingLotManager() {
 		initAvailableParkingSpots();
 	}
 	private void initAvailableParkingSpots() {
+		handler = new ExceptionHandler();
 		availableParkingSpots = new HashMap<>();
 		availableParkingSpots.put(ParkingSpotType.SMALL, 1);
 		availableParkingSpots.put(ParkingSpotType.MEDIUM, 1);
@@ -30,7 +32,6 @@ public class ParkingLotManager{
 			Ticket ticket = park(user, vehicle, parkingSpot);
 			ticket.printTicket();
 		} catch (Exception e) {
-			ExceptionHandler handler = new ExceptionHandler();
 			handler.handleException(e);
 		}
 	}
@@ -46,7 +47,7 @@ public class ParkingLotManager{
 		try {
 			parkingContext = parkingContextFactory.getParkingContextForUser(user);
 		} catch (UnknownParkingStrategy e) {
-			e.printStackTrace();
+			handler.handleException(e);
 		}
 		return parkingContext;
 	}

@@ -1,6 +1,5 @@
 package parkingstrategies;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import exceptions.FullParkingLotException;
@@ -55,5 +54,4 @@ public class RegularUserParkingStrategy implements ParkingConditionsStrategy {
 			throw new InvalidParkingSpotSelection("Invalid parking spot selection");
 		}
 	}
-
 }

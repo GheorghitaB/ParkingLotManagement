@@ -1,6 +1,5 @@
 package parkingstrategies;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import exceptions.FullParkingLotException;
@@ -25,9 +24,9 @@ public class VIPUserParkingStrategy implements ParkingConditionsStrategy {
         if (selectedVehicleType == VehicleType.MOTORCYCLE) {
             checkMotorcycleParkingConditions(selectedParkingSpot, smallParkingSpots, mediumParkingSpots, largeParkingSpots);
         } else if (selectedVehicleType == VehicleType.CAR) {
-            checkCarParkingConditions(selectedParkingSpot, smallParkingSpots, mediumParkingSpots, largeParkingSpots);
+            checkCarParkingConditions(selectedParkingSpot, mediumParkingSpots, largeParkingSpots);
         } else if (selectedVehicleType == VehicleType.TRUCK) {
-            checkTruckParkingConditions(selectedParkingSpot, smallParkingSpots, mediumParkingSpots, largeParkingSpots);
+            checkTruckParkingConditions(selectedParkingSpot, largeParkingSpots);
         } else throw new UnknownVehicleType("Unknown vehicle type");
     }
 
@@ -54,7 +53,7 @@ public class VIPUserParkingStrategy implements ParkingConditionsStrategy {
         }
     }
 
-    private void checkCarParkingConditions(ParkingSpotType selectedParkingSpot, int smallParkingSpots, int mediumParkingSpots, int largeParkingSpots) throws Exception {
+    private void checkCarParkingConditions(ParkingSpotType selectedParkingSpot, int mediumParkingSpots, int largeParkingSpots) throws Exception {
         switch (selectedParkingSpot) {
             case SMALL:
                 throw new InvalidParkingSpotSelection("Invalid parking spot selection");
@@ -73,7 +72,7 @@ public class VIPUserParkingStrategy implements ParkingConditionsStrategy {
         }
     }
 
-    private void checkTruckParkingConditions(ParkingSpotType selectedParkingSpot, int smallParkingSpots, int mediumParkingSpots, int largeParkingSpots) throws Exception {
+    private void checkTruckParkingConditions(ParkingSpotType selectedParkingSpot, int largeParkingSpots) throws Exception {
         switch (selectedParkingSpot) {
             case SMALL:
             case MEDIUM:
