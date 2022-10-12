@@ -13,13 +13,13 @@ import vehicles.Vehicle;
 
 public class ParkingLotManager{
 	private Map<ParkingSpotType, Integer> availableParkingSpots;
-	private ExceptionHandler handler;
+	private final ExceptionHandler handler;
 
 	public ParkingLotManager() {
+		handler = new ExceptionHandler();
 		initAvailableParkingSpots();
 	}
 	private void initAvailableParkingSpots() {
-		handler = new ExceptionHandler();
 		availableParkingSpots = new HashMap<>();
 		availableParkingSpots.put(ParkingSpotType.SMALL, 1);
 		availableParkingSpots.put(ParkingSpotType.MEDIUM, 1);
