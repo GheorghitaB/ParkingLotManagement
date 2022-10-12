@@ -1,10 +1,15 @@
 package parkinglots;
 
 import parkingspots.ParkingSpot;
-import tickets.Ticket;
-import users.User;
-import vehicles.Vehicle;
+import parkingspots.ParkingSpotType;
+
+import java.util.Map;
 
 public interface ParkingLot {
-    Ticket park(User user, Vehicle vehicle, ParkingSpot parkingSpot);
+    void initParkingLot();
+    void decreaseParkingSpotsByOne(ParkingSpot parkingSpot);
+    void increaseParkingSpotsByValue(ParkingSpot parkingSpot, int value);
+    void decreaseParkingSpotsByValue(ParkingSpot parkingSpot, int value);
+    Map<ParkingSpotType, Integer> getAllParkingSpots();
+    int getParkingSpotSizeByType(ParkingSpotType parkingSpotType);
 }

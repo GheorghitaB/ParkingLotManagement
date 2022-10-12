@@ -1,22 +1,32 @@
+import exceptions.ParkingLotException;
+import parkinglots.ParkingLot;
 import parkinglots.ParkingLotManager;
-import parkingspots.MediumParkingSpot;
-import parkingspots.ParkingSpot;
-import parkingspots.SmallParkingSpot;
+import parkinglots.ParkingLotMapImpl;
+import users.RegularUser;
 import users.User;
 import users.VIPUser;
+import vehicles.Car;
 import vehicles.Motorcycle;
 import vehicles.Vehicle;
 
 public class Main {
     public static void main(String[] args) {
-        User user = new VIPUser("John Smith");
-        Vehicle vehicle = new Motorcycle();
-        ParkingSpot mediumPS = new MediumParkingSpot();
-        ParkingSpot smallPS = new SmallParkingSpot();
+        ParkingLot parkingLot = new ParkingLotMapImpl();
 
-        ParkingLotManager parkingLotManager = new ParkingLotManager();
-        parkingLotManager.acceptForParking(user, vehicle, smallPS);
-        parkingLotManager.acceptForParking(user, vehicle, mediumPS);
-        parkingLotManager.acceptForParking(user, vehicle, mediumPS);
+        User user = new RegularUser("John Smith");
+        Vehicle vehicle = new Motorcycle();
+
+        User vip = new VIPUser("Vip user");
+        Vehicle car = new Car();
+
+        ParkingLotManager parkingLotManager = new ParkingLotManager(parkingLot);
+        try {
+            parkingLotManager.park(user, vehicle).printTicket();
+            parkingLotManager.park(vip, car).printTicket();
+            parkingLotManager.park(vip, car).printTicket();
+            //parkingLotManager.park(vip, car).printTicket();
+        } catch (ParkingLotException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
