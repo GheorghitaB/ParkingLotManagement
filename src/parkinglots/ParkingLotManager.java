@@ -15,15 +15,19 @@ public class ParkingLotManager{
 	private Map<ParkingSpotType, Integer> availableParkingSpots;
 	private final ExceptionHandler handler;
 
+	public final static int SMALL_PARKING_SPOTS = 1;
+	public final static int MEDIUM_PARKING_SPOTS = 1;
+	public final static int LARGE_PARKING_SPOTS = 1;
+
 	public ParkingLotManager() {
 		handler = new ExceptionHandler();
 		initAvailableParkingSpots();
 	}
 	private void initAvailableParkingSpots() {
 		availableParkingSpots = new HashMap<>();
-		availableParkingSpots.put(ParkingSpotType.SMALL, 1);
-		availableParkingSpots.put(ParkingSpotType.MEDIUM, 1);
-		availableParkingSpots.put(ParkingSpotType.LARGE, 1);
+		availableParkingSpots.put(ParkingSpotType.SMALL, SMALL_PARKING_SPOTS);
+		availableParkingSpots.put(ParkingSpotType.MEDIUM, MEDIUM_PARKING_SPOTS);
+		availableParkingSpots.put(ParkingSpotType.LARGE, LARGE_PARKING_SPOTS);
 	}
 
 	public void acceptForParking(User user, Vehicle vehicle, ParkingSpot parkingSpot) {
