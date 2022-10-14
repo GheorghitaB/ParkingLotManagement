@@ -9,30 +9,30 @@ import users.UserType;
 import vehicles.Vehicle;
 
 public class ParkingLotManager{
-	private final ParkingLot parkingLot;
-	public ParkingLotManager(ParkingLot parkingLot) {
+	private final ParkingLotDAO parkingLot;
+	public ParkingLotManager(ParkingLotDAO parkingLot) {
 		this.parkingLot = parkingLot;
 	}
 	public Ticket park(User user, Vehicle vehicle) throws ParkingLotException {
-		UserStrategy userStrategy = getUserStrategy(user);
-		ParkingSpot parkingSpot = getParkingSpot(userStrategy, vehicle);
+		ParkingSpot parkingSpot = getParkingSpot(user, vehicle);
 		parkingLot.decreaseParkingSpotsByOne(parkingSpot);
 		return new Ticket(user, vehicle, parkingSpot);
 	}
 
-	private UserStrategy getUserStrategy(User user) throws UnknownUserStrategy {
+	private ParkingStrategy getParkingStrategy(User user) throws UnknownUserStrategy {
 		UserType userType = user.getUserType();
 		switch (userType){
 			case REGULAR:
-				return new RegularUserStrategy();
+				return new RegularUserParkingStrategy();
 			case VIP:
-				return new VipUserStrategy();
+				return new VipUserParkingStrategy();
 			default:
 				throw new UnknownUserStrategy("Unknown user strategy " + user.getUserType());
 		}
 	}
 
-	private ParkingSpot getParkingSpot(UserStrategy userStrategy, Vehicle vehicle) throws ParkingLotException {
-		return userStrategy.getParkingSpotForVehicle(vehicle, parkingLot);
+	private ParkingSpot getParkingSpot(User user, Vehicle vehicle) throws ParkingLotException {
+		ParkingStrategy parkingStrategy = getParkingStrategy(user);
+		return parkingStrategy.getParkingSpotForVehicle(vehicle, parkingLot);
 	}
 }

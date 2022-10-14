@@ -5,8 +5,7 @@ import parkingspots.ParkingSpotType;
 
 import java.util.Map;
 
-public interface ParkingLot {
-    void initParkingLot();
+public interface ParkingLotDAO {
     void decreaseParkingSpotsByOne(ParkingSpot parkingSpot);
     void increaseParkingSpotsByValue(ParkingSpot parkingSpot, int value);
     void decreaseParkingSpotsByValue(ParkingSpot parkingSpot, int value);

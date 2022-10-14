@@ -2,16 +2,16 @@ package parkingstrategies;
 
 import exceptions.FullParkingLotException;
 import exceptions.UnknownVehicleType;
-import parkinglots.ParkingLot;
+import parkinglots.ParkingLotDAO;
 import parkingspots.*;
 import vehicles.Vehicle;
 import vehicles.VehicleType;
 
 import java.util.Map;
 
-public class RegularUserStrategy implements UserStrategy{
+public class RegularUserParkingStrategy implements ParkingStrategy {
     @Override
-    public ParkingSpot getParkingSpotForVehicle(Vehicle vehicle, ParkingLot parkingLot) throws FullParkingLotException {
+    public ParkingSpot getParkingSpotForVehicle(Vehicle vehicle, ParkingLotDAO parkingLot) throws FullParkingLotException {
         VehicleType vehicleType = vehicle.getVehicleType();
         Map<ParkingSpotType, Integer> parkingSpots = parkingLot.getAllParkingSpots();
 

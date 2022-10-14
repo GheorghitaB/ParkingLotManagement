@@ -5,23 +5,11 @@ import parkingspots.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ParkingLotMapImpl implements ParkingLot {
-
-    public final static int SMALL_PARKING_SPOTS = 1;
-    public final static int MEDIUM_PARKING_SPOTS = 1;
-    public final static int LARGE_PARKING_SPOTS = 1;
+public class ParkingLotHashMapImpl implements ParkingLotDAO {
     private Map<ParkingSpotType, Integer> parkingSpots;
 
-    public ParkingLotMapImpl(){
-        initParkingLot();
-    }
-
-    @Override
-    public void initParkingLot() {
-        parkingSpots = new HashMap<>();
-        parkingSpots.put(ParkingSpotType.SMALL, SMALL_PARKING_SPOTS);
-        parkingSpots.put(ParkingSpotType.MEDIUM, MEDIUM_PARKING_SPOTS);
-        parkingSpots.put(ParkingSpotType.LARGE, LARGE_PARKING_SPOTS);
+    public ParkingLotHashMapImpl(Map<ParkingSpotType, Integer> parkingSpots){
+        this.parkingSpots = parkingSpots;
     }
 
     @Override
@@ -48,5 +36,4 @@ public class ParkingLotMapImpl implements ParkingLot {
     public int getParkingSpotSizeByType(ParkingSpotType parkingSpotType) {
         return parkingSpots.get(parkingSpotType);
     }
-
 }

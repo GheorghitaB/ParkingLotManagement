@@ -1,6 +1,6 @@
 package exceptions;
 
-public class UnknownVehicleType extends FullParkingLotException{
+public class UnknownVehicleType extends IllegalStateException{
 	public UnknownVehicleType(String s) {
 		super(s);
 	}

@@ -2,14 +2,14 @@ package parkingstrategies;
 
 import exceptions.FullParkingLotException;
 import exceptions.UnknownVehicleType;
-import parkinglots.ParkingLot;
+import parkinglots.ParkingLotDAO;
 import parkingspots.*;
 import vehicles.Vehicle;
 import vehicles.VehicleType;
 
-public class VipUserStrategy implements UserStrategy{
+public class VipUserParkingStrategy implements ParkingStrategy {
     @Override
-    public ParkingSpot getParkingSpotForVehicle(Vehicle vehicle, ParkingLot parkingLot) throws FullParkingLotException {
+    public ParkingSpot getParkingSpotForVehicle(Vehicle vehicle, ParkingLotDAO parkingLot) throws FullParkingLotException {
         VehicleType vehicleType = vehicle.getVehicleType();
 
         switch (vehicleType){
