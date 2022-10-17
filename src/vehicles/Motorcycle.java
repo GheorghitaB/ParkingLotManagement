@@ -2,8 +2,8 @@ package vehicles;
 
 public class Motorcycle extends Vehicle{
 
-	public Motorcycle() {
-		super(VehicleType.MOTORCYCLE);
+	public Motorcycle(String plateNumber, boolean isElectric) {
+		super(VehicleType.MOTORCYCLE, plateNumber, isElectric);
 	}
 
 }

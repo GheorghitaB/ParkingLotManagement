@@ -1,7 +1,7 @@
 package parkingspots;
 
 public class MediumParkingSpot extends ParkingSpot{
-	public MediumParkingSpot() {
-		super(ParkingSpotType.MEDIUM);
+	public MediumParkingSpot(boolean hasElectricCharger) {
+		super(ParkingSpotType.MEDIUM, hasElectricCharger);
 	}
 }

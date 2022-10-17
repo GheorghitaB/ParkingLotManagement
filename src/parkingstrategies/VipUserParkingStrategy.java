@@ -1,41 +1,49 @@
 package parkingstrategies;
 
-import exceptions.FullParkingLotException;
+import exceptions.ParkingSpotNotFound;
 import exceptions.UnknownVehicleType;
-import parkinglots.ParkingLotDAO;
+import parkinglots.ParkingLotRepository;
 import parkingspots.*;
 import vehicles.Vehicle;
 import vehicles.VehicleType;
 
+import java.util.*;
+
 public class VipUserParkingStrategy implements ParkingStrategy {
+
     @Override
-    public ParkingSpot getParkingSpotForVehicle(Vehicle vehicle, ParkingLotDAO parkingLot) throws FullParkingLotException {
+    public ParkingSpot getParkingSpotForVehicle(Vehicle vehicle, ParkingLotRepository parkingLotRepository) throws ParkingSpotNotFound {
         VehicleType vehicleType = vehicle.getVehicleType();
 
-        switch (vehicleType){
-            case MOTORCYCLE:
-                if(parkingLot.getParkingSpotSizeByType(ParkingSpotType.SMALL) > 0){
-                    return new SmallParkingSpot();
-                } else if(parkingLot.getParkingSpotSizeByType(ParkingSpotType.MEDIUM) > 0){
-                    return new MediumParkingSpot();
-                } else if(parkingLot.getParkingSpotSizeByType(ParkingSpotType.LARGE) > 0){
-                    return new LargeParkingSpot();
-                } else
-                    throw new FullParkingLotException("Full parking lot exception");
-            case CAR:
-                if(parkingLot.getParkingSpotSizeByType(ParkingSpotType.MEDIUM) > 0){
-                    return new MediumParkingSpot();
-                } else if(parkingLot.getParkingSpotSizeByType(ParkingSpotType.LARGE) > 0){
-                    return new LargeParkingSpot();
-                } else
-                    throw new FullParkingLotException("Full parking lot exception");
-            case TRUCK:
-                if(parkingLot.getParkingSpotSizeByType(ParkingSpotType.LARGE) > 0){
-                    return new LargeParkingSpot();
-                } else
-                    throw new FullParkingLotException("Full parking lot exception");
-            default:
-                throw new UnknownVehicleType("Unknown vehicle type: " + vehicleType);
+        Map<VehicleType, ParkingSpotType> map = new LinkedHashMap<>();
+        map.put(VehicleType.MOTORCYCLE, ParkingSpotType.SMALL);
+        map.put(VehicleType.CAR, ParkingSpotType.MEDIUM);
+        map.put(VehicleType.TRUCK, ParkingSpotType.LARGE);
+
+        if(map.get(vehicleType) == null){
+            throw new UnknownVehicleType("Unknown vehicle type " + vehicleType);
         }
+
+        for(int i=0; i<map.size(); i++){
+            VehicleType vehicleTypeInMap = (VehicleType) map.keySet().toArray()[i];
+            if(vehicleTypeInMap.equals(vehicleType)){
+                for(int j=i; j<map.size(); j++){
+                    ParkingSpotType pst = map.get(map.keySet().toArray()[j]);
+                    if(vehicle.isElectric()){
+                        if(parkingLotRepository.getSizeOfEmptyParkingSpotsWithElectricChargerOfType(pst) > 0){
+                            return parkingLotRepository.getEmptyParkingSpotWithElectricChargerOfType(pst);
+                        }
+                    } else {
+                        if(parkingLotRepository.getSizeOfEmptyParkingSpotsOfType(pst) > 0){
+                            return parkingLotRepository.getEmptyParkingSpotOfType(pst);
+                        }
+                    }
+                }
+                break;
+            }
+        }
+
+        throw new ParkingSpotNotFound("Parking spot not found");
     }
 }
+

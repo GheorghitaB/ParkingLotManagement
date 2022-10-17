@@ -1,10 +1,10 @@
 package parkingstrategies;
 
-import exceptions.FullParkingLotException;
-import parkinglots.ParkingLotDAO;
+import exceptions.ParkingSpotNotFound;
+import parkinglots.ParkingLotRepository;
 import parkingspots.ParkingSpot;
 import vehicles.Vehicle;
 
 public interface ParkingStrategy {
-    ParkingSpot getParkingSpotForVehicle(Vehicle vehicle, ParkingLotDAO parkingLot) throws FullParkingLotException;
+    ParkingSpot getParkingSpotForVehicle(Vehicle vehicle, ParkingLotRepository parkingLot) throws ParkingSpotNotFound;
 }

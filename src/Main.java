@@ -1,38 +1,41 @@
-import exceptions.ParkingLotException;
-import parkinglots.ParkingLotDAO;
+import exceptions.ParkingSpotNotFound;
+import exceptions.VehicleNotFound;
+import parkinglots.ParkingLotRepository;
 import parkinglots.ParkingLotManager;
-import parkinglots.ParkingLotHashMapImpl;
-import parkingspots.ParkingSpotType;
-import users.RegularUser;
+import parkinglots.ParkingLotInMemoryRepository;
+import parkingspots.*;
 import users.User;
 import users.VIPUser;
-import vehicles.Car;
 import vehicles.Motorcycle;
 import vehicles.Vehicle;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        HashMap<ParkingSpotType, Integer> parkingSpots = new HashMap<>();
-        parkingSpots.put(ParkingSpotType.SMALL, 10);
-        parkingSpots.put(ParkingSpotType.MEDIUM, 10);
-        parkingSpots.put(ParkingSpotType.LARGE, 10);
+        List<ParkingSpot> parkingSpots = new ArrayList<>();
+        parkingSpots.add(new SmallParkingSpot(true));
+        parkingSpots.add(new MediumParkingSpot(false));
+        parkingSpots.add(new MediumParkingSpot(true));
+        parkingSpots.add(new LargeParkingSpot(true));
 
-        ParkingLotDAO parkingLot = new ParkingLotHashMapImpl(parkingSpots);
+        ParkingLotRepository parkingLotRepository = new ParkingLotInMemoryRepository(parkingSpots);
+        ParkingLotManager parkingLotManager = new ParkingLotManager(parkingLotRepository);
 
-        User user = new RegularUser("John Smith");
-        Vehicle vehicle = new Motorcycle();
+        User user = new VIPUser("John Smith");
+        Vehicle vehicle = new Motorcycle("22BB", true);
 
-        User vip = new VIPUser("Vip user");
-        Vehicle car = new Car();
-
-        ParkingLotManager parkingLotManager = new ParkingLotManager(parkingLot);
         try {
-            parkingLotManager.park(user, vehicle).printTicket();
-            parkingLotManager.park(vip, car).printTicket();
-        } catch (ParkingLotException e) {
-            System.out.println(e.getMessage());
+            parkingLotManager.park(user, vehicle);
+
+            ParkingSpot spot = parkingLotManager.findVehicle(vehicle);
+            System.out.println(vehicle.getPlateNumber() + " is parked on parking spot id " + spot.getId()
+                    + " (" + spot.getParkingSpotType()+")");
+        } catch (VehicleNotFound e) {
+            System.out.println("The vehicle has not been found");
+        } catch (ParkingSpotNotFound e) {
+            System.out.println("Unavailable parking spots right now");
         }
     }
 }

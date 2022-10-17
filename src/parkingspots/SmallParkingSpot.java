@@ -1,7 +1,7 @@
 package parkingspots;
 
 public class SmallParkingSpot extends ParkingSpot{
-	public SmallParkingSpot() {
-		super(ParkingSpotType.SMALL);
+	public SmallParkingSpot(boolean hasElectricCharger) {
+		super(ParkingSpotType.SMALL, hasElectricCharger);
 	}
 }
