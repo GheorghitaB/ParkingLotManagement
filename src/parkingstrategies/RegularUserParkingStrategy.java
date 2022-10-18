@@ -11,23 +11,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RegularUserParkingStrategy implements ParkingStrategy {
+    private Map<VehicleType, ParkingSpotType> fittingParkingSpots;
     @Override
     public ParkingSpot getParkingSpotForVehicle(Vehicle vehicle, ParkingLotRepository parkingLot) throws ParkingSpotNotFound {
-        VehicleType vehicleType = vehicle.getVehicleType();
-
-        Map<VehicleType, ParkingSpotType> map = new HashMap<>();
-        map.put(VehicleType.MOTORCYCLE, ParkingSpotType.SMALL);
-        map.put(VehicleType.CAR, ParkingSpotType.MEDIUM);
-        map.put(VehicleType.TRUCK, ParkingSpotType.LARGE);
-
-        if(map.get(vehicleType) == null){
-            throw new UnknownVehicleType("Unknown vehicle type " + vehicleType);
-        }
+        populateFittingParkingSpots();
+        validateSelectedVehicleType(vehicle.getVehicleType(), fittingParkingSpots);
 
         if(vehicle.isElectric()){
-            return parkingLot.getEmptyParkingSpotWithElectricChargerOfType(map.get(vehicleType));
+            return parkingLot.getEmptyParkingSpotWithElectricChargerOfType(fittingParkingSpots.get(vehicle.getVehicleType()));
         } else {
-            return parkingLot.getEmptyParkingSpotOfType(map.get(vehicleType));
+            return parkingLot.getEmptyParkingSpotOfType(fittingParkingSpots.get(vehicle.getVehicleType()));
         }
+    }
+    private void validateSelectedVehicleType(VehicleType selectedVehicleType, Map<VehicleType, ParkingSpotType> fittingParkingSpots) {
+        if (fittingParkingSpots.get(selectedVehicleType) == null) {
+            throw new UnknownVehicleType("Unknown vehicle type " + selectedVehicleType);
+        }
+    }
+
+    private void populateFittingParkingSpots(){
+        fittingParkingSpots = new HashMap<>();
+        fittingParkingSpots.put(VehicleType.MOTORCYCLE, ParkingSpotType.SMALL);
+        fittingParkingSpots.put(VehicleType.CAR, ParkingSpotType.MEDIUM);
+        fittingParkingSpots.put(VehicleType.TRUCK, ParkingSpotType.LARGE);
     }
 }

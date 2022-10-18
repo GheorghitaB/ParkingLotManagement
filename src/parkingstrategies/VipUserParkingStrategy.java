@@ -9,41 +9,49 @@ import vehicles.VehicleType;
 
 import java.util.*;
 
+import static parkingspots.ParkingSpotType.*;
+
 public class VipUserParkingStrategy implements ParkingStrategy {
+    private Map<VehicleType, List<ParkingSpotType>> fittingParkingSpots;
 
-    @Override
-    public ParkingSpot getParkingSpotForVehicle(Vehicle vehicle, ParkingLotRepository parkingLotRepository) throws ParkingSpotNotFound {
-        VehicleType vehicleType = vehicle.getVehicleType();
+    public
+    @Override ParkingSpot getParkingSpotForVehicle(Vehicle vehicle, ParkingLotRepository parkingLotRepository) throws ParkingSpotNotFound {
+        populateFittingParkingSpots();
+        validateSelectedVehicleType(vehicle.getVehicleType(), fittingParkingSpots);
+        return getParkingSpot(vehicle, parkingLotRepository);
+    }
 
-        Map<VehicleType, ParkingSpotType> map = new LinkedHashMap<>();
-        map.put(VehicleType.MOTORCYCLE, ParkingSpotType.SMALL);
-        map.put(VehicleType.CAR, ParkingSpotType.MEDIUM);
-        map.put(VehicleType.TRUCK, ParkingSpotType.LARGE);
+    private void populateFittingParkingSpots() {
+        fittingParkingSpots = new LinkedHashMap<>();
 
-        if(map.get(vehicleType) == null){
-            throw new UnknownVehicleType("Unknown vehicle type " + vehicleType);
+        fittingParkingSpots.put(VehicleType.MOTORCYCLE, List.of(SMALL, MEDIUM, LARGE));
+        fittingParkingSpots.put(VehicleType.CAR, List.of(MEDIUM, LARGE));
+        fittingParkingSpots.put(VehicleType.TRUCK, List.of(LARGE));
+    }
+
+    private void validateSelectedVehicleType(VehicleType selectedVehicleType, Map<VehicleType, List<ParkingSpotType>> fittingParkingSpots) {
+        if (fittingParkingSpots.get(selectedVehicleType) == null) {
+            throw new UnknownVehicleType("Unknown vehicle type " + selectedVehicleType);
         }
+    }
 
-        for(int i=0; i<map.size(); i++){
-            VehicleType vehicleTypeInMap = (VehicleType) map.keySet().toArray()[i];
-            if(vehicleTypeInMap.equals(vehicleType)){
-                for(int j=i; j<map.size(); j++){
-                    ParkingSpotType pst = map.get(map.keySet().toArray()[j]);
-                    if(vehicle.isElectric()){
-                        if(parkingLotRepository.getSizeOfEmptyParkingSpotsWithElectricChargerOfType(pst) > 0){
-                            return parkingLotRepository.getEmptyParkingSpotWithElectricChargerOfType(pst);
-                        }
-                    } else {
-                        if(parkingLotRepository.getSizeOfEmptyParkingSpotsOfType(pst) > 0){
-                            return parkingLotRepository.getEmptyParkingSpotOfType(pst);
-                        }
-                    }
+    private ParkingSpot getParkingSpot(Vehicle vehicle, ParkingLotRepository parkingLotRepository) throws ParkingSpotNotFound {
+        ParkingSpotNotFound parkingSpotNotFound = null;
+
+        List<ParkingSpotType> givenFittingParkingSpots = fittingParkingSpots.get(vehicle.getVehicleType());
+        for (ParkingSpotType pst : givenFittingParkingSpots) {
+            try {
+                if (vehicle.isElectric()) {
+                    return parkingLotRepository.getEmptyParkingSpotWithElectricChargerOfType(pst);
+                } else {
+                    return parkingLotRepository.getEmptyParkingSpotOfType(pst);
                 }
-                break;
+            } catch (ParkingSpotNotFound e) {
+                parkingSpotNotFound = e;
             }
-        }
 
-        throw new ParkingSpotNotFound("Parking spot not found");
+        }
+        throw parkingSpotNotFound;
     }
 }
 
