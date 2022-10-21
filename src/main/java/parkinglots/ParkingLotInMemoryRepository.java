@@ -1,12 +1,11 @@
 package parkinglots;
 
-import exceptions.ParkingSpotNotFound;
 import exceptions.VehicleNotFound;
 import parkingspots.*;
 import vehicles.Vehicle;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 public class ParkingLotInMemoryRepository implements ParkingLotRepository {
     private final List<ParkingSpot> parkingSpots;
@@ -24,33 +23,16 @@ public class ParkingLotInMemoryRepository implements ParkingLotRepository {
     }
 
     @Override
-    public int getSizeOfEmptyParkingSpotsOfType(ParkingSpotType parkingSpotType) {
-        return parkingSpots.stream()
-                .filter(parkingSpot ->  parkingSpot.getParkingSpotType().equals(parkingSpotType) && parkingSpot.isEmpty())
-                .collect(Collectors.toList()).size();
-    }
-
-    @Override
-    public int getSizeOfEmptyParkingSpotsWithElectricChargerOfType(ParkingSpotType parkingSpotType){
-        return parkingSpots.stream()
-                .filter(e -> e.hasElectricCharger() && e.getParkingSpotType().equals(parkingSpotType))
-                .collect(Collectors.toList())
-                .size();
-    }
-
-    @Override
-    public ParkingSpot getEmptyParkingSpotOfType(ParkingSpotType type) throws ParkingSpotNotFound {
+    public Optional<ParkingSpot> getEmptyParkingSpotWithoutElectricChargerOfType(ParkingSpotType type) {
         return parkingSpots.stream()
                 .filter(parkingSpot -> parkingSpot.getParkingSpotType().equals(type) && parkingSpot.isEmpty())
-                .findFirst()
-                .orElseThrow(() -> new ParkingSpotNotFound("Parking spot has not been found"));
+                .findFirst();
     }
 
     @Override
-    public ParkingSpot getEmptyParkingSpotWithElectricChargerOfType(ParkingSpotType type) throws ParkingSpotNotFound {
+    public Optional<ParkingSpot> getEmptyParkingSpotWithElectricChargerOfType(ParkingSpotType type){
         return parkingSpots.stream()
                 .filter(parkingSpot -> parkingSpot.getParkingSpotType().equals(type) && parkingSpot.isEmpty() && parkingSpot.hasElectricCharger())
-                .findFirst()
-                .orElseThrow(() -> new ParkingSpotNotFound("Parking spot with electric charger has not been found"));
+                .findFirst();
     }
 }

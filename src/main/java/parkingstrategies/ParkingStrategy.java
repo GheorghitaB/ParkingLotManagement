@@ -5,6 +5,8 @@ import parkinglots.ParkingLotRepository;
 import parkingspots.ParkingSpot;
 import vehicles.Vehicle;
 
+import java.util.Optional;
+
 public interface ParkingStrategy {
-    ParkingSpot getParkingSpot(Vehicle vehicle, ParkingLotRepository parkingLot) throws ParkingSpotNotFound;
+    Optional<ParkingSpot> getParkingSpot(Vehicle vehicle, ParkingLotRepository parkingLot) throws ParkingSpotNotFound;
 }

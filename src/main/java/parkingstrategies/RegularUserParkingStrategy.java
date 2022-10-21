@@ -9,30 +9,56 @@ import vehicles.VehicleType;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class RegularUserParkingStrategy implements ParkingStrategy {
     private Map<VehicleType, ParkingSpotType> fittingParkingSpots;
-    @Override
-    public ParkingSpot getParkingSpot(Vehicle vehicle, ParkingLotRepository parkingLot) throws ParkingSpotNotFound {
-        populateFittingParkingSpots();
-        validateSelectedVehicleType(vehicle.getVehicleType(), fittingParkingSpots);
 
-        if(vehicle.isElectric()){
-            return parkingLot.getEmptyParkingSpotWithElectricChargerOfType(fittingParkingSpots.get(vehicle.getVehicleType()));
-        } else {
-            return parkingLot.getEmptyParkingSpotOfType(fittingParkingSpots.get(vehicle.getVehicleType()));
+    public RegularUserParkingStrategy(){
+        populateFittingParkingSpots();
+    }
+    @Override
+    public Optional<ParkingSpot> getParkingSpot(Vehicle vehicle, ParkingLotRepository repository) throws ParkingSpotNotFound {
+        validateVehicleType(vehicle.getVehicleType(), fittingParkingSpots);
+
+        ParkingSpotType fittingParkingSpot = fittingParkingSpots.get(vehicle.getVehicleType());
+
+        Optional<ParkingSpot> parkingSpotOptional = vehicle.isElectric() ? getParkingSpotWithElectricCharger(repository, fittingParkingSpot)
+                                                                         : getParkingSpotWithoutElectricCharger(repository, fittingParkingSpot);
+
+        if(parkingSpotOptional.isEmpty() && vehicle.isElectric()){
+            parkingSpotOptional = getParkingSpotWithoutElectricCharger(repository, fittingParkingSpot);
+        }
+
+        validateParkingSpotOptional(parkingSpotOptional);
+
+        return parkingSpotOptional;
+    }
+
+    private static void validateParkingSpotOptional(Optional<ParkingSpot> parkingSpotOptional) throws ParkingSpotNotFound {
+        if(parkingSpotOptional.isEmpty()){
+            throw new ParkingSpotNotFound("Parking spot not found");
         }
     }
-    private void validateSelectedVehicleType(VehicleType selectedVehicleType, Map<VehicleType, ParkingSpotType> fittingParkingSpots) {
-        if (fittingParkingSpots.get(selectedVehicleType) == null) {
-            throw new UnknownVehicleType("Unknown vehicle type " + selectedVehicleType);
-        }
-    }
+
 
     private void populateFittingParkingSpots(){
         fittingParkingSpots = new HashMap<>();
         fittingParkingSpots.put(VehicleType.MOTORCYCLE, ParkingSpotType.SMALL);
         fittingParkingSpots.put(VehicleType.CAR, ParkingSpotType.MEDIUM);
         fittingParkingSpots.put(VehicleType.TRUCK, ParkingSpotType.LARGE);
+    }
+
+    private void validateVehicleType(VehicleType selectedVehicleType, Map<VehicleType, ParkingSpotType> fittingParkingSpots) {
+        if (fittingParkingSpots.get(selectedVehicleType) == null) {
+            throw new UnknownVehicleType("Unknown vehicle type " + selectedVehicleType);
+        }
+    }
+
+    private Optional<ParkingSpot> getParkingSpotWithElectricCharger(ParkingLotRepository parkingLot, ParkingSpotType parkingSpotType){
+        return parkingLot.getEmptyParkingSpotWithElectricChargerOfType(parkingSpotType);
+    }
+    private Optional<ParkingSpot> getParkingSpotWithoutElectricCharger(ParkingLotRepository repository, ParkingSpotType parkingSpotType){
+        return repository.getEmptyParkingSpotWithoutElectricChargerOfType(parkingSpotType);
     }
 }

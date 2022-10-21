@@ -8,18 +8,20 @@ import users.User;
 import users.UserType;
 import vehicles.Vehicle;
 
+import java.util.Optional;
+
 public class ParkingLotManager{
 	private final ParkingLotRepository parkingLot;
 	public ParkingLotManager(ParkingLotRepository parkingLot) {
 		this.parkingLot = parkingLot;
 	}
 	public Ticket park(User user, Vehicle vehicle) throws ParkingSpotNotFound {
-		ParkingSpot parkingSpot = getParkingSpot(user, vehicle);
-		parkingSpot.setVehicle(vehicle);
-		return new Ticket(user, vehicle, parkingSpot);
+		Optional<ParkingSpot> parkingSpot = getParkingSpot(user, vehicle);
+		parkingSpot.get().setVehicle(vehicle);
+		return new Ticket(user, vehicle, parkingSpot.get());
 	}
 
-	private ParkingSpot getParkingSpot(User user, Vehicle vehicle) throws ParkingSpotNotFound {
+	private Optional<ParkingSpot> getParkingSpot(User user, Vehicle vehicle) throws ParkingSpotNotFound {
 		ParkingStrategy parkingStrategy = getParkingStrategy(user);
 		return parkingStrategy.getParkingSpot(vehicle, parkingLot);
 	}

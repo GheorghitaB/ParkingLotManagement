@@ -1,15 +1,14 @@
 package parkinglots;
 
-import exceptions.ParkingSpotNotFound;
 import exceptions.VehicleNotFound;
 import parkingspots.ParkingSpot;
 import parkingspots.ParkingSpotType;
 import vehicles.Vehicle;
 
+import java.util.Optional;
+
 public interface ParkingLotRepository {
     ParkingSpot findVehicle(Vehicle vehicle) throws VehicleNotFound;
-    int getSizeOfEmptyParkingSpotsOfType(ParkingSpotType parkingSpotType);
-    int getSizeOfEmptyParkingSpotsWithElectricChargerOfType(ParkingSpotType parkingSpotType);
-    ParkingSpot getEmptyParkingSpotOfType(ParkingSpotType type) throws ParkingSpotNotFound;
-    ParkingSpot getEmptyParkingSpotWithElectricChargerOfType(ParkingSpotType type) throws ParkingSpotNotFound;
+    Optional<ParkingSpot> getEmptyParkingSpotWithoutElectricChargerOfType(ParkingSpotType type);
+    Optional<ParkingSpot> getEmptyParkingSpotWithElectricChargerOfType(ParkingSpotType type);
 }
