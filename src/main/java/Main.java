@@ -1,5 +1,4 @@
 import exceptions.ParkingSpotNotFound;
-import exceptions.VehicleNotFound;
 import parkinglots.ParkingLotRepository;
 import parkinglots.ParkingLotManager;
 import parkinglots.ParkingLotInMemoryRepository;
@@ -29,14 +28,17 @@ public class Main {
 
         try {
             parkingLotManager.park(user, vehicle);
+        } catch (ParkingSpotNotFound e) {
+            System.out.println("There are not available parking spots right now");
+        }
 
-            Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicle(vehicle);
+        Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicle(vehicle);
+        if(parkingSpotOptional.isPresent()){
             System.out.println(vehicle.getPlateNumber() + " is parked on parking spot id " + parkingSpotOptional.get().getId()
                     + " (" + parkingSpotOptional.get().getParkingSpotType()+")");
-        } catch (VehicleNotFound e) {
-            System.out.println("The vehicle has not been found");
-        } catch (ParkingSpotNotFound e) {
-            System.out.println("Unavailable parking spots right now");
+
+        } else {
+            System.out.println("Parking spot has not been found.");
         }
-    }
+            }
 }

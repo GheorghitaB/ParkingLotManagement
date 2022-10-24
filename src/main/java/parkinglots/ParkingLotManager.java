@@ -11,19 +11,25 @@ import vehicles.Vehicle;
 import java.util.Optional;
 
 public class ParkingLotManager{
-	private final ParkingLotRepository parkingLot;
+	private final ParkingLotRepository parkingLotRepository;
 	public ParkingLotManager(ParkingLotRepository parkingLot) {
-		this.parkingLot = parkingLot;
+		this.parkingLotRepository = parkingLot;
 	}
 	public Ticket park(User user, Vehicle vehicle) throws ParkingSpotNotFound {
-		Optional<ParkingSpot> parkingSpot = getParkingSpot(user, vehicle);
-		parkingSpot.get().setVehicle(vehicle);
-		return new Ticket(user, vehicle, parkingSpot.get());
+		Optional<ParkingSpot> parkingSpotOptional = getParkingSpot(user, vehicle);
+		if(parkingSpotOptional.isPresent()){
+			parkingSpotOptional.get().setVehicle(vehicle);
+			return getTicket(user, vehicle, parkingSpotOptional.get());
+		}
+		throw new ParkingSpotNotFound("Parking spot not found exception");
 	}
 
-	private Optional<ParkingSpot> getParkingSpot(User user, Vehicle vehicle) throws ParkingSpotNotFound {
+	private Ticket getTicket(User user, Vehicle vehicle, ParkingSpot parkingSpot){
+		return new Ticket(user, vehicle, parkingSpot);
+	}
+	private Optional<ParkingSpot> getParkingSpot(User user, Vehicle vehicle) {
 		ParkingStrategy parkingStrategy = getParkingStrategy(user);
-		return parkingStrategy.getParkingSpot(vehicle, parkingLot);
+		return parkingStrategy.getParkingSpot(vehicle, parkingLotRepository);
 	}
 
 	private ParkingStrategy getParkingStrategy(User user) throws UnknownUserStrategy {
@@ -38,16 +44,7 @@ public class ParkingLotManager{
 		}
 	}
 
-	public Optional<ParkingSpot> findVehicle(Vehicle vehicle) throws VehicleNotFound {
-		Optional<ParkingSpot> parkingSpotOptional = parkingLot.findVehicle(vehicle);
-		validateParkingSpotOptional(parkingSpotOptional);
-		return parkingSpotOptional;
+	public Optional<ParkingSpot> findVehicle(Vehicle vehicle) {
+		return parkingLotRepository.findVehicle(vehicle);
 	}
-
-	private void validateParkingSpotOptional(Optional<ParkingSpot> parkingSpotOptional) throws VehicleNotFound {
-		if(parkingSpotOptional.isEmpty()){
-			throw new VehicleNotFound("Vehicle has not been found");
-		}
-	}
-
 }
