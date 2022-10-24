@@ -24,4 +24,16 @@ public class Ticket {
 				", parkingSpot=" + parkingSpot +
 				'}';
 	}
+
+	public User getUser(){
+		return user;
+	}
+
+	public Vehicle getVehicle(){
+		return vehicle;
+	}
+
+	public ParkingSpot getParkingSpot(){
+		return parkingSpot;
+	}
 }
