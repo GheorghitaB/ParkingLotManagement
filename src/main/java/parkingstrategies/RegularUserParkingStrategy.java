@@ -1,7 +1,5 @@
 package parkingstrategies;
 
-import exceptions.ParkingSpotNotFound;
-import exceptions.UnknownVehicleType;
 import parkinglots.ParkingLotRepository;
 import parkingspots.*;
 import vehicles.Vehicle;
@@ -23,9 +21,7 @@ public class RegularUserParkingStrategy implements ParkingStrategy {
 
 
     @Override
-    public Optional<ParkingSpot> getParkingSpot(Vehicle vehicle, ParkingLotRepository repository) throws ParkingSpotNotFound {
-        validateVehicleType(vehicle.getVehicleType(), fittingParkingSpots);
-
+    public Optional<ParkingSpot> getParkingSpot(Vehicle vehicle, ParkingLotRepository repository){
         ParkingSpotType fittingParkingSpot = fittingParkingSpots.get(vehicle.getVehicleType());
 
         Optional<ParkingSpot> parkingSpotOptional = vehicle.isElectric() ? getParkingSpotWithElectricCharger(repository, fittingParkingSpot)
@@ -35,22 +31,7 @@ public class RegularUserParkingStrategy implements ParkingStrategy {
             parkingSpotOptional = getParkingSpotWithoutElectricCharger(repository, fittingParkingSpot);
         }
 
-        validateParkingSpotOptional(parkingSpotOptional);
-
         return parkingSpotOptional;
-    }
-
-    private static void validateParkingSpotOptional(Optional<ParkingSpot> parkingSpotOptional) throws ParkingSpotNotFound {
-        if(parkingSpotOptional.isEmpty()){
-            throw new ParkingSpotNotFound("Parking spot not found");
-        }
-    }
-
-
-    private void validateVehicleType(VehicleType selectedVehicleType, Map<VehicleType, ParkingSpotType> fittingParkingSpots) {
-        if (fittingParkingSpots.get(selectedVehicleType) == null) {
-            throw new UnknownVehicleType("Unknown vehicle type " + selectedVehicleType);
-        }
     }
 
     private Optional<ParkingSpot> getParkingSpotWithElectricCharger(ParkingLotRepository parkingLot, ParkingSpotType parkingSpotType){
