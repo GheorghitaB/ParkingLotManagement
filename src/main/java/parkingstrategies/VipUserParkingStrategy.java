@@ -38,25 +38,25 @@ public class VipUserParkingStrategy implements ParkingStrategy {
     }
 
     private Optional<ParkingSpot> getEmptyParkingSpotWithElectricChargerForVehicleType(VehicleType vehicleType, ParkingLotRepository repository){
-        Optional<ParkingSpot> parkingSpotOptional = Optional.empty();
         List<ParkingSpotType> fittingParkingSpotsList = fittingParkingSpots.get(vehicleType);
 
-        for(int i=0; i<fittingParkingSpotsList.size() && parkingSpotOptional.isEmpty(); i++){
-            parkingSpotOptional = repository.getEmptyParkingSpotWithElectricChargerOfType(fittingParkingSpotsList.get(i));
-        }
-
-        return parkingSpotOptional;
+        return fittingParkingSpotsList
+                .stream()
+                .map(repository::getEmptyParkingSpotWithElectricChargerOfType)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst();
     }
 
     private Optional<ParkingSpot> getEmptyParkingSpotWithoutElectricChargerForVehicleType(VehicleType vehicleType, ParkingLotRepository repository){
-        Optional<ParkingSpot> parkingSpotOptional = Optional.empty();
         List<ParkingSpotType> fittingParkingSpotsList = fittingParkingSpots.get(vehicleType);
 
-        for(int i=0; i<fittingParkingSpotsList.size() && parkingSpotOptional.isEmpty(); i++){
-            parkingSpotOptional = repository.getEmptyParkingSpotWithoutElectricChargerOfType(fittingParkingSpotsList.get(i));
-        }
-
-        return parkingSpotOptional;
+        return fittingParkingSpotsList
+                .stream()
+                .map(repository::getEmptyParkingSpotWithoutElectricChargerOfType)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst();
     }
 }
 
