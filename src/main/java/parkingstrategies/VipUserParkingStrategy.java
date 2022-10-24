@@ -1,7 +1,5 @@
 package parkingstrategies;
 
-import exceptions.ParkingSpotNotFound;
-import exceptions.UnknownVehicleType;
 import parkinglots.ParkingLotRepository;
 import parkingspots.*;
 import vehicles.Vehicle;
@@ -23,18 +21,11 @@ public class VipUserParkingStrategy implements ParkingStrategy {
 
     public
     @Override
-    Optional<ParkingSpot> getParkingSpot(Vehicle vehicle, ParkingLotRepository parkingLotRepository) throws ParkingSpotNotFound {
-        validateSelectedVehicleType(vehicle.getVehicleType(), fittingParkingSpots);
+    Optional<ParkingSpot> getParkingSpot(Vehicle vehicle, ParkingLotRepository parkingLotRepository) {
         return getParkingSpotOptional(vehicle, parkingLotRepository);
     }
 
-    private void validateSelectedVehicleType(VehicleType selectedVehicleType, Map<VehicleType, List<ParkingSpotType>> fittingParkingSpots) {
-        if (fittingParkingSpots.get(selectedVehicleType) == null) {
-            throw new UnknownVehicleType("Unknown vehicle type " + selectedVehicleType);
-        }
-    }
-
-    private Optional<ParkingSpot> getParkingSpotOptional(Vehicle vehicle, ParkingLotRepository parkingLotRepository) throws ParkingSpotNotFound {
+    private Optional<ParkingSpot> getParkingSpotOptional(Vehicle vehicle, ParkingLotRepository parkingLotRepository) {
         Optional<ParkingSpot> parkingSpotOptional = vehicle.isElectric() ? getEmptyParkingSpotWithElectricChargerForVehicleType(vehicle.getVehicleType(), parkingLotRepository)
 
                                                    : getEmptyParkingSpotWithoutElectricChargerForVehicleType(vehicle.getVehicleType(), parkingLotRepository);
@@ -42,8 +33,6 @@ public class VipUserParkingStrategy implements ParkingStrategy {
         if(parkingSpotOptional.isEmpty() && vehicle.isElectric()){
             parkingSpotOptional = getEmptyParkingSpotWithoutElectricChargerForVehicleType(vehicle.getVehicleType(), parkingLotRepository);
         }
-
-        validateParkingSpotOptional(parkingSpotOptional);
 
         return parkingSpotOptional;
     }
@@ -68,12 +57,6 @@ public class VipUserParkingStrategy implements ParkingStrategy {
         }
 
         return parkingSpotOptional;
-    }
-
-    private void validateParkingSpotOptional(Optional<ParkingSpot> parkingSpotOptional) throws ParkingSpotNotFound {
-        if(parkingSpotOptional.isEmpty()){
-            throw new ParkingSpotNotFound("Parking spot not found");
-        }
     }
 }
 
