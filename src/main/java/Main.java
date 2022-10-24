@@ -11,6 +11,7 @@ import vehicles.Vehicle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) {
@@ -29,9 +30,9 @@ public class Main {
         try {
             parkingLotManager.park(user, vehicle);
 
-            ParkingSpot spot = parkingLotManager.findVehicle(vehicle);
-            System.out.println(vehicle.getPlateNumber() + " is parked on parking spot id " + spot.getId()
-                    + " (" + spot.getParkingSpotType()+")");
+            Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicle(vehicle);
+            System.out.println(vehicle.getPlateNumber() + " is parked on parking spot id " + parkingSpotOptional.get().getId()
+                    + " (" + parkingSpotOptional.get().getParkingSpotType()+")");
         } catch (VehicleNotFound e) {
             System.out.println("The vehicle has not been found");
         } catch (ParkingSpotNotFound e) {

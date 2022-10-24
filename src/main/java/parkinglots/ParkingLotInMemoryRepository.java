@@ -1,6 +1,5 @@
 package parkinglots;
 
-import exceptions.VehicleNotFound;
 import parkingspots.*;
 import vehicles.Vehicle;
 
@@ -15,11 +14,10 @@ public class ParkingLotInMemoryRepository implements ParkingLotRepository {
     }
 
     @Override
-    public ParkingSpot findVehicle(Vehicle vehicle) throws VehicleNotFound {
+    public Optional<ParkingSpot> findVehicle(Vehicle vehicle){
         return parkingSpots.stream()
                 .filter(parkingSpot -> !parkingSpot.isEmpty() && parkingSpot.getVehicle().getPlateNumber().equals(vehicle.getPlateNumber()))
-                .findFirst()
-                .orElseThrow(() -> new VehicleNotFound("The vehicle has not been found"));
+                .findFirst();
     }
 
     @Override

@@ -38,8 +38,16 @@ public class ParkingLotManager{
 		}
 	}
 
-	public ParkingSpot findVehicle(Vehicle vehicle) throws VehicleNotFound {
-		return parkingLot.findVehicle(vehicle);
+	public Optional<ParkingSpot> findVehicle(Vehicle vehicle) throws VehicleNotFound {
+		Optional<ParkingSpot> parkingSpotOptional = parkingLot.findVehicle(vehicle);
+		validateParkingSpotOptional(parkingSpotOptional);
+		return parkingSpotOptional;
+	}
+
+	private void validateParkingSpotOptional(Optional<ParkingSpot> parkingSpotOptional) throws VehicleNotFound {
+		if(parkingSpotOptional.isEmpty()){
+			throw new VehicleNotFound("Vehicle has not been found");
+		}
 	}
 
 }
