@@ -15,4 +15,13 @@ public class Ticket {
 		this.vehicle = vehicle;
 		this.parkingSpot = parkingSpot;
 	}
+
+	@Override
+	public String toString() {
+		return "Ticket{" +
+				"user=" + user +
+				", vehicle=" + vehicle +
+				", parkingSpot=" + parkingSpot +
+				'}';
+	}
 }
