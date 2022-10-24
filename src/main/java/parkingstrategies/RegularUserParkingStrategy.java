@@ -12,11 +12,16 @@ import java.util.Map;
 import java.util.Optional;
 
 public class RegularUserParkingStrategy implements ParkingStrategy {
-    private Map<VehicleType, ParkingSpotType> fittingParkingSpots;
+    private static final Map<VehicleType, ParkingSpotType> fittingParkingSpots;
 
-    public RegularUserParkingStrategy(){
-        populateFittingParkingSpots();
+    static{
+        fittingParkingSpots = new HashMap<>();
+        fittingParkingSpots.put(VehicleType.MOTORCYCLE, ParkingSpotType.SMALL);
+        fittingParkingSpots.put(VehicleType.CAR, ParkingSpotType.MEDIUM);
+        fittingParkingSpots.put(VehicleType.TRUCK, ParkingSpotType.LARGE);
     }
+
+
     @Override
     public Optional<ParkingSpot> getParkingSpot(Vehicle vehicle, ParkingLotRepository repository) throws ParkingSpotNotFound {
         validateVehicleType(vehicle.getVehicleType(), fittingParkingSpots);
@@ -41,13 +46,6 @@ public class RegularUserParkingStrategy implements ParkingStrategy {
         }
     }
 
-
-    private void populateFittingParkingSpots(){
-        fittingParkingSpots = new HashMap<>();
-        fittingParkingSpots.put(VehicleType.MOTORCYCLE, ParkingSpotType.SMALL);
-        fittingParkingSpots.put(VehicleType.CAR, ParkingSpotType.MEDIUM);
-        fittingParkingSpots.put(VehicleType.TRUCK, ParkingSpotType.LARGE);
-    }
 
     private void validateVehicleType(VehicleType selectedVehicleType, Map<VehicleType, ParkingSpotType> fittingParkingSpots) {
         if (fittingParkingSpots.get(selectedVehicleType) == null) {

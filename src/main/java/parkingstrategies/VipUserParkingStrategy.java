@@ -12,21 +12,20 @@ import java.util.*;
 import static parkingspots.ParkingSpotType.*;
 
 public class VipUserParkingStrategy implements ParkingStrategy {
-    private Map<VehicleType, List<ParkingSpotType>> fittingParkingSpots;
+    private static final Map<VehicleType, List<ParkingSpotType>> fittingParkingSpots;
 
-    public
-    @Override
-    Optional<ParkingSpot> getParkingSpot(Vehicle vehicle, ParkingLotRepository parkingLotRepository) throws ParkingSpotNotFound {
-        populateFittingParkingSpots();
-        validateSelectedVehicleType(vehicle.getVehicleType(), fittingParkingSpots);
-        return getParkingSpotOptional(vehicle, parkingLotRepository);
-    }
-
-    private void populateFittingParkingSpots() {
+    static{
         fittingParkingSpots = new LinkedHashMap<>();
         fittingParkingSpots.put(VehicleType.MOTORCYCLE, List.of(SMALL, MEDIUM, LARGE));
         fittingParkingSpots.put(VehicleType.CAR, List.of(MEDIUM, LARGE));
         fittingParkingSpots.put(VehicleType.TRUCK, List.of(LARGE));
+    }
+
+    public
+    @Override
+    Optional<ParkingSpot> getParkingSpot(Vehicle vehicle, ParkingLotRepository parkingLotRepository) throws ParkingSpotNotFound {
+        validateSelectedVehicleType(vehicle.getVehicleType(), fittingParkingSpots);
+        return getParkingSpotOptional(vehicle, parkingLotRepository);
     }
 
     private void validateSelectedVehicleType(VehicleType selectedVehicleType, Map<VehicleType, List<ParkingSpotType>> fittingParkingSpots) {
