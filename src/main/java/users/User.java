@@ -1,5 +1,7 @@
 package users;
 
+import java.util.Objects;
+
 public abstract class User {
 	protected String name;
 	private final UserType userType;
@@ -16,6 +18,17 @@ public abstract class User {
 	public UserType getUserType() {
 		return userType;
 	}
-	
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		User user = (User) o;
+		return name.equals(user.name) && userType == user.userType;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, userType);
+	}
 }

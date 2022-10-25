@@ -2,12 +2,14 @@ package parkingspots;
 
 import vehicles.Vehicle;
 
+import java.util.Objects;
+
 public abstract class ParkingSpot {
-	private int id;
+	private final int id;
 	private static int gen_id = 0;
 	private Vehicle vehicle;
 	private final ParkingSpotType parkingSpotType;
-	private boolean hasElectricCharger;
+	private final boolean hasElectricCharger;
 	protected ParkingSpot(ParkingSpotType parkingSpotType, boolean hasElectricCharger) {
 		this.parkingSpotType = parkingSpotType;
 		this.hasElectricCharger = hasElectricCharger;
@@ -31,4 +33,17 @@ public abstract class ParkingSpot {
 	}
 	public boolean isEmpty(){return vehicle == null;}
 	public boolean hasElectricCharger(){return hasElectricCharger;}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		ParkingSpot that = (ParkingSpot) o;
+		return id == that.id && hasElectricCharger == that.hasElectricCharger && vehicle.equals(that.vehicle) && parkingSpotType == that.parkingSpotType;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, vehicle, parkingSpotType, hasElectricCharger);
+	}
 }
