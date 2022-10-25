@@ -32,7 +32,7 @@ public class Main {
             System.out.println("There are not available parking spots right now");
         }
 
-        Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicle(vehicle);
+        Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicleByPlateNumber(vehicle.getPlateNumber());
         if(parkingSpotOptional.isPresent()){
             System.out.println(vehicle.getPlateNumber() + " is parked on parking spot id " + parkingSpotOptional.get().getId()
                     + " (" + parkingSpotOptional.get().getParkingSpotType()+")");

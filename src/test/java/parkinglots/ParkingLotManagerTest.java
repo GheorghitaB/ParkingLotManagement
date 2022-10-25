@@ -64,8 +64,8 @@ class ParkingLotManagerTest {
     void findVehicleShouldReturnEmptyOptionalWhenTheSpecifiedVehicleIsNotParked(){
         Vehicle car = new Car("", false);
 
-        when(parkingLotRepository.findVehicle(car)).thenReturn(Optional.empty());
-        Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicle(car);
+        when(parkingLotRepository.findVehicleByPlateNumber(car.getPlateNumber())).thenReturn(Optional.empty());
+        Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicleByPlateNumber(car.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isEmpty());
     }
@@ -75,12 +75,12 @@ class ParkingLotManagerTest {
         ParkingSpot smallParkingSpot = new SmallParkingSpot(false);
         Vehicle motorcycle = new Motorcycle("", false);
 
-        when(parkingLotRepository.findVehicle(motorcycle)).thenReturn(Optional.of(smallParkingSpot));
-        Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicle(motorcycle);
+        when(parkingLotRepository.findVehicleByPlateNumber(motorcycle.getPlateNumber())).thenReturn(Optional.of(smallParkingSpot));
+        Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicleByPlateNumber(motorcycle.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isPresent());
         assertEquals(smallParkingSpot.getParkingSpotType(), parkingSpotOptional.get().getParkingSpotType());
         assertFalse(parkingSpotOptional.get().hasElectricCharger());
-        verify(parkingLotRepository, times(1)).findVehicle(motorcycle);
+        verify(parkingLotRepository, times(1)).findVehicleByPlateNumber(motorcycle.getPlateNumber());
     }
 }

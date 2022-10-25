@@ -29,8 +29,8 @@ class ParkingLotInMemoryRepositoryTest {
         Vehicle motorcycle = new Motorcycle("", false);
         smallParkingSpot.setVehicle(motorcycle);
 
-        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(new ArrayList<>(Arrays.asList(smallParkingSpot)));
-        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicle(motorcycle);
+        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(Arrays.asList(smallParkingSpot));
+        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(motorcycle.getPlateNumber());
 
         assertFalse(parkingSpotOptional.get().hasElectricCharger());
         assertEquals(SMALL, parkingSpotOptional.get().getParkingSpotType());
@@ -44,7 +44,7 @@ class ParkingLotInMemoryRepositoryTest {
         smallParkingSpot.setVehicle(motorcycle);
 
         ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(new ArrayList<>(Arrays.asList(smallParkingSpot)));
-        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicle(motorcycle);
+        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(motorcycle.getPlateNumber());
 
         assertTrue(parkingSpotOptional.get().hasElectricCharger());
         assertEquals(SMALL, parkingSpotOptional.get().getParkingSpotType());
@@ -58,7 +58,7 @@ class ParkingLotInMemoryRepositoryTest {
         mediumParkingSpot.setVehicle(car);
 
         ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(new ArrayList<>(Arrays.asList(mediumParkingSpot)));
-        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicle(car);
+        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(car.getPlateNumber());
         assertTrue(parkingSpotOptional.get().hasElectricCharger());
         assertEquals(MEDIUM, parkingSpotOptional.get().getParkingSpotType());
         assertEquals(car, parkingSpotOptional.get().getVehicle());
@@ -71,7 +71,7 @@ class ParkingLotInMemoryRepositoryTest {
         mediumParkingSpot.setVehicle(motorcycle);
 
         ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(new ArrayList<>(Arrays.asList(mediumParkingSpot)));
-        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicle(motorcycle);
+        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(motorcycle.getPlateNumber());
         assertFalse(parkingSpotOptional.get().hasElectricCharger());
         assertEquals(MEDIUM, parkingSpotOptional.get().getParkingSpotType());
         assertEquals(motorcycle, parkingSpotOptional.get().getVehicle());

@@ -44,7 +44,7 @@ public class ParkingLotManager{
 		}
 	}
 
-	public Optional<ParkingSpot> findVehicle(Vehicle vehicle) {
-		return parkingLotRepository.findVehicle(vehicle);
+	public Optional<ParkingSpot> findVehicleByPlateNumber(String plateNumber) {
+		return parkingLotRepository.findVehicleByPlateNumber(plateNumber);
 	}
 }
