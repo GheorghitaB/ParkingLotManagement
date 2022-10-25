@@ -10,34 +10,39 @@ import java.util.Map;
 import java.util.Optional;
 
 public class RegularUserParkingStrategy implements ParkingStrategy {
-    private static final Map<VehicleType, ParkingSpotType> fittingParkingSpots;
+    private static final Map<VehicleType, ParkingSpotType> FITTING_PARKING_SPOTS;
+    private final ParkingLotRepository parkingLotRepository;
+
+    public RegularUserParkingStrategy(ParkingLotRepository parkingLotRepository){
+        this.parkingLotRepository = parkingLotRepository;
+    }
 
     static{
-        fittingParkingSpots = new HashMap<>();
-        fittingParkingSpots.put(VehicleType.MOTORCYCLE, ParkingSpotType.SMALL);
-        fittingParkingSpots.put(VehicleType.CAR, ParkingSpotType.MEDIUM);
-        fittingParkingSpots.put(VehicleType.TRUCK, ParkingSpotType.LARGE);
+        FITTING_PARKING_SPOTS = new HashMap<>();
+        FITTING_PARKING_SPOTS.put(VehicleType.MOTORCYCLE, ParkingSpotType.SMALL);
+        FITTING_PARKING_SPOTS.put(VehicleType.CAR, ParkingSpotType.MEDIUM);
+        FITTING_PARKING_SPOTS.put(VehicleType.TRUCK, ParkingSpotType.LARGE);
     }
 
 
     @Override
-    public Optional<ParkingSpot> getParkingSpot(Vehicle vehicle, ParkingLotRepository repository){
-        ParkingSpotType fittingParkingSpot = fittingParkingSpots.get(vehicle.getVehicleType());
+    public Optional<ParkingSpot> getParkingSpot(Vehicle vehicle){
+        ParkingSpotType fittingParkingSpot = FITTING_PARKING_SPOTS.get(vehicle.getVehicleType());
 
-        Optional<ParkingSpot> parkingSpotOptional = vehicle.isElectric() ? getParkingSpotWithElectricCharger(repository, fittingParkingSpot)
-                                                                         : getParkingSpotWithoutElectricCharger(repository, fittingParkingSpot);
+        Optional<ParkingSpot> parkingSpotOptional = vehicle.isElectric() ? getParkingSpotWithElectricCharger(fittingParkingSpot)
+                                                                         : getParkingSpotWithoutElectricCharger(fittingParkingSpot);
 
         if(parkingSpotOptional.isEmpty() && vehicle.isElectric()){
-            parkingSpotOptional = getParkingSpotWithoutElectricCharger(repository, fittingParkingSpot);
+            parkingSpotOptional = getParkingSpotWithoutElectricCharger(fittingParkingSpot);
         }
 
         return parkingSpotOptional;
     }
 
-    private Optional<ParkingSpot> getParkingSpotWithElectricCharger(ParkingLotRepository parkingLot, ParkingSpotType parkingSpotType){
-        return parkingLot.getEmptyParkingSpotWithElectricChargerOfType(parkingSpotType);
+    private Optional<ParkingSpot> getParkingSpotWithElectricCharger(ParkingSpotType parkingSpotType){
+        return parkingLotRepository.getEmptyParkingSpotWithElectricChargerOfType(parkingSpotType);
     }
-    private Optional<ParkingSpot> getParkingSpotWithoutElectricCharger(ParkingLotRepository repository, ParkingSpotType parkingSpotType){
-        return repository.getEmptyParkingSpotWithoutElectricChargerOfType(parkingSpotType);
+    private Optional<ParkingSpot> getParkingSpotWithoutElectricCharger(ParkingSpotType parkingSpotType){
+        return parkingLotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(parkingSpotType);
     }
 }

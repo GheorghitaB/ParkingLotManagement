@@ -316,16 +316,3 @@ class ParkingLotManagerIntegrationTest {
         assertTrue(parkingSpotOptional.isEmpty());
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

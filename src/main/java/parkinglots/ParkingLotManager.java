@@ -29,16 +29,16 @@ public class ParkingLotManager{
 	}
 	private Optional<ParkingSpot> getParkingSpot(User user, Vehicle vehicle) {
 		ParkingStrategy parkingStrategy = getParkingStrategy(user);
-		return parkingStrategy.getParkingSpot(vehicle, parkingLotRepository);
+		return parkingStrategy.getParkingSpot(vehicle);
 	}
 
 	private ParkingStrategy getParkingStrategy(User user) throws UnknownUserStrategy {
 		UserType userType = user.getUserType();
 		switch (userType){
 			case REGULAR:
-				return new RegularUserParkingStrategy();
+				return new RegularUserParkingStrategy(parkingLotRepository);
 			case VIP:
-				return new VipUserParkingStrategy();
+				return new VipUserParkingStrategy(parkingLotRepository);
 			default:
 				throw new UnknownUserStrategy("Unknown user strategy " + user.getUserType());
 		}
