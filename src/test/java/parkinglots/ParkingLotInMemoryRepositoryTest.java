@@ -2,20 +2,23 @@ package parkinglots;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import parkingspots.MediumParkingSpot;
-import parkingspots.ParkingSpot;
-import parkingspots.SmallParkingSpot;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
+import parkingspots.*;
 import vehicles.Car;
 import vehicles.Motorcycle;
+import vehicles.Truck;
 import vehicles.Vehicle;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static parkingspots.ParkingSpotType.MEDIUM;
-import static parkingspots.ParkingSpotType.SMALL;
+import static parkingspots.ParkingSpotType.*;
 
 class ParkingLotInMemoryRepositoryTest {
 
@@ -24,81 +27,189 @@ class ParkingLotInMemoryRepositoryTest {
     }
 
     @Test
-    void findVehicleShouldReturnSmallParkingSpotWithoutElectricChargerWhenNonElectricMotorcycleIsSetOnThatParkingSpot(){
+    void findVehicleByPlateNumberShouldReturnSmallParkingSpotWithoutElectricChargerWhenNonElectricMotorcycleIsSetOnThatParkingSpot(){
         ParkingSpot smallParkingSpot = new SmallParkingSpot(false);
         Vehicle motorcycle = new Motorcycle("", false);
         smallParkingSpot.setVehicle(motorcycle);
 
-        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(Arrays.asList(smallParkingSpot));
+        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(List.of(smallParkingSpot));
         Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(motorcycle.getPlateNumber());
 
+        assertTrue(parkingSpotOptional.isPresent());
         assertFalse(parkingSpotOptional.get().hasElectricCharger());
         assertEquals(SMALL, parkingSpotOptional.get().getParkingSpotType());
         assertEquals(motorcycle, parkingSpotOptional.get().getVehicle());
     }
 
     @Test
-    void findVehicleShouldReturnSmallParkingSpotWithElectricChargerWhenElectricMotorcycleIsSetOnThatParkingSpot(){
+    void findVehicleByPlateNumberShouldReturnSmallParkingSpotWithElectricChargerWhenElectricMotorcycleIsSetOnThatParkingSpot(){
         ParkingSpot smallParkingSpot = new SmallParkingSpot(true);
         Vehicle motorcycle = new Motorcycle("", true);
         smallParkingSpot.setVehicle(motorcycle);
 
-        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(new ArrayList<>(Arrays.asList(smallParkingSpot)));
+        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(List.of(smallParkingSpot));
         Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(motorcycle.getPlateNumber());
 
+        assertTrue(parkingSpotOptional.isPresent());
         assertTrue(parkingSpotOptional.get().hasElectricCharger());
         assertEquals(SMALL, parkingSpotOptional.get().getParkingSpotType());
         assertEquals(motorcycle, parkingSpotOptional.get().getVehicle());
     }
 
     @Test
-    void findVehicleShouldReturnMediumParkingSpotWithElectricChargerWhenElectricCarIsSetOnThatParkingSpot(){
+    void findVehicleByPlateNumberShouldReturnMediumParkingSpotWithElectricChargerWhenElectricCarIsSetOnThatParkingSpot(){
         ParkingSpot mediumParkingSpot = new MediumParkingSpot(true);
         Vehicle car = new Car("", true);
         mediumParkingSpot.setVehicle(car);
 
-        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(new ArrayList<>(Arrays.asList(mediumParkingSpot)));
+        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(List.of(mediumParkingSpot));
         Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(car.getPlateNumber());
+
+        assertTrue(parkingSpotOptional.isPresent());
         assertTrue(parkingSpotOptional.get().hasElectricCharger());
         assertEquals(MEDIUM, parkingSpotOptional.get().getParkingSpotType());
         assertEquals(car, parkingSpotOptional.get().getVehicle());
     }
 
     @Test
-    void findVehicleShouldReturnMediumParkingSpotWithoutElectricChargerForElectricMotorcycleWhenElectricMotorcycleIsSetOnThatParkingSpot(){
+    void findVehicleByPlateNumberShouldReturnMediumParkingSpotWithoutElectricChargerWhenNonElectricCarIsSetOnThatParkingSpot(){
+        ParkingSpot mediumParkingSpot = new MediumParkingSpot(false);
+        Vehicle car = new Car("", false);
+        mediumParkingSpot.setVehicle(car);
+
+        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(List.of(mediumParkingSpot));
+        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(car.getPlateNumber());
+
+        assertTrue(parkingSpotOptional.isPresent());
+        assertFalse(parkingSpotOptional.get().hasElectricCharger());
+        assertEquals(MEDIUM, parkingSpotOptional.get().getParkingSpotType());
+        assertEquals(car, parkingSpotOptional.get().getVehicle());
+    }
+
+    @Test
+    void findVehicleByPlateNumberShouldReturnLargeParkingSpotWithElectricChargerWhenElectricTruckIsSetOnThatParkingSpot(){
+        ParkingSpot largeParkingSpot = new LargeParkingSpot(true);
+        Vehicle truck = new Car("", true);
+        largeParkingSpot.setVehicle(truck);
+
+        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(List.of(largeParkingSpot));
+        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(truck.getPlateNumber());
+
+        assertTrue(parkingSpotOptional.isPresent());
+        assertTrue(parkingSpotOptional.get().hasElectricCharger());
+        assertEquals(LARGE, parkingSpotOptional.get().getParkingSpotType());
+        assertEquals(truck, parkingSpotOptional.get().getVehicle());
+    }
+
+    @Test
+    void findVehicleByPlateNumberShouldReturnLargeParkingSpotWithoutElectricChargerWhenNonElectricTruckIsSetOnThatParkingSpot(){
+        ParkingSpot largeParkingSpot = new LargeParkingSpot(true);
+        Vehicle truck = new Car("", true);
+        largeParkingSpot.setVehicle(truck);
+
+        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(List.of(largeParkingSpot));
+        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(truck.getPlateNumber());
+
+        assertTrue(parkingSpotOptional.isPresent());
+        assertTrue(parkingSpotOptional.get().hasElectricCharger());
+        assertEquals(LARGE, parkingSpotOptional.get().getParkingSpotType());
+        assertEquals(truck, parkingSpotOptional.get().getVehicle());
+    }
+
+    @Test
+    void findVehicleByPlateNumberShouldReturnSmallParkingSpotWithoutElectricChargerWhenElectricMotorcycleIsSetOnThatParkingSpot(){
+        ParkingSpot smallParkingSpot = new SmallParkingSpot(false);
+        Vehicle motorcycle = new Motorcycle("", true);
+        smallParkingSpot.setVehicle(motorcycle);
+
+        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(List.of(smallParkingSpot));
+        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(motorcycle.getPlateNumber());
+
+        assertTrue(parkingSpotOptional.isPresent());
+        assertFalse(parkingSpotOptional.get().hasElectricCharger());
+        assertEquals(SMALL, parkingSpotOptional.get().getParkingSpotType());
+        assertEquals(motorcycle, parkingSpotOptional.get().getVehicle());
+    }
+
+    @ParameterizedTest
+    @MethodSource("vehicleGenerator")
+    void findVehicleByPlateNumberShouldReturnAnEmptyOptionalForVehicleWhenItIsNotSetOnAParkingSpot(Vehicle vehicle){
+        List<ParkingSpot> parkingSpotList = new ArrayList<>();
+        parkingSpotList.add(new SmallParkingSpot(false));
+        parkingSpotList.add(new SmallParkingSpot(true));
+        parkingSpotList.add(new MediumParkingSpot(false));
+        parkingSpotList.add(new MediumParkingSpot(true));
+        parkingSpotList.add(new LargeParkingSpot(false));
+        parkingSpotList.add(new LargeParkingSpot(true));
+
+        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(parkingSpotList);
+        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(vehicle.getPlateNumber());
+
+        assertTrue(parkingSpotOptional.isEmpty());
+    }
+
+    private static Stream<Arguments> vehicleGenerator(){
+        return Stream.of(
+                Arguments.of(new Motorcycle("", false)),
+                Arguments.of(new Motorcycle("", true)),
+                Arguments.of(new Car("", false)),
+                Arguments.of(new Car("", true)),
+                Arguments.of(new Truck("", false)),
+                Arguments.of(new Truck("", true)));
+    }
+
+    @Test
+    void findVehicleByPlateNumberShouldReturnMediumParkingSpotWithoutElectricChargerForElectricMotorcycleWhenElectricMotorcycleIsSetOnThatParkingSpot(){
         ParkingSpot mediumParkingSpot = new MediumParkingSpot(false);
         Vehicle motorcycle = new Motorcycle("", true);
         mediumParkingSpot.setVehicle(motorcycle);
 
-        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(new ArrayList<>(Arrays.asList(mediumParkingSpot)));
+        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(List.of(mediumParkingSpot));
         Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(motorcycle.getPlateNumber());
+
+        assertTrue(parkingSpotOptional.isPresent());
         assertFalse(parkingSpotOptional.get().hasElectricCharger());
         assertEquals(MEDIUM, parkingSpotOptional.get().getParkingSpotType());
         assertEquals(motorcycle, parkingSpotOptional.get().getVehicle());
     }
 
-    @Test
-    void getEmptyParkingSpotWithoutElectricChargerOfTypeSmallShouldReturnEmptyOptionalIfThereIsNoEmptySmallParkingSpotWithoutElectricCharger(){
+    @ParameterizedTest
+    @EnumSource(ParkingSpotType.class)
+    void getEmptyParkingSpotOfTypeAnyShouldReturnEmptyOptionalIfThereIsNoEmptyParkingSpotOfTheSpecifiedType(ParkingSpotType parkingSpotType){
         ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(new ArrayList<>());
-        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.getEmptyParkingSpotWithoutElectricChargerOfType(SMALL);
+        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.getEmptyParkingSpotWithoutElectricChargerOfType(parkingSpotType);
         assertTrue(parkingSpotOptional.isEmpty());
     }
 
-    @Test
-    void getEmptyParkingSpotWithoutElectricChargerOfTypeSmallShouldReturnOptionalOfSmallParkingSpotWithoutElectricChargerIfThereIsAtLeastOneEmptySmallParkingSpotWithoutElectricCharger(){
-        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(new ArrayList<>(Arrays.asList(new SmallParkingSpot(false))));
-        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.getEmptyParkingSpotWithoutElectricChargerOfType(SMALL);
+    @ParameterizedTest
+    @EnumSource(ParkingSpotType.class)
+    void getEmptyParkingSpotWithoutElectricChargerOfTypeAnyShouldReturnOptionalOfParkingSpotOfSpecifiedTypeWhenThereIsAtLeastOneEmptyParkingSpotWithoutElectricChargerOfTheSpecifiedType(ParkingSpotType parkingSpotType){
+        List<ParkingSpot> parkingSpotList = new ArrayList<>();
+        parkingSpotList.add(new SmallParkingSpot(false));
+        parkingSpotList.add(new MediumParkingSpot(false));
+        parkingSpotList.add(new LargeParkingSpot(false));
+
+        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(parkingSpotList);
+        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.getEmptyParkingSpotWithoutElectricChargerOfType(parkingSpotType);
+
         assertTrue(parkingSpotOptional.isPresent());
-        assertEquals(SMALL, parkingSpotOptional.get().getParkingSpotType());
+        assertEquals(parkingSpotType, parkingSpotOptional.get().getParkingSpotType());
         assertFalse(parkingSpotOptional.get().hasElectricCharger());
     }
 
-    @Test
-    void getEmptyParkingSpotWithElectricChargerOfTypeSmallShouldReturnEmptyOptionalIfThereIsNoEmptySmallParkingSpotWithElectricCharger(){
-        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(new ArrayList<>());
-        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.getEmptyParkingSpotWithElectricChargerOfType(SMALL);
-        assertTrue(parkingSpotOptional.isEmpty());
+    @ParameterizedTest
+    @EnumSource(ParkingSpotType.class)
+    void getEmptyParkingSpotWithElectricChargerOfTypeAnyShouldReturnOptionalOfParkingSpotOfSpecifiedTypeWhenThereIsAtLeastOneEmptyParkingSpotWithElectricChargerOfTheSpecifiedType(ParkingSpotType parkingSpotType){
+        List<ParkingSpot> parkingSpotList = new ArrayList<>();
+        parkingSpotList.add(new SmallParkingSpot(true));
+        parkingSpotList.add(new MediumParkingSpot(true));
+        parkingSpotList.add(new LargeParkingSpot(true));
+
+        ParkingLotInMemoryRepository parkingLotInMemoryRepository = new ParkingLotInMemoryRepository(parkingSpotList);
+        Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.getEmptyParkingSpotWithElectricChargerOfType(parkingSpotType);
+
+        assertTrue(parkingSpotOptional.isPresent());
+        assertEquals(parkingSpotType, parkingSpotOptional.get().getParkingSpotType());
+        assertTrue(parkingSpotOptional.get().hasElectricCharger());
     }
-
-
 }
