@@ -3,7 +3,11 @@ package parkinglots;
 import exceptions.ParkingSpotNotFound;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import parkingspots.*;
+import parkingstrategies.ParkingStrategyFactory;
 import tickets.Ticket;
 import users.RegularUser;
 import users.User;
@@ -16,6 +20,7 @@ import vehicles.Vehicle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,7 +50,7 @@ class ParkingLotManagerIntegrationTest {
         initUsers();
         initVehicles();
         ParkingLotRepository parkingLotRepository = new ParkingLotInMemoryRepository(parkingSpotList);
-        parkingLotManager = new ParkingLotManager(parkingLotRepository);
+        parkingLotManager = new ParkingLotManager(parkingLotRepository, ParkingStrategyFactory.getParkingStrategyInstance());
     }
 
     private void initParkingSpots(){
@@ -185,7 +190,13 @@ class ParkingLotManagerIntegrationTest {
 
     @Test
     void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenMediumParkingSpotWithElectricCharger() throws ParkingSpotNotFound {
-        parkingSpotList.remove(smallParkingSpotWithElectricCharger);
+        List<ParkingSpot> newParkingSpotList = new ArrayList<>();
+        newParkingSpotList.add(smallParkingSpotWithoutElectricCharger);
+        newParkingSpotList.add(mediumParkingSpotWithoutElectricCharger);
+        newParkingSpotList.add(mediumParkingSpotWithElectricCharger);
+        newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
+        newParkingSpotList.add(largeParkingSpotWithElectricCharger);
+        parkingLotManager = new ParkingLotManager(new ParkingLotInMemoryRepository(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
 
         Ticket ticket = parkingLotManager.park(vipUser, electricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
@@ -199,8 +210,12 @@ class ParkingLotManagerIntegrationTest {
 
     @Test
     void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenLargeParkingSpotWithElectricCharger() throws ParkingSpotNotFound {
-        parkingSpotList.remove(smallParkingSpotWithElectricCharger);
-        parkingSpotList.remove(mediumParkingSpotWithElectricCharger);
+        List<ParkingSpot> newParkingSpotList = new ArrayList<>();
+        newParkingSpotList.add(smallParkingSpotWithoutElectricCharger);
+        newParkingSpotList.add(mediumParkingSpotWithoutElectricCharger);
+        newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
+        newParkingSpotList.add(largeParkingSpotWithElectricCharger);
+        parkingLotManager = new ParkingLotManager(new ParkingLotInMemoryRepository(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
 
         Ticket ticket = parkingLotManager.park(vipUser, electricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
@@ -214,9 +229,11 @@ class ParkingLotManagerIntegrationTest {
 
     @Test
     void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenSmallParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound {
-        parkingSpotList.remove(smallParkingSpotWithElectricCharger);
-        parkingSpotList.remove(mediumParkingSpotWithElectricCharger);
-        parkingSpotList.remove(largeParkingSpotWithElectricCharger);
+        List<ParkingSpot> newParkingSpotList = new ArrayList<>();
+        newParkingSpotList.add(smallParkingSpotWithoutElectricCharger);
+        newParkingSpotList.add(mediumParkingSpotWithoutElectricCharger);
+        newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
+        parkingLotManager = new ParkingLotManager(new ParkingLotInMemoryRepository(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
 
         Ticket ticket = parkingLotManager.park(vipUser, electricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
@@ -230,10 +247,10 @@ class ParkingLotManagerIntegrationTest {
 
     @Test
     void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenMediumParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound {
-        parkingSpotList.remove(smallParkingSpotWithElectricCharger);
-        parkingSpotList.remove(mediumParkingSpotWithElectricCharger);
-        parkingSpotList.remove(largeParkingSpotWithElectricCharger);
-        parkingSpotList.remove(smallParkingSpotWithoutElectricCharger);
+        List<ParkingSpot> newParkingSpotList = new ArrayList<>();
+        newParkingSpotList.add(mediumParkingSpotWithoutElectricCharger);
+        newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
+        parkingLotManager = new ParkingLotManager(new ParkingLotInMemoryRepository(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
 
         Ticket ticket = parkingLotManager.park(vipUser, electricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
@@ -247,11 +264,9 @@ class ParkingLotManagerIntegrationTest {
 
     @Test
     void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenLargeParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound {
-        parkingSpotList.remove(smallParkingSpotWithElectricCharger);
-        parkingSpotList.remove(mediumParkingSpotWithElectricCharger);
-        parkingSpotList.remove(largeParkingSpotWithElectricCharger);
-        parkingSpotList.remove(smallParkingSpotWithoutElectricCharger);
-        parkingSpotList.remove(mediumParkingSpotWithoutElectricCharger);
+        List<ParkingSpot> newParkingSpotList = new ArrayList<>();
+        newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
+        parkingLotManager = new ParkingLotManager(new ParkingLotInMemoryRepository(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
 
         Ticket ticket = parkingLotManager.park(vipUser, electricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
@@ -265,54 +280,86 @@ class ParkingLotManagerIntegrationTest {
 
     @Test
     void parkShouldThrowParkingSpotNotFoundExceptionWhenVipUserWantsToParkANonElectricMotorcycleAndThereAreNotAnyFittingParkingSpots(){
-        parkingSpotList.clear();
+        List<ParkingSpot> newParkingSpotList = new ArrayList<>();
+        parkingLotManager = new ParkingLotManager(new ParkingLotInMemoryRepository(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
         assertThrows(ParkingSpotNotFound.class, () -> parkingLotManager.park(vipUser, nonElectricMotorcycle));
     }
 
     @Test
-    void findVehicleShouldReturnSmallParkingSpotWithoutElectricChargerWhenRegularUserHasParkedANonElectricMotorcycleOnThatParkingSpot() throws ParkingSpotNotFound {
+    void findVehicleByPlateNumberShouldReturnSmallParkingSpotWithoutElectricChargerWhenRegularUserHasParkedANonElectricMotorcycleOnThatParkingSpot() throws ParkingSpotNotFound {
         parkingLotManager.park(regularUser, nonElectricMotorcycle);
         Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicleByPlateNumber(nonElectricMotorcycle.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isPresent());
+        Vehicle vehicleParkedOnTheParkingSpot = parkingSpotOptional.get().getVehicle();
+
         assertEquals(parkingSpotOptional.get(), smallParkingSpotWithoutElectricCharger);
+        assertEquals(vehicleParkedOnTheParkingSpot, nonElectricMotorcycle);
     }
 
     @Test
-    void findVehicleShouldReturnSmallParkingSpotWithElectricChargerWhenRegularUserHasParkedAnElectricMotorcycleOnThatParkingSpot() throws ParkingSpotNotFound {
+    void findVehicleByPlateNumberShouldReturnSmallParkingSpotWithElectricChargerWhenRegularUserHasParkedAnElectricMotorcycleOnThatParkingSpot() throws ParkingSpotNotFound {
         parkingLotManager.park(regularUser, electricMotorcycle);
         Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicleByPlateNumber(electricMotorcycle.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isPresent());
+        Vehicle vehicleParkedOnTheParkingSpot = parkingSpotOptional.get().getVehicle();
+        assertEquals(electricMotorcycle, vehicleParkedOnTheParkingSpot);
         assertEquals(parkingSpotOptional.get(), smallParkingSpotWithElectricCharger);
     }
 
+
     @Test
-    void findVehicleShouldReturnLargeParkingSpotWithElectricChargerWhenVipUserHasParkedAnElectricCarOnThatParkingSpot() throws ParkingSpotNotFound {
-        parkingSpotList.remove(mediumParkingSpotWithElectricCharger);
+    void findVehicleByPlateNumberShouldReturnLargeParkingSpotWithElectricChargerWhenVipUserHasParkedAnElectricCarOnThatParkingSpot() throws ParkingSpotNotFound {
+        List<ParkingSpot> newParkingSpotList = new ArrayList<>();
+        newParkingSpotList.add(smallParkingSpotWithoutElectricCharger);
+        newParkingSpotList.add(smallParkingSpotWithElectricCharger);
+        newParkingSpotList.add(mediumParkingSpotWithoutElectricCharger);
+        newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
+        newParkingSpotList.add(largeParkingSpotWithElectricCharger);
+        parkingLotManager = new ParkingLotManager(new ParkingLotInMemoryRepository(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
 
         parkingLotManager.park(vipUser, electricCar);
         Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicleByPlateNumber(electricCar.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isPresent());
+        Vehicle vehicleParkedOnTheParkingSpot = parkingSpotOptional.get().getVehicle();
+        assertEquals(electricCar, vehicleParkedOnTheParkingSpot);
         assertEquals(parkingSpotOptional.get(), largeParkingSpotWithElectricCharger);
     }
 
     @Test
-    void findVehicleShouldReturnMediumParkingSpotWithoutElectricChargerWhenVipUserHasParkedAnElectricCarOnThatParkingSpot() throws ParkingSpotNotFound {
-        parkingSpotList.remove(mediumParkingSpotWithElectricCharger);
-        parkingSpotList.remove(largeParkingSpotWithElectricCharger);
+    void findVehicleByPlateNumberShouldReturnMediumParkingSpotWithoutElectricChargerWhenVipUserHasParkedAnElectricCarOnThatParkingSpot() throws ParkingSpotNotFound {
+        List<ParkingSpot> newParkingSpotList = new ArrayList<>();
+        newParkingSpotList.add(smallParkingSpotWithoutElectricCharger);
+        newParkingSpotList.add(smallParkingSpotWithElectricCharger);
+        newParkingSpotList.add(mediumParkingSpotWithoutElectricCharger);
+        newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
+        parkingLotManager = new ParkingLotManager(new ParkingLotInMemoryRepository(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
 
         parkingLotManager.park(vipUser, electricCar);
         Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicleByPlateNumber(electricCar.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isPresent());
+        Vehicle vehicleParkedOnTheParkingSpot = parkingSpotOptional.get().getVehicle();
+        assertEquals(electricCar, vehicleParkedOnTheParkingSpot);
         assertEquals(parkingSpotOptional.get(), mediumParkingSpotWithoutElectricCharger);
     }
 
-    @Test
-    void findVehicleShouldReturnEmptyOptionalForElectricMotorcycleWhenItIsNotParked(){
-        Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicleByPlateNumber(electricMotorcycle.getPlateNumber());
+    @ParameterizedTest
+    @MethodSource("vehicleGenerator")
+    void findVehicleByPlateNumberShoutReturnEmptyOptionalForAnyVehicleWhichIsNotParked(Vehicle vehicle){
+        Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicleByPlateNumber(vehicle.getPlateNumber());
         assertTrue(parkingSpotOptional.isEmpty());
+    }
+
+    private static Stream<Arguments> vehicleGenerator() {
+        return Stream.of(
+                Arguments.of(new Motorcycle("", false)),
+                Arguments.of(new Motorcycle("", true)),
+                Arguments.of(new Car("", false)),
+                Arguments.of(new Car("", true)),
+                Arguments.of(new Truck("", false)),
+                Arguments.of(new Truck("", true)));
     }
 }
