@@ -33,9 +33,7 @@ public class RegularUserParkingStrategyTest{
     @Test
     void shouldThrowParkingSpotNotFoundExceptionForMotorcycleWhenThereIsNoEmptySmallParkingSpot(){
         when(parkingLotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(SMALL)).thenThrow(ParkingSpotNotFound.class);
-        assertThrows(ParkingSpotNotFound.class,
-                ()-> regularUserParkingStrategy.getParkingSpot(new Motorcycle("", false)));
-        verify(parkingLotRepository, times(1)).getEmptyParkingSpotWithoutElectricChargerOfType(SMALL);
+        assertThrows(ParkingSpotNotFound.class, ()-> regularUserParkingStrategy.getParkingSpot(new Motorcycle("", false)));
     }
 
     @Test
