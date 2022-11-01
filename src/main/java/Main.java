@@ -1,4 +1,5 @@
 import exceptions.ParkingSpotNotFound;
+import inits.ParkingSpotsInit;
 import parkinglots.ParkingLotRepository;
 import parkinglots.ParkingLotManager;
 import parkinglots.ParkingLotInMemoryRepository;
@@ -10,19 +11,11 @@ import users.VIPUser;
 import vehicles.Motorcycle;
 import vehicles.Vehicle;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) {
-        List<ParkingSpot> parkingSpots = new ArrayList<>();
-        parkingSpots.add(new SmallParkingSpot(false));
-        parkingSpots.add(new MediumParkingSpot(false));
-        parkingSpots.add(new MediumParkingSpot(false));
-        parkingSpots.add(new LargeParkingSpot(true));
-
-        ParkingLotRepository parkingLotRepository = new ParkingLotInMemoryRepository(parkingSpots);
+        ParkingLotRepository parkingLotRepository = new ParkingLotInMemoryRepository(ParkingSpotsInit.getListOfParkingSpotsFromResource("parkingspots.init", " "));
         ParkingLotManager parkingLotManager = new ParkingLotManager(parkingLotRepository, ParkingStrategyFactory.getParkingStrategyInstance());
 
         User user = new VIPUser("John Smith");
@@ -32,7 +25,7 @@ public class Main {
             Ticket ticket = parkingLotManager.park(user, vehicle);
             System.out.println(ticket.toString());
         } catch (ParkingSpotNotFound e) {
-            System.out.println("Parking lot unavailable for user type " + user.getUserType()
+            System.out.println("Parking spot unavailable (not found) for user type " + user.getUserType()
                                     + " with vehicle type " + vehicle.getVehicleType());
         }
 

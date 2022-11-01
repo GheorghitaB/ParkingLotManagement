@@ -1,0 +1,13 @@
+### this is a comment
+
+#populate parking spots list by the following pattern:
+#ParkingSpotType NumberOfParkingSpots 0/1, where 0 = without electric charger and 1 = with electric charger
+
+### example:    "SMALL 5 1"   =>   that means 5 SMALL parking spots with electric charger
+### example:    "LARGE 10 0"   =>   that means 10 LARGE parking spots without electric charger
+
+SMALL 4 1
+MEDIUM 3 0
+MEDIUM 3 1
+LARGE 1 1
+medium 2 1

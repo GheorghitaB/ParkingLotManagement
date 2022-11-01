@@ -24,6 +24,7 @@ public class ParkingLotManager{
 			parkingSpotOptional.get().setVehicle(vehicle);
 			return new Ticket(user, vehicle, parkingSpotOptional.get());
 		}
+
 		throw new ParkingSpotNotFound("Parking spot not found exception");
 	}
 
