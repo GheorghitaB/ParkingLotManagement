@@ -57,6 +57,7 @@ public class ParkingSpotsInit {
             }
         } catch (IOException e) {
             System.out.println("Error while reading resource " + resource);
+            System.exit(UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION);
         } catch (NullPointerException e){
             System.out.println("The resource " + resource + " has not been found.");
             System.exit(UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION);
