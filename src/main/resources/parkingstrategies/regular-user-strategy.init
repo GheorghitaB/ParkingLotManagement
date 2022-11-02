@@ -1,0 +1,12 @@
+#this is a comment
+
+#Add parking spot fit for each type of vehicle by following the next pattern
+#PATTERN: VehicleType ParkingSpotType
+
+##EXAMPLE: MOTORCYCLE SMALL => it means that for vehicle type MOTORCYCLE, the fit parking spot type is SMALL
+##EXAMPLE: CAR MEDIUM => it means that for vehicle type CAR, the fit parking spot type is MEDIUM
+##EXAMPLE: TRUCK LARGE => it means that for vehicle type TRUCK, the fit parking spot type is LARGE
+
+MOTORCYCLE SMALL
+CAR MEDIUM
+TRUCK LARGE

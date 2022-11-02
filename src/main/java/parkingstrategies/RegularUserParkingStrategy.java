@@ -1,11 +1,11 @@
 package parkingstrategies;
 
+import inits.parkingstrategies.RegularUserStrategyInit;
 import parkinglots.ParkingLotRepository;
 import parkingspots.*;
 import vehicles.Vehicle;
 import vehicles.VehicleType;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -18,10 +18,7 @@ public class RegularUserParkingStrategy implements ParkingStrategy {
     }
 
     static{
-        FITTING_PARKING_SPOTS = new HashMap<>();
-        FITTING_PARKING_SPOTS.put(VehicleType.MOTORCYCLE, ParkingSpotType.SMALL);
-        FITTING_PARKING_SPOTS.put(VehicleType.CAR, ParkingSpotType.MEDIUM);
-        FITTING_PARKING_SPOTS.put(VehicleType.TRUCK, ParkingSpotType.LARGE);
+        FITTING_PARKING_SPOTS = RegularUserStrategyInit.getMapOfFittingParkingSpotsFromResource("parkingstrategies/regular-user-strategy.init", " ");
     }
 
 
