@@ -1,0 +1,11 @@
+# this is a comment
+#ADD PARKING SPOTS FITS FOR EACH TYPE OF VEHICLE (FOR VIP USER) BY FOLLOWING THE NEXT PATTERN:
+#PATTERN: VehicleType ParkingSpotType1 ParkingSpotType2 [...] ParkingSpotTypeN
+
+### EXAMPLE: MOTORCYCLE SMALL MEDIUM LARGE  => it means that for MOTORCYCLE type is allowed the next parking spots: SMALL, MEDIUM, and LARGE
+### EXAMPLE: CAR MEDIUM LARGE  => it means that for CAR type is allowed the next parking spots: MEDIUM, and LARGE
+### EXAMPLE: TRUCK LARGE    => it means that for TRUCK type is allowed the next parking spots: LARGE
+
+MOTORCYCLE SMALL MEDIUM LARGE
+CAR MEDIUM LARGE
+TRUCK LARGE

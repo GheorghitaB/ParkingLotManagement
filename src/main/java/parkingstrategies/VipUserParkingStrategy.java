@@ -1,5 +1,6 @@
 package parkingstrategies;
 
+import inits.parkingstrategies.VipUserStrategyInit;
 import parkinglots.ParkingLotRepository;
 import parkingspots.*;
 import vehicles.Vehicle;
@@ -7,7 +8,6 @@ import vehicles.VehicleType;
 
 import java.util.*;
 
-import static parkingspots.ParkingSpotType.*;
 
 public class VipUserParkingStrategy implements ParkingStrategy {
     private static final Map<VehicleType, List<ParkingSpotType>> FITTING_PARKING_SPOTS;
@@ -18,10 +18,7 @@ public class VipUserParkingStrategy implements ParkingStrategy {
     }
 
     static{
-        FITTING_PARKING_SPOTS = new LinkedHashMap<>();
-        FITTING_PARKING_SPOTS.put(VehicleType.MOTORCYCLE, List.of(SMALL, MEDIUM, LARGE));
-        FITTING_PARKING_SPOTS.put(VehicleType.CAR, List.of(MEDIUM, LARGE));
-        FITTING_PARKING_SPOTS.put(VehicleType.TRUCK, List.of(LARGE));
+        FITTING_PARKING_SPOTS = VipUserStrategyInit.getParkingSpotsFitsFromResource("parkingstrategies/vip-user-strategy.init", " ");
     }
 
     public
