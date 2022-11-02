@@ -3,6 +3,7 @@ package parkingstrategies;
 import inits.parkingstrategies.RegularUserStrategyInit;
 import parkinglots.ParkingLotRepository;
 import parkingspots.*;
+import resourcepaths.ResourcePath;
 import vehicles.Vehicle;
 import vehicles.VehicleType;
 
@@ -18,7 +19,7 @@ public class RegularUserParkingStrategy implements ParkingStrategy {
     }
 
     static{
-        FITTING_PARKING_SPOTS = RegularUserStrategyInit.getMapOfFittingParkingSpotsFromResource("parkingstrategies/regular-user-strategy.init", " ");
+        FITTING_PARKING_SPOTS = RegularUserStrategyInit.getMapOfFittingParkingSpotsFromResource(ResourcePath.getPathOf("regular-user-strategy"));
     }
 
 

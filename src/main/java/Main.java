@@ -5,6 +5,7 @@ import parkinglots.ParkingLotManager;
 import parkinglots.ParkingLotInMemoryRepository;
 import parkingspots.*;
 import parkingstrategies.ParkingStrategyFactory;
+import resourcepaths.ResourcePath;
 import tickets.Ticket;
 import users.User;
 import users.VIPUser;
@@ -16,7 +17,7 @@ import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) {
-        ParkingLotRepository parkingLotRepository = new ParkingLotInMemoryRepository(ParkingSpotsInit.getListOfParkingSpotsFromResource("parkingspots/parking-spots.init", " "));
+        ParkingLotRepository parkingLotRepository = new ParkingLotInMemoryRepository(ParkingSpotsInit.getListOfParkingSpotsFromResource(ResourcePath.getPathOf("parking-spots")));
         ParkingLotManager parkingLotManager = new ParkingLotManager(parkingLotRepository, ParkingStrategyFactory.getParkingStrategyInstance());
 
         User user = new VIPUser("John Smith");

@@ -13,7 +13,7 @@ import java.util.Map;
 public class RegularUserStrategyInit extends TextArgumentParser {
     private static final int NUMBER_OF_ARGUMENTS = 2;
 
-    public static Map<VehicleType, ParkingSpotType> getMapOfFittingParkingSpotsFromResource(String resourcePath, String lineSplitByString){
+    public static Map<VehicleType, ParkingSpotType> getMapOfFittingParkingSpotsFromResource(String resourcePath){
         Map<VehicleType, ParkingSpotType> fittingParkingSpots = new HashMap<>();
         InputStream is = null;
         InputStreamReader isr = null;

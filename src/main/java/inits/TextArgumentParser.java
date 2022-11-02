@@ -4,6 +4,7 @@ import java.io.*;
 
 public abstract class TextArgumentParser {
     private static final String COMMENT_SYMBOL = "#";
+    protected static final String lineSplitByString = " ";
     protected static final int UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION = -1;
 
     protected static boolean isComment(String line){
@@ -18,7 +19,7 @@ public abstract class TextArgumentParser {
         return line.strip().toUpperCase();
     }
 
-    protected static String[] getArgumentsFromLine(String line, String lineSplitByString) {
+    protected static String[] getArgumentsFromLine(String line) {
         return line.split(lineSplitByString);
     }
 

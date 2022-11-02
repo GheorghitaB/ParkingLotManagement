@@ -11,7 +11,7 @@ import java.util.List;
 public class ParkingSpotsInit extends TextArgumentParser {
     private static final int NUMBER_OF_ALLOWED_ARGUMENTS = 3;
 
-    public static List<ParkingSpot> getListOfParkingSpotsFromResource(String resourcePath, String lineSplitByString){
+    public static List<ParkingSpot> getListOfParkingSpotsFromResource(String resourcePath){
         List<ParkingSpot> parkingSpotsList = new ArrayList<>();
         InputStream is = null;
         InputStreamReader isr = null;
@@ -32,7 +32,7 @@ public class ParkingSpotsInit extends TextArgumentParser {
                 line = prepareLine(line);
 
                 if(!skipLine(line)){
-                    String[] arguments = getArgumentsFromLine(line, lineSplitByString);
+                    String[] arguments = getArgumentsFromLine(line);
                     validateLineArguments(lineCount, line, arguments);
                     populateParkingSpotsListFromLineArguments(parkingSpotsList, arguments);
                 }
