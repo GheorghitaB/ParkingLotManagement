@@ -1,0 +1,3 @@
+parking-spots           = parkingspots/parking-spots.init
+regular-user-strategy   = parkingstrategies/regular-user-strategy.init
+vip-user-strategy       = parkingstrategies/vip-user-strategy.init
