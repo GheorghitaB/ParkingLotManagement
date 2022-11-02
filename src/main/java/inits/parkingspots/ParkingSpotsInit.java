@@ -1,4 +1,4 @@
-package inits;
+package inits.parkingspots;
 
 import parkingspots.*;
 
@@ -19,6 +19,7 @@ public class ParkingSpotsInit {
 
         try {
             is = ParkingSpotsInit.class.getClassLoader().getResourceAsStream(resource);
+            assert is != null;
             isr = new InputStreamReader(is, StandardCharsets.UTF_8);
             br = new BufferedReader(isr);
             int lineCount = 0;
@@ -26,33 +27,11 @@ public class ParkingSpotsInit {
 
             while((line = br.readLine()) != null){
                 lineCount++;
-                line = line.strip();
-                line = line.toUpperCase();
-
-                if(isComment(line) || line.isEmpty()){
-                    continue;
-                }
-
-                String[] arguments = line.split(lineSplitByString);
-
-                validateLineArguments(lineCount, line, arguments);
-
-                String parkingSpotType = arguments[0];
-                String numberOfParkingSpots = arguments[1];
-                String hasElectricCharger = arguments[2];
-
-                ParkingSpotType chosenParkingSpotType = ParkingSpotType.valueOf(parkingSpotType);
-                int chosenNumberOfParkingSpots = Integer.parseInt(numberOfParkingSpots);
-                boolean isWithElectricCharger = hasElectricCharger.equals("1");
-
-                for(int i=0; i<chosenNumberOfParkingSpots; i++){
-                    if(chosenParkingSpotType.equals(ParkingSpotType.SMALL)){
-                        parkingSpotsList.add(new SmallParkingSpot(isWithElectricCharger));
-                    } else if(chosenParkingSpotType.equals(ParkingSpotType.MEDIUM)){
-                        parkingSpotsList.add(new MediumParkingSpot(isWithElectricCharger));
-                    } else if(chosenParkingSpotType.equals(ParkingSpotType.LARGE)){
-                        parkingSpotsList.add(new LargeParkingSpot(isWithElectricCharger));
-                    }
+                line = prepareLine(line);
+                if(!skipLine(line)){
+                    String[] arguments = getArgumentsFromLine(line, lineSplitByString);
+                    validateLineArguments(lineCount, line, arguments);
+                    populateParkingSpotsListFromLineArguments(parkingSpotsList, arguments);
                 }
             }
         } catch (IOException e) {
@@ -62,24 +41,60 @@ public class ParkingSpotsInit {
             System.out.println("The resource " + resource + " has not been found.");
             System.exit(UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION);
         } finally {
-            if(br != null){
-                try { br.close();}
-                catch (IOException e) {
-                    System.out.println("Buffered Reader cannot be closed");
-                }
-            }
-            if(isr != null){
-                try{isr.close();}
-                catch (IOException e){System.out.println("Input Stream Reader cannot be closed");}
-            }
-            if(is != null){
-                try{is.close();}
-                catch (IOException e){System.out.println("Input Stream cannot be closed");}
-            }
+            closeStreams(br, isr, is);
         }
 
-        showAtConsoleTheListOfParkingSpots(parkingSpotsList);
+        showInConsoleTheListOfParkingSpots(parkingSpotsList);
         return parkingSpotsList;
+    }
+
+    private static boolean skipLine(String line){
+        return isComment(line) || line.isEmpty();
+    }
+
+    private static String prepareLine(String line) {
+        return line.strip().toUpperCase();
+    }
+
+    private static String[] getArgumentsFromLine(String line, String lineSplitByString) {
+        return line.split(lineSplitByString);
+    }
+
+    private static void populateParkingSpotsListFromLineArguments(List<ParkingSpot> parkingSpotsList, String[] arguments) {
+        String parkingSpotType = arguments[0];
+        String numberOfParkingSpots = arguments[1];
+        String hasElectricCharger = arguments[2];
+
+        ParkingSpotType chosenParkingSpotType = ParkingSpotType.valueOf(parkingSpotType);
+        int chosenNumberOfParkingSpots = Integer.parseInt(numberOfParkingSpots);
+        boolean isWithElectricCharger = hasElectricCharger.equals("1");
+
+        for(int i=0; i<chosenNumberOfParkingSpots; i++){
+            if(chosenParkingSpotType.equals(ParkingSpotType.SMALL)){
+                parkingSpotsList.add(new SmallParkingSpot(isWithElectricCharger));
+            } else if(chosenParkingSpotType.equals(ParkingSpotType.MEDIUM)){
+                parkingSpotsList.add(new MediumParkingSpot(isWithElectricCharger));
+            } else if(chosenParkingSpotType.equals(ParkingSpotType.LARGE)){
+                parkingSpotsList.add(new LargeParkingSpot(isWithElectricCharger));
+            }
+        }
+    }
+
+    private static void closeStreams(BufferedReader br, InputStreamReader isr, InputStream is){
+        if(br != null){
+            try { br.close();}
+            catch (IOException e) {
+                System.out.println("Buffered Reader cannot be closed");
+            }
+        }
+        if(isr != null){
+            try{isr.close();}
+            catch (IOException e){System.out.println("Input Stream Reader cannot be closed");}
+        }
+        if(is != null){
+            try{is.close();}
+            catch (IOException e){System.out.println("Input Stream cannot be closed");}
+        }
     }
 
     private static void validateLineArguments(int lineCount, String line, String[] arguments) {
@@ -102,7 +117,7 @@ public class ParkingSpotsInit {
     }
 
     private static void validateNumberOfParkingSpotsArgument(int lineNumber, String line, String numberOfParkingSpots) {
-        if(!numberOfParkingSpots.matches("[0-9]+") || numberOfParkingSpots.contains("-")){
+        if(!numberOfParkingSpots.matches("[0-9]+")){
             throw new IllegalArgumentException("Illegal argument at line " + lineNumber + ": " + line +
                     ". The number of parking spots should be a positive number. It is " + numberOfParkingSpots);
         }
@@ -127,7 +142,7 @@ public class ParkingSpotsInit {
         return line.startsWith("#");
     }
 
-    private static void showAtConsoleTheListOfParkingSpots(List<ParkingSpot> parkingSpotsList){
+    private static void showInConsoleTheListOfParkingSpots(List<ParkingSpot> parkingSpotsList){
         for(ParkingSpot ps : parkingSpotsList){
             System.out.println(ps.getParkingSpotType() + " (electric charger: " + ps.hasElectricCharger() + ")");
         }
