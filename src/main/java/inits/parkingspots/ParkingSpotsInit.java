@@ -1,5 +1,6 @@
 package inits.parkingspots;
 
+import inits.TextArgumentParser;
 import parkingspots.*;
 
 import java.io.*;
@@ -7,19 +8,20 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParkingSpotsInit {
+public class ParkingSpotsInit extends TextArgumentParser {
     private static final int NUMBER_OF_ALLOWED_ARGUMENTS = 3;
-    private static final int UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION = -1;
 
-    public static List<ParkingSpot> getListOfParkingSpotsFromResource(String resource, String lineSplitByString){
+    public static List<ParkingSpot> getListOfParkingSpotsFromResource(String resourcePath, String lineSplitByString){
         List<ParkingSpot> parkingSpotsList = new ArrayList<>();
         InputStream is = null;
         InputStreamReader isr = null;
         BufferedReader br = null;
 
         try {
-            is = ParkingSpotsInit.class.getClassLoader().getResourceAsStream(resource);
-            assert is != null;
+            is = ParkingSpotsInit.class.getClassLoader().getResourceAsStream(resourcePath);
+            if (is == null){
+                throw new FileNotFoundException("Resource \"" + resourcePath + "\" has not been found.");
+            }
             isr = new InputStreamReader(is, StandardCharsets.UTF_8);
             br = new BufferedReader(isr);
             int lineCount = 0;
@@ -28,36 +30,25 @@ public class ParkingSpotsInit {
             while((line = br.readLine()) != null){
                 lineCount++;
                 line = prepareLine(line);
+
                 if(!skipLine(line)){
                     String[] arguments = getArgumentsFromLine(line, lineSplitByString);
                     validateLineArguments(lineCount, line, arguments);
                     populateParkingSpotsListFromLineArguments(parkingSpotsList, arguments);
                 }
             }
-        } catch (IOException e) {
-            System.out.println("Error while reading resource " + resource);
+        } catch (FileNotFoundException e){
+            System.out.println("The resourcePath " + resourcePath + " has not been found.");
             System.exit(UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION);
-        } catch (NullPointerException e){
-            System.out.println("The resource " + resource + " has not been found.");
+        } catch (IOException e) {
+            System.out.println("Error while reading resourcePath " + resourcePath);
             System.exit(UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION);
         } finally {
-            closeStreams(br, isr, is);
+            closeStreams(is, isr, br);
         }
 
         showInConsoleTheListOfParkingSpots(parkingSpotsList);
         return parkingSpotsList;
-    }
-
-    private static boolean skipLine(String line){
-        return isComment(line) || line.isEmpty();
-    }
-
-    private static String prepareLine(String line) {
-        return line.strip().toUpperCase();
-    }
-
-    private static String[] getArgumentsFromLine(String line, String lineSplitByString) {
-        return line.split(lineSplitByString);
     }
 
     private static void populateParkingSpotsListFromLineArguments(List<ParkingSpot> parkingSpotsList, String[] arguments) {
@@ -77,23 +68,6 @@ public class ParkingSpotsInit {
             } else if(chosenParkingSpotType.equals(ParkingSpotType.LARGE)){
                 parkingSpotsList.add(new LargeParkingSpot(isWithElectricCharger));
             }
-        }
-    }
-
-    private static void closeStreams(BufferedReader br, InputStreamReader isr, InputStream is){
-        if(br != null){
-            try { br.close();}
-            catch (IOException e) {
-                System.out.println("Buffered Reader cannot be closed");
-            }
-        }
-        if(isr != null){
-            try{isr.close();}
-            catch (IOException e){System.out.println("Input Stream Reader cannot be closed");}
-        }
-        if(is != null){
-            try{is.close();}
-            catch (IOException e){System.out.println("Input Stream cannot be closed");}
         }
     }
 
@@ -136,10 +110,6 @@ public class ParkingSpotsInit {
             throw new IllegalArgumentException("Illegal arguments at line " + lineNumber + ": "  + line +
                     ". The parking spot type \"" + parkingSpotType + "\" is not valid.");
         }
-    }
-
-    private static boolean isComment(String line){
-        return line.startsWith("#");
     }
 
     private static void showInConsoleTheListOfParkingSpots(List<ParkingSpot> parkingSpotsList){
