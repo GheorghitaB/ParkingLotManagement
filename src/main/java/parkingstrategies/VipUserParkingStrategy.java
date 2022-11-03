@@ -3,7 +3,7 @@ package parkingstrategies;
 import inits.parkingstrategies.VipUserStrategyInit;
 import parkinglots.ParkingLotRepository;
 import parkingspots.*;
-import resourcepaths.ResourcePath;
+import properties.AppProperty;
 import vehicles.Vehicle;
 import vehicles.VehicleType;
 
@@ -19,7 +19,7 @@ public class VipUserParkingStrategy implements ParkingStrategy {
     }
 
     static{
-        FITTING_PARKING_SPOTS = VipUserStrategyInit.getParkingSpotsFitsFromResource(ResourcePath.getPathOf("vip-user-strategy"), " ");
+        FITTING_PARKING_SPOTS = VipUserStrategyInit.getParkingSpotsFitsFromResource(AppProperty.getResourcePath("vip-user-strategy"));
     }
 
     public

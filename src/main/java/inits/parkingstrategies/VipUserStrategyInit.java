@@ -12,7 +12,7 @@ import java.util.*;
 public class VipUserStrategyInit extends TextArgumentParser {
     private static final int NUMBER_OF_MINIMUM_ALLOWED_ARGUMENTS = 1;
 
-    public static Map<VehicleType, List<ParkingSpotType>> getParkingSpotsFitsFromResource(String resourcePath, String lineSplitByString){
+    public static Map<VehicleType, List<ParkingSpotType>> getParkingSpotsFitsFromResource(String resourcePath){
         Map<VehicleType, List<ParkingSpotType>> parkingSpotsFits = new LinkedHashMap<>();
         InputStream is = null;
         InputStreamReader isr = null;
