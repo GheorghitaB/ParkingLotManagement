@@ -33,11 +33,11 @@ public class RegularUserStrategyInit extends TextArgumentParser {
                 lineNumber++;
                 line = prepareLine(line);
 
-                if(!skipLine(line)){
-                    String[] arguments = line.split(lineSplitByString);
-                    validateLineArguments(lineNumber, line, arguments);
-                    populateFittingParkingSpots(fittingParkingSpots, lineNumber, line, arguments);
-                }
+                if(skipLine(line)){continue;}
+
+                String[] arguments = line.split(lineSplitByString);
+                validateLineArguments(lineNumber, line, arguments);
+                populateFittingParkingSpots(fittingParkingSpots, lineNumber, line, arguments);
             }
         } catch (FileNotFoundException e){
             System.out.println("The resourcePath " + resourcePath + " has not been found.");

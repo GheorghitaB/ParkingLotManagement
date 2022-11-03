@@ -31,11 +31,11 @@ public class ParkingSpotsInit extends TextArgumentParser {
                 lineCount++;
                 line = prepareLine(line);
 
-                if(!skipLine(line)){
-                    String[] arguments = getArgumentsFromLine(line);
-                    validateLineArguments(lineCount, line, arguments);
-                    populateParkingSpotsListFromLineArguments(parkingSpotsList, arguments);
-                }
+                if(skipLine(line)){continue;}
+
+                String[] arguments = getArgumentsFromLine(line);
+                validateLineArguments(lineCount, line, arguments);
+                populateParkingSpotsListFromLineArguments(parkingSpotsList, arguments);
             }
         } catch (FileNotFoundException e){
             System.out.println("The resourcePath " + resourcePath + " has not been found.");

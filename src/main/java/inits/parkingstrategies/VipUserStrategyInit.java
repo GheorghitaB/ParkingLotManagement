@@ -32,11 +32,11 @@ public class VipUserStrategyInit extends TextArgumentParser {
                 lineNumber++;
                 line = prepareLine(line);
 
-                if(!skipLine(line)){
-                    String[] arguments = line.split(lineSplitByString);
-                    validateLineArguments(lineNumber, line, arguments);
-                    populateParkingSpotsFits(parkingSpotsFits, lineNumber, line, arguments);
-                }
+                if(skipLine(line)){continue;}
+
+                String[] arguments = line.split(lineSplitByString);
+                validateLineArguments(lineNumber, line, arguments);
+                populateParkingSpotsFits(parkingSpotsFits, lineNumber, line, arguments);
             }
         } catch (FileNotFoundException e){
             System.out.println("The resourcePath " + resourcePath + " has not been found.");
