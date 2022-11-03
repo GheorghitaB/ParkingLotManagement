@@ -2,6 +2,7 @@ package properties;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ public class AppProperty {
 
     static {
         propertyPathMap = new HashMap<>();
-        loadProperties("properties/app-property.init");
+        loadProperties("properties/app-properties.init");
     }
 
     private static void loadProperties(String appPropertyFilePath){
@@ -22,7 +23,7 @@ public class AppProperty {
         try{
             is = AppProperty.class.getClassLoader().getResourceAsStream(appPropertyFilePath);
             if (is == null){
-                throw new FileNotFoundException("Resource file path\"" + appPropertyFilePath + "\" has not been found");
+                throw new FileNotFoundException("Resource file path \"" + appPropertyFilePath + "\" has not been found");
             }
             isr = new InputStreamReader(is, StandardCharsets.UTF_8);
             br = new BufferedReader(isr);
@@ -31,6 +32,7 @@ public class AppProperty {
             while ((line = br.readLine()) != null){
                 String[] arguments = line.split("=");
                 validateArguments(arguments);
+                arguments = prepareArguments(arguments);
                 addPropertyToMap(arguments);
             }
 
@@ -43,6 +45,12 @@ public class AppProperty {
         } finally {
             closeStreams(is, isr, br);
         }
+    }
+
+    private static String[] prepareArguments(String[] arguments) {
+        return Arrays.stream(arguments)
+                .map(String::strip)
+                .toArray(String[]::new);
     }
 
     private static void closeStreams(InputStream is, InputStreamReader isr, BufferedReader br){
@@ -62,7 +70,7 @@ public class AppProperty {
     }
 
     private static void addPropertyToMap(String[] arguments) {
-        propertyPathMap.put(arguments[0].strip(), arguments[1].strip());
+        propertyPathMap.put(arguments[0], arguments[1]);
     }
 
     private static void validateArguments(String[] arguments) {
