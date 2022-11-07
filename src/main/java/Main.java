@@ -1,8 +1,8 @@
 import exceptions.ParkingSpotNotFound;
 import inits.parkingspots.ParkingSpotsInit;
-import parkinglots.ParkingLotRepository;
+import repositories.ParkingSpotRepository;
 import parkinglots.ParkingLotManager;
-import parkinglots.ParkingLotInMemoryRepository;
+import repositories.ParkingSpotInMemoryRepository;
 import parkingspots.*;
 import parkingstrategies.ParkingStrategyFactory;
 import properties.AppProperty;
@@ -19,8 +19,8 @@ import java.util.Optional;
 public class Main {
     public static void main(String[] args) {
         List<ParkingSpot> parkingSpotList = ParkingSpotsInit.getListOfParkingSpotsFromResource(AppProperty.getResourcePath("parking-spots"));
-        ParkingLotRepository parkingLotRepository = new ParkingLotInMemoryRepository(parkingSpotList);
-        ParkingLotManager parkingLotManager = new ParkingLotManager(parkingLotRepository, ParkingStrategyFactory.getParkingStrategyInstance());
+        ParkingSpotRepository parkingSpotRepository = new ParkingSpotInMemoryRepository(parkingSpotList);
+        ParkingLotManager parkingLotManager = new ParkingLotManager(parkingSpotRepository, ParkingStrategyFactory.getParkingStrategyInstance());
 
         User user = new VIPUser("John Smith");
         Vehicle vehicle = new Motorcycle("22BB", true);

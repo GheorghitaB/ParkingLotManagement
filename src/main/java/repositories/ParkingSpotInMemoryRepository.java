@@ -1,14 +1,14 @@
-package parkinglots;
+package repositories;
 
 import parkingspots.*;
 
 import java.util.List;
 import java.util.Optional;
 
-public class ParkingLotInMemoryRepository implements ParkingLotRepository {
+public class ParkingSpotInMemoryRepository implements ParkingSpotRepository {
     private final List<ParkingSpot> parkingSpots;
 
-    public ParkingLotInMemoryRepository(List<ParkingSpot> parkingSpots){
+    public ParkingSpotInMemoryRepository(List<ParkingSpot> parkingSpots){
         this.parkingSpots = parkingSpots;
     }
 

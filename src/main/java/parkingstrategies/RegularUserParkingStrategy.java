@@ -1,7 +1,7 @@
 package parkingstrategies;
 
 import inits.parkingstrategies.RegularUserStrategyInit;
-import parkinglots.ParkingLotRepository;
+import repositories.ParkingSpotRepository;
 import parkingspots.*;
 import properties.AppProperty;
 import vehicles.Vehicle;
@@ -12,10 +12,10 @@ import java.util.Optional;
 
 public class RegularUserParkingStrategy implements ParkingStrategy {
     private static final Map<VehicleType, ParkingSpotType> FITTING_PARKING_SPOTS;
-    private final ParkingLotRepository parkingLotRepository;
+    private final ParkingSpotRepository parkingSpotRepository;
 
-    public RegularUserParkingStrategy(ParkingLotRepository parkingLotRepository){
-        this.parkingLotRepository = parkingLotRepository;
+    public RegularUserParkingStrategy(ParkingSpotRepository parkingSpotRepository){
+        this.parkingSpotRepository = parkingSpotRepository;
     }
 
     static{
@@ -38,9 +38,9 @@ public class RegularUserParkingStrategy implements ParkingStrategy {
     }
 
     private Optional<ParkingSpot> getParkingSpotWithElectricCharger(ParkingSpotType parkingSpotType){
-        return parkingLotRepository.getEmptyParkingSpotWithElectricChargerOfType(parkingSpotType);
+        return parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(parkingSpotType);
     }
     private Optional<ParkingSpot> getParkingSpotWithoutElectricCharger(ParkingSpotType parkingSpotType){
-        return parkingLotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(parkingSpotType);
+        return parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(parkingSpotType);
     }
 }

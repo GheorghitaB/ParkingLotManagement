@@ -1,7 +1,7 @@
 package parkingstrategies;
 
 import exceptions.UnknownUserStrategy;
-import parkinglots.ParkingLotRepository;
+import repositories.ParkingSpotRepository;
 import users.User;
 import users.UserType;
 
@@ -14,13 +14,13 @@ public class ParkingStrategyFactory {
         return parkingStrategyInstance;
     }
 
-    public ParkingStrategy getParkingStrategy(User user, ParkingLotRepository parkingLotRepository) throws UnknownUserStrategy {
+    public ParkingStrategy getParkingStrategy(User user, ParkingSpotRepository parkingSpotRepository) throws UnknownUserStrategy {
         UserType userType = user.getUserType();
         switch (userType){
             case REGULAR:
-                return new RegularUserParkingStrategy(parkingLotRepository);
+                return new RegularUserParkingStrategy(parkingSpotRepository);
             case VIP:
-                return new VipUserParkingStrategy(parkingLotRepository);
+                return new VipUserParkingStrategy(parkingSpotRepository);
             default:
                 throw new UnknownUserStrategy("Unknown user strategy " + user.getUserType());
         }

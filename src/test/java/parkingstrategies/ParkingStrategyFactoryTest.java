@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import parkinglots.ParkingLotRepository;
+import repositories.ParkingSpotRepository;
 import users.RegularUser;
 import users.User;
 import users.VIPUser;
@@ -15,7 +15,7 @@ class ParkingStrategyFactoryTest {
 
     private ParkingStrategyFactory parkingStrategyFactory;
     @Mock
-    private ParkingLotRepository parkingLotRepository;
+    private ParkingSpotRepository parkingSpotRepository;
 
     @BeforeEach
     void setUp() {
@@ -26,14 +26,14 @@ class ParkingStrategyFactoryTest {
     @Test
     void getParkingStrategy_ShouldReturnRegularUserParkingStrategyWhenUserIsOfTypeRegular(){
         User regularUser = new RegularUser("");
-        ParkingStrategy parkingStrategy = parkingStrategyFactory.getParkingStrategy(regularUser, parkingLotRepository);
+        ParkingStrategy parkingStrategy = parkingStrategyFactory.getParkingStrategy(regularUser, parkingSpotRepository);
         assertTrue(parkingStrategy instanceof RegularUserParkingStrategy);
     }
 
     @Test
     void getParkingStrategy_ShouldReturnVipUserParkingStrategyWhenUserIsOfTypeVip(){
         User vipUser = new VIPUser("");
-        ParkingStrategy parkingStrategy = parkingStrategyFactory.getParkingStrategy(vipUser, parkingLotRepository);
+        ParkingStrategy parkingStrategy = parkingStrategyFactory.getParkingStrategy(vipUser, parkingSpotRepository);
         assertTrue(parkingStrategy instanceof VipUserParkingStrategy);
     }
 }

@@ -1,7 +1,7 @@
 package parkingstrategies;
 
 import inits.parkingstrategies.VipUserStrategyInit;
-import parkinglots.ParkingLotRepository;
+import repositories.ParkingSpotRepository;
 import parkingspots.*;
 import properties.AppProperty;
 import vehicles.Vehicle;
@@ -12,10 +12,10 @@ import java.util.*;
 
 public class VipUserParkingStrategy implements ParkingStrategy {
     private static final Map<VehicleType, List<ParkingSpotType>> FITTING_PARKING_SPOTS;
-    private final ParkingLotRepository parkingLotRepository;
+    private final ParkingSpotRepository parkingSpotRepository;
 
-    public VipUserParkingStrategy(ParkingLotRepository parkingLotRepository){
-        this.parkingLotRepository = parkingLotRepository;
+    public VipUserParkingStrategy(ParkingSpotRepository parkingSpotRepository){
+        this.parkingSpotRepository = parkingSpotRepository;
     }
 
     static{
@@ -45,7 +45,7 @@ public class VipUserParkingStrategy implements ParkingStrategy {
 
         return fittingParkingSpotsList
                 .stream()
-                .map(parkingLotRepository::getEmptyParkingSpotWithElectricChargerOfType)
+                .map(parkingSpotRepository::getEmptyParkingSpotWithElectricChargerOfType)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst();
@@ -56,7 +56,7 @@ public class VipUserParkingStrategy implements ParkingStrategy {
 
         return fittingParkingSpotsList
                 .stream()
-                .map(parkingLotRepository::getEmptyParkingSpotWithoutElectricChargerOfType)
+                .map(parkingSpotRepository::getEmptyParkingSpotWithoutElectricChargerOfType)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst();

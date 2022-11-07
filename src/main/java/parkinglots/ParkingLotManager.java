@@ -3,6 +3,7 @@ package parkinglots;
 import exceptions.ParkingSpotNotFound;
 import parkingspots.ParkingSpot;
 import parkingstrategies.*;
+import repositories.ParkingSpotRepository;
 import tickets.Ticket;
 import users.User;
 import vehicles.Vehicle;
@@ -10,11 +11,11 @@ import vehicles.Vehicle;
 import java.util.Optional;
 
 public class ParkingLotManager{
-	private final ParkingLotRepository parkingLotRepository;
+	private final ParkingSpotRepository parkingSpotRepository;
 	private final ParkingStrategyFactory parkingStrategyFactory;
 
-	public ParkingLotManager(ParkingLotRepository parkingLot, ParkingStrategyFactory parkingStrategyFactory) {
-		this.parkingLotRepository = parkingLot;
+	public ParkingLotManager(ParkingSpotRepository parkingSpotRepository, ParkingStrategyFactory parkingStrategyFactory) {
+		this.parkingSpotRepository = parkingSpotRepository;
 		this.parkingStrategyFactory = parkingStrategyFactory;
 	}
 
@@ -29,11 +30,11 @@ public class ParkingLotManager{
 	}
 
 	private Optional<ParkingSpot> getParkingSpot(User user, Vehicle vehicle) {
-		ParkingStrategy parkingStrategy = parkingStrategyFactory.getParkingStrategy(user, parkingLotRepository);
+		ParkingStrategy parkingStrategy = parkingStrategyFactory.getParkingStrategy(user, parkingSpotRepository);
 		return parkingStrategy.getParkingSpot(vehicle);
 	}
 
 	public Optional<ParkingSpot> findVehicleByPlateNumber(String plateNumber) {
-		return parkingLotRepository.findVehicleByPlateNumber(plateNumber);
+		return parkingSpotRepository.findVehicleByPlateNumber(plateNumber);
 	}
 }
