@@ -3,55 +3,34 @@ package inits.parkingspots;
 import inits.TextArgumentParser;
 import parkingspots.*;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ParkingSpotsInit extends TextArgumentParser {
     private static final int NUMBER_OF_ALLOWED_ARGUMENTS = 3;
 
     public static List<ParkingSpot> getListOfParkingSpotsFromResource(String resourcePath){
+        List<String> lines = readLines(resourcePath);
         List<ParkingSpot> parkingSpotsList = new ArrayList<>();
-        InputStream is = null;
-        InputStreamReader isr = null;
-        BufferedReader br = null;
+        AtomicInteger lineCount = new AtomicInteger(0);
 
-        try {
-            is = ParkingSpotsInit.class.getClassLoader().getResourceAsStream(resourcePath);
-            if (is == null){
-                throw new FileNotFoundException("Resource \"" + resourcePath + "\" has not been found.");
-            }
-            isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-            br = new BufferedReader(isr);
-            int lineCount = 0;
-            String line;
+        lines.forEach(line -> {
+            lineCount.getAndIncrement();
+            line = prepareLine(line);
 
-            while((line = br.readLine()) != null){
-                lineCount++;
-                line = prepareLine(line);
-
-                if(skipLine(line)){continue;}
-
+            if(notSkipLine(line)){
                 String[] arguments = getArgumentsFromLine(line);
-                validateLineArguments(lineCount, line, arguments);
-                populateParkingSpotsListFromLineArguments(parkingSpotsList, arguments);
+                validateLineArguments(lineCount.get(), line, arguments);
+                addParkingSpot(parkingSpotsList, arguments);
             }
-        } catch (FileNotFoundException e){
-            System.out.println("The resourcePath " + resourcePath + " has not been found.");
-            System.exit(UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION);
-        } catch (IOException e) {
-            System.out.println("Error while reading resourcePath " + resourcePath);
-            System.exit(UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION);
-        } finally {
-            closeStreams(is, isr, br);
-        }
+        });
 
         showInConsoleTheListOfParkingSpots(parkingSpotsList);
         return parkingSpotsList;
     }
 
-    private static void populateParkingSpotsListFromLineArguments(List<ParkingSpot> parkingSpotsList, String[] arguments) {
+    private static void addParkingSpot(List<ParkingSpot> parkingSpotsList, String[] arguments) {
         String parkingSpotType = arguments[0];
         String numberOfParkingSpots = arguments[1];
         String hasElectricCharger = arguments[2];

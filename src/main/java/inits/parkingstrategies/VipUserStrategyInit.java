@@ -1,57 +1,36 @@
 package inits.parkingstrategies;
 
 import inits.TextArgumentParser;
-import inits.parkingspots.ParkingSpotsInit;
 import parkingspots.ParkingSpotType;
 import vehicles.VehicleType;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class VipUserStrategyInit extends TextArgumentParser {
     private static final int NUMBER_OF_MINIMUM_ALLOWED_ARGUMENTS = 1;
 
     public static Map<VehicleType, List<ParkingSpotType>> getParkingSpotsFitsFromResource(String resourcePath){
+        List<String> lines = readLines(resourcePath);
+        AtomicInteger lineNumber = new AtomicInteger(0);
         Map<VehicleType, List<ParkingSpotType>> parkingSpotsFits = new LinkedHashMap<>();
-        InputStream is = null;
-        InputStreamReader isr = null;
-        BufferedReader br = null;
 
-        try {
-            is = ParkingSpotsInit.class.getClassLoader().getResourceAsStream(resourcePath);
-            if (is == null){
-                throw new FileNotFoundException("Resource \"" + resourcePath + "\" has not been found.");
-            }
-            isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-            br = new BufferedReader(isr);
-            int lineNumber = 0;
-            String line;
+        lines.forEach(line -> {
+            lineNumber.getAndIncrement();
+            line = prepareLine(line);
 
-            while ((line = br.readLine()) != null) {
-                lineNumber++;
-                line = prepareLine(line);
-
-                if(skipLine(line)){continue;}
-
+            if(notSkipLine(line)){
                 String[] arguments = line.split(lineSplitByString);
-                validateLineArguments(lineNumber, line, arguments);
-                populateParkingSpotsFits(parkingSpotsFits, lineNumber, line, arguments);
+                validateLineArguments(lineNumber.get(), line, arguments);
+                addParkingSpotFit(parkingSpotsFits, lineNumber.get(), line, arguments);
             }
-        } catch (FileNotFoundException e){
-            System.out.println("The resourcePath " + resourcePath + " has not been found.");
-            System.exit(UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION);
-        } catch (IOException e) {
-            System.out.println("Error while reading resourcePath " + resourcePath);
-            System.exit(UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION);
-        } finally {
-            closeStreams(is, isr, br);
-    }
+        });
+
         displayInConsoleMapOfParkingSpotsFits(parkingSpotsFits);
         return parkingSpotsFits;
     }
 
-    private static void populateParkingSpotsFits(Map<VehicleType, List<ParkingSpotType>> parkingSpotsFits, int lineNumber, String line, String[] arguments) {
+    private static void addParkingSpotFit(Map<VehicleType, List<ParkingSpotType>> parkingSpotsFits, int lineNumber, String line, String[] arguments) {
         if(!vehicleTypeIsAlreadyInserted(parkingSpotsFits, arguments[0])){
             VehicleType chosenVehicleType = VehicleType.valueOf(arguments[0]);
             List<ParkingSpotType> fittingParkingSpots = getFittingParkingSpotsFromLineArguments(arguments);
