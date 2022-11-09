@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TextArgumentParser {
-    private static final String DEFAULT_COMMENT_REGEX = "#";
+    private static final String DEFAULT_COMMENT_PREFIX = "#";
     public static final String DEFAULT_SPLIT_REGEX = " ";
     public static final int UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION = -1;
 
@@ -39,8 +39,8 @@ public class TextArgumentParser {
         return lines;
     }
 
-    public static boolean isComment(String line, String commentRegex){
-        return StringUtils.startsWith(line, commentRegex);
+    public static boolean isComment(String line, String commentPrefix){
+        return StringUtils.startsWith(line, commentPrefix);
     }
 
     public static boolean isEmpty(String line){
@@ -48,11 +48,11 @@ public class TextArgumentParser {
     }
 
     public static boolean notComment(String line){
-        return notComment(line, DEFAULT_COMMENT_REGEX);
+        return notComment(line, DEFAULT_COMMENT_PREFIX);
     }
 
-    public static boolean notComment(String line, String commentRegex){
-        return !isComment(line, commentRegex) && !isEmpty(line);
+    public static boolean notComment(String line, String commentPrefix){
+        return !isComment(line, commentPrefix) && !isEmpty(line);
     }
 
     public static String prepareLine(String line) {
