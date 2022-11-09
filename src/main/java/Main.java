@@ -44,7 +44,7 @@ public class Main {
             System.out.println(vehicle.getPlateNumber() + " is parked on parking spot id " + parkingSpotOptional.get().getId()
                     + " (" + parkingSpotOptional.get().getParkingSpotType()+")");
         } else {
-            System.out.println("Parking spot has not been found.");
+            System.out.printf("Parking spot for plate number %s has not been found.\n", vehicle.getPlateNumber());
         }
 
         System.out.println();
@@ -63,7 +63,7 @@ public class Main {
             System.out.println(anotherVehicle.getPlateNumber() + " is parked on parking spot id " + anotherParkingSpotOptional.get().getId()
                     + " (" + anotherParkingSpotOptional.get().getParkingSpotType()+")");
         } else {
-            System.out.println("Parking spot has not been found.");
+            System.out.printf("Parking spot for plate number %s has not been found.\n", anotherVehicle.getPlateNumber());
         }
     }
 }
