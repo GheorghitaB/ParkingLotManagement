@@ -46,4 +46,14 @@ public abstract class ParkingSpot {
 	public int hashCode() {
 		return Objects.hash(id, vehicle, parkingSpotType, hasElectricCharger);
 	}
+
+	@Override
+	public String toString() {
+		return "ParkingSpot{" +
+				"id=" + id +
+				", vehicle=" + vehicle +
+				", parkingSpotType=" + parkingSpotType +
+				", hasElectricCharger=" + hasElectricCharger +
+				'}';
+	}
 }

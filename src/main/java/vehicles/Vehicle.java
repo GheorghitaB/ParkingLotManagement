@@ -33,4 +33,13 @@ public abstract class Vehicle {
 	public int hashCode() {
 		return Objects.hash(vehicleType, plateNumber, isElectric);
 	}
+
+	@Override
+	public String toString() {
+		return "Vehicle{" +
+				"vehicleType=" + vehicleType +
+				", plateNumber='" + plateNumber + '\'' +
+				", isElectric=" + isElectric +
+				'}';
+	}
 }
