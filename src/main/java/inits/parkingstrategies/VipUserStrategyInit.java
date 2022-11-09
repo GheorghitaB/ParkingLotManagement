@@ -1,13 +1,13 @@
 package inits.parkingstrategies;
 
-import inits.TextArgumentParser;
+import static Utils.TextArgumentParser.*;
 import parkingspots.ParkingSpotType;
 import vehicles.VehicleType;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class VipUserStrategyInit extends TextArgumentParser {
+public class VipUserStrategyInit {
     private static final int NUMBER_OF_MINIMUM_ALLOWED_ARGUMENTS = 1;
 
     public static Map<VehicleType, List<ParkingSpotType>> getParkingSpotsFitsFromResource(String resourcePath){
@@ -19,14 +19,15 @@ public class VipUserStrategyInit extends TextArgumentParser {
             lineNumber.getAndIncrement();
             line = prepareLine(line);
 
-            if(notSkipLine(line)){
-                String[] arguments = line.split(lineSplitByString);
+            if(notComment(line)){
+                String[] arguments = getArgumentsFromLine(line);
+                arguments = prepareArguments(arguments);
                 validateLineArguments(lineNumber.get(), line, arguments);
                 addParkingSpotFit(parkingSpotsFits, lineNumber.get(), line, arguments);
             }
         });
 
-        displayInConsoleMapOfParkingSpotsFits(parkingSpotsFits);
+        //displayInConsoleMapOfParkingSpotsFits(parkingSpotsFits);
         return parkingSpotsFits;
     }
 

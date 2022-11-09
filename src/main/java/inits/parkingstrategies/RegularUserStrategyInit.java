@@ -1,6 +1,6 @@
 package inits.parkingstrategies;
 
-import inits.TextArgumentParser;
+import static Utils.TextArgumentParser.*;
 import parkingspots.ParkingSpotType;
 import vehicles.VehicleType;
 
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class RegularUserStrategyInit extends TextArgumentParser {
+public class RegularUserStrategyInit {
     private static final int NUMBER_OF_ARGUMENTS = 2;
 
     public static Map<VehicleType, ParkingSpotType> getMapOfFittingParkingSpotsFromResource(String resourcePath){
@@ -21,14 +21,15 @@ public class RegularUserStrategyInit extends TextArgumentParser {
             lineNumber.getAndIncrement();
             line = prepareLine(line);
 
-            if(notSkipLine(line)){
-                String[] arguments = line.split(lineSplitByString);
+            if(notComment(line)){
+                String[] arguments = getArgumentsFromLine(line);
+                arguments = prepareArguments(arguments);
                 validateLineArguments(lineNumber.get(), line, arguments);
                 addFittingParkingSpot(fittingParkingSpots, lineNumber.get(), line, arguments);
             }
         });
 
-        displayInConsoleFittingParkingSpots(fittingParkingSpots);
+        //displayInConsoleFittingParkingSpots(fittingParkingSpots);
         return fittingParkingSpots;
     }
 

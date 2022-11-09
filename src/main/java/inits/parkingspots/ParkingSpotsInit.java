@@ -1,13 +1,13 @@
 package inits.parkingspots;
 
-import inits.TextArgumentParser;
+import static Utils.TextArgumentParser.*;
 import parkingspots.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ParkingSpotsInit extends TextArgumentParser {
+public class ParkingSpotsInit {
     private static final int NUMBER_OF_ALLOWED_ARGUMENTS = 3;
 
     public static List<ParkingSpot> getListOfParkingSpotsFromResource(String resourcePath){
@@ -19,14 +19,15 @@ public class ParkingSpotsInit extends TextArgumentParser {
             lineCount.getAndIncrement();
             line = prepareLine(line);
 
-            if(notSkipLine(line)){
+            if(notComment(line)){
                 String[] arguments = getArgumentsFromLine(line);
+                arguments = prepareArguments(arguments);
                 validateLineArguments(lineCount.get(), line, arguments);
                 addParkingSpot(parkingSpotsList, arguments);
             }
         });
 
-        showInConsoleTheListOfParkingSpots(parkingSpotsList);
+        //showInConsoleTheListOfParkingSpots(parkingSpotsList);
         return parkingSpotsList;
     }
 

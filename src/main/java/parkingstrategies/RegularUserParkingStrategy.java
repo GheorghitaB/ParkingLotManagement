@@ -1,5 +1,6 @@
 package parkingstrategies;
 
+import Utils.Constants;
 import inits.parkingstrategies.RegularUserStrategyInit;
 import repositories.ParkingSpotRepository;
 import parkingspots.*;
@@ -19,7 +20,7 @@ public class RegularUserParkingStrategy implements ParkingStrategy {
     }
 
     static{
-        FITTING_PARKING_SPOTS = RegularUserStrategyInit.getMapOfFittingParkingSpotsFromResource(AppProperty.getResourcePath("regular-user-strategy"));
+        FITTING_PARKING_SPOTS = RegularUserStrategyInit.getMapOfFittingParkingSpotsFromResource(AppProperty.getProperty(Constants.REGULAR_USER_STRATEGY_FILEPATH));
     }
 
 

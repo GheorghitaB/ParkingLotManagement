@@ -1,5 +1,6 @@
 package parkingstrategies;
 
+import Utils.Constants;
 import inits.parkingstrategies.VipUserStrategyInit;
 import repositories.ParkingSpotRepository;
 import parkingspots.*;
@@ -19,7 +20,7 @@ public class VipUserParkingStrategy implements ParkingStrategy {
     }
 
     static{
-        FITTING_PARKING_SPOTS = VipUserStrategyInit.getParkingSpotsFitsFromResource(AppProperty.getResourcePath("vip-user-strategy"));
+        FITTING_PARKING_SPOTS = VipUserStrategyInit.getParkingSpotsFitsFromResource(AppProperty.getProperty(Constants.VIP_USER_STRATEGY_FILEPATH));
     }
 
     public

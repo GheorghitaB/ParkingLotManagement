@@ -6,7 +6,7 @@
 ### example:    "SMALL 5 1"   =>   that means 5 SMALL parking spots with electric charger
 ### example:    "LARGE 10 0"   =>   that means 10 LARGE parking spots without electric charger
 
-SMALL 4 1
+SMALL 1 1
 MEDIUM 3 0
 MEDIUM 3 1
 LARGE 1 1
