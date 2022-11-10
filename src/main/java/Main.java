@@ -20,7 +20,7 @@ import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) {
-        List<ParkingSpot> parkingSpotList = ParkingSpotsInit.getListOfParkingSpotsFromResource(AppProperty.getProperty(Constants.PARKING_SPOTS_FILEPATH));
+        List<ParkingSpot> parkingSpotList = ParkingSpotsInit.getListOfParkingSpotsFromResource(AppProperty.getProperty(Constants.PARKING_SPOTS_FILEPATH_PROPERTY));
         ParkingSpotRepository parkingSpotRepository = new ParkingSpotInMemoryRepository(parkingSpotList);
         ParkingLotManager parkingLotManager = new ParkingLotManager(parkingSpotRepository, ParkingStrategyFactory.getParkingStrategyInstance());
 
