@@ -43,16 +43,12 @@ public class TextArgumentParser {
         return StringUtils.startsWith(line, commentPrefix);
     }
 
-    public static boolean isEmpty(String line){
-        return StringUtils.isEmpty(line);
-    }
-
     public static boolean notComment(String line){
         return notComment(line, DEFAULT_COMMENT_PREFIX);
     }
 
     public static boolean notComment(String line, String commentPrefix){
-        return !isComment(line, commentPrefix) && !isEmpty(line);
+        return !isComment(line, commentPrefix) && !StringUtils.isEmpty(line);
     }
 
     public static String prepareLine(String line) {
