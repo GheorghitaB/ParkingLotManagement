@@ -1,7 +1,11 @@
 package inits.parkingstrategies;
 
 import static Utils.TextArgumentParser.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import parkingspots.ParkingSpotType;
+import Utils.validators.ArgumentValidator;
 import vehicles.VehicleType;
 
 import java.util.HashMap;
@@ -11,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class RegularUserStrategyInit {
     private static final int NUMBER_OF_ARGUMENTS = 2;
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegularUserStrategyInit.class);
 
     public static Map<VehicleType, ParkingSpotType> getMapOfFittingParkingSpotsFromResource(String resourcePath){
         List<String> lines = readLines(resourcePath);
@@ -29,62 +34,58 @@ public class RegularUserStrategyInit {
             }
         });
 
-        //displayInConsoleFittingParkingSpots(fittingParkingSpots);
         return fittingParkingSpots;
     }
 
     private static void addFittingParkingSpot(Map<VehicleType, ParkingSpotType> fittingParkingSpots, int lineNumber, String line, String[] arguments) {
         VehicleType vehicleType = VehicleType.valueOf(arguments[0]);
         ParkingSpotType parkingSpotType = ParkingSpotType.valueOf(arguments[1]);
+        String warnMessage = "Vehicle type \"" + arguments[0] + "\" is already inserted, therefore line "
+                + lineNumber + ": " + line + " is ignored...";
 
-        if(!vehicleTypeIsAlreadyInserted(fittingParkingSpots, vehicleType)){
+        if(!vehicleTypeIsAlreadyInserted(fittingParkingSpots, vehicleType, warnMessage)){
             fittingParkingSpots.put(vehicleType, parkingSpotType);
-        } else {
-            System.out.println("Vehicle type \"" + arguments[0] + "\" is already inserted, therefore line "
-                    + lineNumber + ": " + line + " is ignored...");
         }
     }
 
-    private static boolean vehicleTypeIsAlreadyInserted(Map<VehicleType, ParkingSpotType> fittingParkingSpots, VehicleType vehicleType){
-        return fittingParkingSpots.containsKey(vehicleType);
-    }
-
-    private static void displayInConsoleFittingParkingSpots(Map<VehicleType, ParkingSpotType> fittingParkingSpots) {
-        fittingParkingSpots.forEach((vehicleType, parkingSpotType) -> System.out.println(vehicleType + " -> " + parkingSpotType));
+    private static boolean vehicleTypeIsAlreadyInserted(Map<VehicleType, ParkingSpotType> fittingParkingSpots, VehicleType vehicleType, String warnMessage){
+        if(fittingParkingSpots.containsKey(vehicleType)){
+            LOGGER.warn(warnMessage);
+            return true;
+        }
+        return false;
     }
 
     private static void validateLineArguments(int lineNumber, String line, String[] arguments){
-        try {
-            validateNumberOfArguments(lineNumber, line, arguments);
-            validateVehicleTypeArgument(lineNumber, line, arguments);
-            validateParkingSpotTypeArgument(lineNumber, line, arguments);
-        } catch (IllegalArgumentException e){
-            System.out.println(e.getMessage());
+        boolean legalArguments = validateNumberOfArguments(lineNumber, line, arguments)
+                    && validateVehicleTypeArgument(lineNumber, line, arguments)
+                    && validateParkingSpotTypeArgument(lineNumber, line, arguments);
+
+        if(!legalArguments){
+            LOGGER.info("Illegal arguments. The application will be closed.");
             System.exit(UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION);
         }
     }
 
-    private static void validateNumberOfArguments(int lineNumber, String line, String[] arguments){
-        if(arguments.length != NUMBER_OF_ARGUMENTS){
-            throw new IllegalArgumentException("Illegal number of arguments at line: " + lineNumber + ": "
-                    + line + ". The number of arguments must be " + NUMBER_OF_ARGUMENTS
-                    + ". It was " + arguments.length);
-        }
+    private static boolean validateNumberOfArguments(int lineNumber, String line, String[] arguments){
+        String errorMessage = "Illegal number of arguments at line: " + lineNumber + ": "
+                + line + ". The number of arguments must be " + NUMBER_OF_ARGUMENTS
+                + ". It was " + arguments.length;
+
+        return ArgumentValidator.validateNumberOfArguments(arguments, NUMBER_OF_ARGUMENTS, errorMessage);
     }
 
-    private static void validateVehicleTypeArgument(int lineNumber, String line, String[] arguments){
-        try{VehicleType.valueOf(arguments[0]);}
-        catch (IllegalArgumentException e){
-            throw new IllegalArgumentException("Illegal arguments at line " + lineNumber + ": "  + line +
-                    ". The vehicle type \"" + arguments[0] + "\" is not valid.");
-        }
+    private static boolean validateVehicleTypeArgument(int lineNumber, String line, String[] arguments){
+        String errorMessage = "Illegal arguments at line " + lineNumber + ": "  + line +
+                ". The vehicle type \"" + arguments[0] + "\" is not valid.";
+
+        return ArgumentValidator.validateVehicleTypeArgument(arguments[0], errorMessage);
     }
 
-    private static void validateParkingSpotTypeArgument(int lineNumber, String line, String[] arguments){
-        try{ParkingSpotType.valueOf(arguments[1]);}
-        catch (IllegalArgumentException e){
-            throw new IllegalArgumentException("Illegal arguments at line: " + lineNumber + ": "
-                    + line + ". The parking spot type \"" + arguments[1] + "\" is not valid.");
-        }
+    private static boolean validateParkingSpotTypeArgument(int lineNumber, String line, String[] arguments){
+        String errorMessage = "Illegal arguments at line: " + lineNumber + ": "
+                + line + ". The parking spot type \"" + arguments[1] + "\" is not valid.";
+
+        return ArgumentValidator.validateParkingSpotTypeArgument(arguments[1], errorMessage);
     }
 }
