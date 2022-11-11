@@ -27,20 +27,20 @@ public class RegularUserParkingStrategyTest{
     @BeforeEach
     void init(){
         MockitoAnnotations.initMocks(this);
-        regularUserParkingStrategy = new RegularUserParkingStrategy(parkingSpotRepository);
+        regularUserParkingStrategy = new RegularUserParkingStrategy();
     }
 
     @Test
     void shouldThrowParkingSpotNotFoundExceptionForMotorcycleWhenThereIsNoEmptySmallParkingSpot(){
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(SMALL)).thenThrow(ParkingSpotNotFound.class);
-        assertThrows(ParkingSpotNotFound.class, ()-> regularUserParkingStrategy.getParkingSpot(new Motorcycle("", false)));
+        assertThrows(ParkingSpotNotFound.class, ()-> regularUserParkingStrategy.getParkingSpot(new Motorcycle("", false), parkingSpotRepository));
     }
 
     @Test
     void shouldReturnSmallParkingSpotForMotorcycleWhenThereIsAnEmptySmallParkingSpot() {
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(SMALL)).thenReturn(Optional.of(new SmallParkingSpot(false)));
 
-        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Motorcycle("", false));
+        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Motorcycle("", false), parkingSpotRepository);
 
         verify(parkingSpotRepository, times(1)).getEmptyParkingSpotWithoutElectricChargerOfType(SMALL);
         assertTrue(parkingSpotOptional.isPresent());
@@ -50,7 +50,7 @@ public class RegularUserParkingStrategyTest{
     void shouldReturnSmallParkingSpotWithElectricChargerForElectricMotorcycleWhenThereIsAnEmptySmallParkingSpotWithElectricCharger() {
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(SMALL)).thenReturn(Optional.of(new SmallParkingSpot(true)));
 
-        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Motorcycle("", true));
+        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Motorcycle("", true), parkingSpotRepository);
 
         assertTrue(parkingSpotOptional.isPresent());
         assertTrue(parkingSpotOptional.get().hasElectricCharger());
@@ -63,7 +63,7 @@ public class RegularUserParkingStrategyTest{
         //given
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(MEDIUM)).thenReturn(Optional.of(new MediumParkingSpot(false)));
         //when
-        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Car("", false));
+        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Car("", false), parkingSpotRepository);
         //then
         assertTrue(parkingSpotOptional.isPresent());
         assertEquals(MEDIUM, parkingSpotOptional.get().getParkingSpotType());
@@ -75,7 +75,7 @@ public class RegularUserParkingStrategyTest{
         //given
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(MEDIUM)).thenReturn(Optional.of(new MediumParkingSpot(true)));
         //when
-        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Car("", true));
+        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Car("", true), parkingSpotRepository);
         //then
         assertTrue(parkingSpotOptional.isPresent());
         assert (parkingSpotOptional.get().hasElectricCharger());
@@ -88,7 +88,7 @@ public class RegularUserParkingStrategyTest{
         //given
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(LARGE)).thenReturn(Optional.of(new LargeParkingSpot(false)));
         //when
-        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Truck("", false));
+        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Truck("", false), parkingSpotRepository);
         //then
         assertTrue(parkingSpotOptional.isPresent());
         assertEquals(LARGE, parkingSpotOptional.get().getParkingSpotType());
@@ -100,7 +100,7 @@ public class RegularUserParkingStrategyTest{
         //given
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(LARGE)).thenReturn(Optional.of(new LargeParkingSpot(true)));
         //when
-        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Truck("", true));
+        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Truck("", true), parkingSpotRepository);
         //then
         assertTrue(parkingSpotOptional.isPresent());
         assertTrue(parkingSpotOptional.get().hasElectricCharger());
@@ -112,7 +112,7 @@ public class RegularUserParkingStrategyTest{
     void shouldReturnSmallParkingSpotWithoutElectricChargerForElectricMotorcycleWhenThereIsNotAnEmptySmallParkingSpotWithElectricChargerAndThereIsAnEmptySmallParkingSpotWithoutElectricCharger() {
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(SMALL)).thenReturn(Optional.empty());
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(SMALL)).thenReturn(Optional.of(new SmallParkingSpot(false)));
-        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Motorcycle("", true));
+        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Motorcycle("", true), parkingSpotRepository);
         assertTrue(parkingSpotOptional.isPresent());
         assertFalse(parkingSpotOptional.get().hasElectricCharger());
         assertEquals(SMALL, parkingSpotOptional.get().getParkingSpotType());
@@ -124,7 +124,7 @@ public class RegularUserParkingStrategyTest{
     void shouldReturnMediumParkingSpotWithoutElectricChargerForElectricCarWhenThereIsNotAnEmptyMediumParkingSpotWithElectricChargerAndThereIsAnEmptyMediumParkingSpotWithoutElectricCharger() {
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(MEDIUM)).thenReturn(Optional.empty());
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(MEDIUM)).thenReturn(Optional.of(new MediumParkingSpot(false)));
-        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Car("", true));
+        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Car("", true), parkingSpotRepository);
         assertTrue(parkingSpotOptional.isPresent());
         assertFalse(parkingSpotOptional.get().hasElectricCharger());
         assertEquals(MEDIUM, parkingSpotOptional.get().getParkingSpotType());
@@ -136,7 +136,7 @@ public class RegularUserParkingStrategyTest{
     void shouldReturnLargeMediumParkingSpotWithoutElectricChargerForElectricTruckWhenThereIsNotAnEmptyLargeParkingSpotWithElectricChargerAndThereIsAnEmptyLargeParkingSpotWithoutElectricCharger() {
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(LARGE)).thenReturn(Optional.empty());
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(LARGE)).thenReturn(Optional.of(new LargeParkingSpot(false)));
-        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Truck("", true));
+        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Truck("", true), parkingSpotRepository);
         assertTrue(parkingSpotOptional.isPresent());
         assertFalse(parkingSpotOptional.get().hasElectricCharger());
         assertEquals(LARGE, parkingSpotOptional.get().getParkingSpotType());
@@ -148,7 +148,7 @@ public class RegularUserParkingStrategyTest{
     void shouldReturnEmptyOptionalForElectricMotorcycleWhenThereIsNotAnEmptySmallParkingSpotWithElectricChargerAndThereIsNotAnEmptySmallParkingSpotWithoutElectricCharger() {
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(SMALL)).thenReturn(Optional.empty());
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(SMALL)).thenReturn(Optional.empty());
-        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Motorcycle("", true));
+        Optional<ParkingSpot> parkingSpotOptional = regularUserParkingStrategy.getParkingSpot(new Motorcycle("", true), parkingSpotRepository);
         assertTrue(parkingSpotOptional.isEmpty());
         verify(parkingSpotRepository, times(1)).getEmptyParkingSpotWithElectricChargerOfType(SMALL);
         verify(parkingSpotRepository, times(1)).getEmptyParkingSpotWithoutElectricChargerOfType(SMALL);

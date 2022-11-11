@@ -19,7 +19,6 @@ import static org.mockito.Mockito.*;
 import static parkingspots.ParkingSpotType.*;
 
 class VipUserParkingStrategyTest {
-
     @Mock
     private ParkingSpotRepository parkingSpotRepository;
 
@@ -30,7 +29,7 @@ class VipUserParkingStrategyTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        vipUserParkingStrategy = new VipUserParkingStrategy(parkingSpotRepository);
+        vipUserParkingStrategy = new VipUserParkingStrategy();
     }
 
     @Test
@@ -45,7 +44,7 @@ class VipUserParkingStrategyTest {
         //given
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(SMALL)).thenReturn(Optional.of(new MediumParkingSpot(false)));
         //when
-        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Motorcycle("", false));
+        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Motorcycle("", false), parkingSpotRepository);
         //then
         assertTrue(parkingSpotOptional.isPresent());
         assertEquals(MEDIUM, parkingSpotOptional.get().getParkingSpotType());
@@ -56,7 +55,7 @@ class VipUserParkingStrategyTest {
         //given
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(SMALL)).thenReturn(Optional.of(new LargeParkingSpot(false)));
         //when
-        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Motorcycle("", false));
+        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Motorcycle("", false), parkingSpotRepository);
         //then
         assertTrue(parkingSpotOptional.isPresent());
         assertEquals(LARGE, parkingSpotOptional.get().getParkingSpotType());
@@ -67,7 +66,7 @@ class VipUserParkingStrategyTest {
     void getParkingSpotShouldReturnMediumParkingSpotForCarWhenThereIsAnEmptyMediumParkingSpot() {
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(MEDIUM)).thenReturn(Optional.of(new MediumParkingSpot(false)));
 
-        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Car("", false));
+        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Car("", false), parkingSpotRepository);
 
         assertTrue(parkingSpotOptional.isPresent());
         assertEquals(MEDIUM, parkingSpotOptional.get().getParkingSpotType());
@@ -78,7 +77,7 @@ class VipUserParkingStrategyTest {
     void getParkingSpotShouldReturnLargeParkingSpotForCarWhenThereIsNotAnEmptyMediumParkingSpotAndThereIsAnEmptyLargeParkingSpot() {
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(MEDIUM)).thenReturn(Optional.of(new LargeParkingSpot(false)));
 
-        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Car("", false));
+        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Car("", false), parkingSpotRepository);
 
         assertTrue(parkingSpotOptional.isPresent());
         assertEquals(LARGE, parkingSpotOptional.get().getParkingSpotType());
@@ -89,7 +88,7 @@ class VipUserParkingStrategyTest {
     void getParkingSpotShouldReturnLargeParkingSpotForTruckWhenThereIsAnEmptyLargeParkingSpot() {
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(LARGE)).thenReturn(Optional.of(new LargeParkingSpot(false)));
 
-        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Truck("", false));
+        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Truck("", false), parkingSpotRepository);
 
         assertTrue(parkingSpotOptional.isPresent());
         assertEquals(LARGE, parkingSpotOptional.get().getParkingSpotType());
@@ -102,7 +101,7 @@ class VipUserParkingStrategyTest {
         //given
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(SMALL)).thenReturn(Optional.of(new SmallParkingSpot(false)));
         //when
-        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Motorcycle("",false));
+        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Motorcycle("",false), parkingSpotRepository);
         //then
         assertTrue(parkingSpotOptional.isPresent());
         assertEquals(SMALL, parkingSpotOptional.get().getParkingSpotType());
@@ -114,7 +113,7 @@ class VipUserParkingStrategyTest {
         //given
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(SMALL)).thenReturn(Optional.of(new SmallParkingSpot(true)));
         //when
-        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Motorcycle("", true));
+        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Motorcycle("", true), parkingSpotRepository);
         //then
         assertTrue(parkingSpotOptional.isPresent());
         assertTrue(parkingSpotOptional.get().hasElectricCharger());
@@ -126,7 +125,7 @@ class VipUserParkingStrategyTest {
     void getParkingSpotShouldReturnMediumWithElectricChargerForElectricMotorcycleWhenThereIsNotASmallParkingSpotWithElectricChargerAndThereIsAMediumParkingSpotWithElectricCharger() {
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(SMALL)).thenReturn(Optional.of(new MediumParkingSpot(true)));
 
-        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Motorcycle("", true));
+        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Motorcycle("", true), parkingSpotRepository);
 
         assertTrue(parkingSpotOptional.isPresent());
         assertTrue(parkingSpotOptional.get().hasElectricCharger());
@@ -139,7 +138,7 @@ class VipUserParkingStrategyTest {
         //given
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(MEDIUM)).thenReturn(Optional.of(new MediumParkingSpot(true)));
         //when
-        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Car("", true));
+        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Car("", true), parkingSpotRepository);
         //then
         assertTrue(parkingSpotOptional.isPresent());
         assertTrue(parkingSpotOptional.get().hasElectricCharger());
@@ -152,7 +151,7 @@ class VipUserParkingStrategyTest {
         //given
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(MEDIUM)).thenReturn(Optional.of(new LargeParkingSpot(true)));
         //when
-        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Car("", true));
+        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Car("", true), parkingSpotRepository);
         //then
         assertTrue(parkingSpotOptional.isPresent());
         assertTrue(parkingSpotOptional.get().hasElectricCharger());
@@ -165,7 +164,7 @@ class VipUserParkingStrategyTest {
         //given
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(LARGE)).thenReturn(Optional.of(new LargeParkingSpot(true)));
         //when
-        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Truck("", true));
+        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Truck("", true), parkingSpotRepository);
         //then
         assertTrue(parkingSpotOptional.isPresent());
         assertTrue(parkingSpotOptional.get().hasElectricCharger());
@@ -179,7 +178,7 @@ class VipUserParkingStrategyTest {
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(MEDIUM)).thenReturn(Optional.empty());
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(LARGE)).thenReturn(Optional.empty());
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(SMALL)).thenReturn(Optional.of(new SmallParkingSpot(false)));
-        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Motorcycle("", true));
+        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Motorcycle("", true), parkingSpotRepository);
         assertTrue(parkingSpotOptional.isPresent());
         assertEquals(SMALL, parkingSpotOptional.get().getParkingSpotType());
         assertFalse(parkingSpotOptional.get().hasElectricCharger());
@@ -196,7 +195,7 @@ class VipUserParkingStrategyTest {
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(LARGE)).thenReturn(Optional.empty());
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(SMALL)).thenReturn(Optional.empty());
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(MEDIUM)).thenReturn(Optional.of(new MediumParkingSpot(false)));
-        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Motorcycle("", true));
+        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Motorcycle("", true), parkingSpotRepository);
         assertTrue(parkingSpotOptional.isPresent());
         assertFalse(parkingSpotOptional.get().hasElectricCharger());
         assertEquals(MEDIUM, parkingSpotOptional.get().getParkingSpotType());
@@ -215,7 +214,7 @@ class VipUserParkingStrategyTest {
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(SMALL)).thenReturn(Optional.empty());
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(MEDIUM)).thenReturn(Optional.empty());
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(LARGE)).thenReturn(Optional.of(new LargeParkingSpot(false)));
-        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Motorcycle("", true));
+        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Motorcycle("", true), parkingSpotRepository);
         assertTrue(parkingSpotOptional.isPresent());
         assertFalse(parkingSpotOptional.get().hasElectricCharger());
         assertEquals(LARGE, parkingSpotOptional.get().getParkingSpotType());
@@ -232,7 +231,7 @@ class VipUserParkingStrategyTest {
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(MEDIUM)).thenReturn(Optional.empty());
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(LARGE)).thenReturn(Optional.empty());
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(MEDIUM)).thenReturn(Optional.of(new MediumParkingSpot(false)));
-        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Car("", true));
+        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Car("", true), parkingSpotRepository);
         assertTrue(parkingSpotOptional.isPresent());
         assertFalse(parkingSpotOptional.get().hasElectricCharger());
         assertEquals(MEDIUM, parkingSpotOptional.get().getParkingSpotType());
@@ -246,7 +245,7 @@ class VipUserParkingStrategyTest {
     void getParkingSpotShouldReturnLargeParkingSpotWithoutElectricChargerForTruckWhenThereOnlyAreLargeParkingSpotsWithoutElectricCharger() {
         when(parkingSpotRepository.getEmptyParkingSpotWithElectricChargerOfType(LARGE)).thenReturn(Optional.empty());
         when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(LARGE)).thenReturn(Optional.of(new LargeParkingSpot(false)));
-        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Truck("", true));
+        Optional<ParkingSpot> parkingSpotOptional = vipUserParkingStrategy.getParkingSpot(new Truck("", true), parkingSpotRepository);
         assertTrue(parkingSpotOptional.isPresent());
         assertFalse(parkingSpotOptional.get().hasElectricCharger());
         assertEquals(LARGE, parkingSpotOptional.get().getParkingSpotType());

@@ -185,7 +185,7 @@ class ParkingLotManagerIntegrationTest {
         User ticketUser = ticket.getUser();
         Vehicle ticketVehicle = ticket.getVehicle();
 
-        assertEquals(ticketGivenParkingSpot, smallParkingSpotWithElectricCharger);
+        assertEquals(smallParkingSpotWithElectricCharger, ticketGivenParkingSpot);
         assertEquals(ticketUser, vipUser);
         assertEquals(ticketVehicle, electricMotorcycle);
     }

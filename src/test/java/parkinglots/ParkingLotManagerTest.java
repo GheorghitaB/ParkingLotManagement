@@ -52,16 +52,16 @@ class ParkingLotManagerTest {
         Vehicle notElectricMotorcycle = new Motorcycle("", false);
         ParkingSpot smallParkingSpotWithoutElectricCharger = new SmallParkingSpot(false);
 
-        when(parkingStrategyFactory.getParkingStrategy(regularUser, parkingSpotRepository)).thenReturn(regularUserParkingStrategy);
-        when(regularUserParkingStrategy.getParkingSpot(notElectricMotorcycle)).thenReturn(Optional.of(smallParkingSpotWithoutElectricCharger));
+        when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
+        when(regularUserParkingStrategy.getParkingSpot(notElectricMotorcycle, parkingSpotRepository)).thenReturn(Optional.of(smallParkingSpotWithoutElectricCharger));
         Ticket ticket = parkingLotManager.park(regularUser, notElectricMotorcycle);
 
         assertEquals(smallParkingSpotWithoutElectricCharger, ticket.getParkingSpot());
         assertEquals(regularUser, ticket.getUser());
         assertEquals(notElectricMotorcycle, ticket.getVehicle());
 
-        verify(regularUserParkingStrategy, times(1)).getParkingSpot(notElectricMotorcycle);
-        verify(parkingStrategyFactory, times(1)).getParkingStrategy(regularUser, parkingSpotRepository);
+        verify(regularUserParkingStrategy, times(1)).getParkingSpot(notElectricMotorcycle, parkingSpotRepository);
+        verify(parkingStrategyFactory, times(1)).getParkingStrategy(regularUser);
     }
 
     @Test
@@ -70,16 +70,16 @@ class ParkingLotManagerTest {
         Vehicle electricMotorcycle = new Motorcycle("", true);
         ParkingSpot smallParkingSpotWithElectricCharger = new SmallParkingSpot(true);
 
-        when(parkingStrategyFactory.getParkingStrategy(regularUser, parkingSpotRepository)).thenReturn(regularUserParkingStrategy);
-        when(regularUserParkingStrategy.getParkingSpot(electricMotorcycle)).thenReturn(Optional.of(smallParkingSpotWithElectricCharger));
+        when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
+        when(regularUserParkingStrategy.getParkingSpot(electricMotorcycle, parkingSpotRepository)).thenReturn(Optional.of(smallParkingSpotWithElectricCharger));
         Ticket ticket = parkingLotManager.park(regularUser, electricMotorcycle);
 
         assertEquals(smallParkingSpotWithElectricCharger, ticket.getParkingSpot());
         assertEquals(regularUser, ticket.getUser());
         assertEquals(electricMotorcycle, ticket.getVehicle());
 
-        verify(regularUserParkingStrategy, times(1)).getParkingSpot(electricMotorcycle);
-        verify(parkingStrategyFactory, times(1)).getParkingStrategy(regularUser, parkingSpotRepository);
+        verify(regularUserParkingStrategy, times(1)).getParkingSpot(electricMotorcycle, parkingSpotRepository);
+        verify(parkingStrategyFactory, times(1)).getParkingStrategy(regularUser);
     }
 
     @Test
@@ -88,16 +88,16 @@ class ParkingLotManagerTest {
         Vehicle notElectricCar = new Car("", false);
         ParkingSpot mediumParkingSpotWithoutElectricCharger = new MediumParkingSpot(false);
 
-        when(parkingStrategyFactory.getParkingStrategy(regularUser, parkingSpotRepository)).thenReturn(regularUserParkingStrategy);
-        when(regularUserParkingStrategy.getParkingSpot(notElectricCar)).thenReturn(Optional.of(mediumParkingSpotWithoutElectricCharger));
+        when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
+        when(regularUserParkingStrategy.getParkingSpot(notElectricCar, parkingSpotRepository)).thenReturn(Optional.of(mediumParkingSpotWithoutElectricCharger));
         Ticket ticket = parkingLotManager.park(regularUser, notElectricCar);
 
         assertEquals(mediumParkingSpotWithoutElectricCharger, ticket.getParkingSpot());
         assertEquals(regularUser, ticket.getUser());
         assertEquals(notElectricCar, ticket.getVehicle());
 
-        verify(regularUserParkingStrategy, times(1)).getParkingSpot(notElectricCar);
-        verify(parkingStrategyFactory, times(1)).getParkingStrategy(regularUser, parkingSpotRepository);
+        verify(regularUserParkingStrategy, times(1)).getParkingSpot(notElectricCar, parkingSpotRepository);
+        verify(parkingStrategyFactory, times(1)).getParkingStrategy(regularUser);
     }
 
     @Test
@@ -106,16 +106,16 @@ class ParkingLotManagerTest {
         Vehicle electricCar = new Car("", true);
         ParkingSpot mediumParkingSpotWithoutElectricCharger = new MediumParkingSpot(false);
 
-        when(parkingStrategyFactory.getParkingStrategy(regularUser, parkingSpotRepository)).thenReturn(regularUserParkingStrategy);
-        when(regularUserParkingStrategy.getParkingSpot(electricCar)).thenReturn(Optional.of(mediumParkingSpotWithoutElectricCharger));
+        when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
+        when(regularUserParkingStrategy.getParkingSpot(electricCar, parkingSpotRepository)).thenReturn(Optional.of(mediumParkingSpotWithoutElectricCharger));
         Ticket ticket = parkingLotManager.park(regularUser, electricCar);
 
         assertEquals(mediumParkingSpotWithoutElectricCharger, ticket.getParkingSpot());
         assertEquals(regularUser, ticket.getUser());
         assertEquals(electricCar, ticket.getVehicle());
 
-        verify(regularUserParkingStrategy, times(1)).getParkingSpot(electricCar);
-        verify(parkingStrategyFactory, times(1)).getParkingStrategy(regularUser, parkingSpotRepository);
+        verify(regularUserParkingStrategy, times(1)).getParkingSpot(electricCar, parkingSpotRepository);
+        verify(parkingStrategyFactory, times(1)).getParkingStrategy(regularUser);
     }
 
     @Test
@@ -124,16 +124,16 @@ class ParkingLotManagerTest {
         Vehicle electricCar = new Car("", true);
         ParkingSpot mediumParkingSpotWithElectricCharger = new MediumParkingSpot(true);
 
-        when(parkingStrategyFactory.getParkingStrategy(regularUser, parkingSpotRepository)).thenReturn(regularUserParkingStrategy);
-        when(regularUserParkingStrategy.getParkingSpot(electricCar)).thenReturn(Optional.of(mediumParkingSpotWithElectricCharger));
+        when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
+        when(regularUserParkingStrategy.getParkingSpot(electricCar, parkingSpotRepository)).thenReturn(Optional.of(mediumParkingSpotWithElectricCharger));
         Ticket ticket = parkingLotManager.park(regularUser, electricCar);
 
         assertEquals(mediumParkingSpotWithElectricCharger, ticket.getParkingSpot());
         assertEquals(regularUser, ticket.getUser());
         assertEquals(electricCar, ticket.getVehicle());
 
-        verify(regularUserParkingStrategy, times(1)).getParkingSpot(electricCar);
-        verify(parkingStrategyFactory, times(1)).getParkingStrategy(regularUser, parkingSpotRepository);
+        verify(regularUserParkingStrategy, times(1)).getParkingSpot(electricCar, parkingSpotRepository);
+        verify(parkingStrategyFactory, times(1)).getParkingStrategy(regularUser);
     }
 
     @Test
@@ -142,8 +142,8 @@ class ParkingLotManagerTest {
         Vehicle electricCar = new Car("", true);
         ParkingSpot mediumParkingSpotWithoutElectricCharger = new MediumParkingSpot(false);
 
-        when(parkingStrategyFactory.getParkingStrategy(vipUser, parkingSpotRepository)).thenReturn(vipUserParkingStrategy);
-        when(vipUserParkingStrategy.getParkingSpot(electricCar)).thenReturn(Optional.of(mediumParkingSpotWithoutElectricCharger));
+        when(parkingStrategyFactory.getParkingStrategy(vipUser)).thenReturn(vipUserParkingStrategy);
+        when(vipUserParkingStrategy.getParkingSpot(electricCar, parkingSpotRepository)).thenReturn(Optional.of(mediumParkingSpotWithoutElectricCharger));
 
         Ticket ticket = parkingLotManager.park(vipUser, electricCar);
 
@@ -151,8 +151,8 @@ class ParkingLotManagerTest {
         assertEquals(vipUser, ticket.getUser());
         assertEquals(electricCar, ticket.getVehicle());
 
-        verify(vipUserParkingStrategy, times(1)).getParkingSpot(electricCar);
-        verify(parkingStrategyFactory, times(1)).getParkingStrategy(vipUser, parkingSpotRepository);
+        verify(vipUserParkingStrategy, times(1)).getParkingSpot(electricCar, parkingSpotRepository);
+        verify(parkingStrategyFactory, times(1)).getParkingStrategy(vipUser);
     }
 
     @Test
@@ -161,8 +161,8 @@ class ParkingLotManagerTest {
         Vehicle electricMotorcycle = new Motorcycle("", true);
         ParkingSpot mediumParkingSpotWithoutElectricCharger = new MediumParkingSpot(false);
 
-        when(parkingStrategyFactory.getParkingStrategy(vipUser, parkingSpotRepository)).thenReturn(vipUserParkingStrategy);
-        when(vipUserParkingStrategy.getParkingSpot(electricMotorcycle)).thenReturn(Optional.of(mediumParkingSpotWithoutElectricCharger));
+        when(parkingStrategyFactory.getParkingStrategy(vipUser)).thenReturn(vipUserParkingStrategy);
+        when(vipUserParkingStrategy.getParkingSpot(electricMotorcycle, parkingSpotRepository)).thenReturn(Optional.of(mediumParkingSpotWithoutElectricCharger));
 
         Ticket ticket = parkingLotManager.park(vipUser, electricMotorcycle);
 
@@ -170,8 +170,8 @@ class ParkingLotManagerTest {
         assertEquals(vipUser, ticket.getUser());
         assertEquals(electricMotorcycle, ticket.getVehicle());
 
-        verify(vipUserParkingStrategy, times(1)).getParkingSpot(electricMotorcycle);
-        verify(parkingStrategyFactory, times(1)).getParkingStrategy(vipUser, parkingSpotRepository);
+        verify(vipUserParkingStrategy, times(1)).getParkingSpot(electricMotorcycle, parkingSpotRepository);
+        verify(parkingStrategyFactory, times(1)).getParkingStrategy(vipUser);
     }
 
     @ParameterizedTest
@@ -184,16 +184,16 @@ class ParkingLotManagerTest {
         User vipUser = new VIPUser("");
         Vehicle notElectricMotorcycle = new Motorcycle("", false);
 
-        when(parkingStrategyFactory.getParkingStrategy(vipUser, parkingSpotRepository)).thenReturn(vipUserParkingStrategy);
-        when(vipUserParkingStrategy.getParkingSpot(notElectricMotorcycle)).thenReturn(Optional.of(parkingSpot));
+        when(parkingStrategyFactory.getParkingStrategy(vipUser)).thenReturn(vipUserParkingStrategy);
+        when(vipUserParkingStrategy.getParkingSpot(notElectricMotorcycle, parkingSpotRepository)).thenReturn(Optional.of(parkingSpot));
         Ticket ticket = parkingLotManager.park(vipUser, notElectricMotorcycle);
 
         assertEquals(parkingSpot, ticket.getParkingSpot());
         assertEquals(vipUser, ticket.getUser());
         assertEquals(notElectricMotorcycle, ticket.getVehicle());
 
-        verify(vipUserParkingStrategy, times(1)).getParkingSpot(notElectricMotorcycle);
-        verify(parkingStrategyFactory, times(1)).getParkingStrategy(vipUser, parkingSpotRepository);
+        verify(vipUserParkingStrategy, times(1)).getParkingSpot(notElectricMotorcycle, parkingSpotRepository);
+        verify(parkingStrategyFactory, times(1)).getParkingStrategy(vipUser);
     }
 
     private static Stream<Arguments> generateParkingSpotsWithoutElectricCharger(){
@@ -213,16 +213,16 @@ class ParkingLotManagerTest {
         User vipUser = new VIPUser("");
         Vehicle electricMotorcycle = new Motorcycle("", true);
 
-        when(parkingStrategyFactory.getParkingStrategy(vipUser, parkingSpotRepository)).thenReturn(vipUserParkingStrategy);
-        when(vipUserParkingStrategy.getParkingSpot(electricMotorcycle)).thenReturn(Optional.of(parkingSpot));
+        when(parkingStrategyFactory.getParkingStrategy(vipUser)).thenReturn(vipUserParkingStrategy);
+        when(vipUserParkingStrategy.getParkingSpot(electricMotorcycle, parkingSpotRepository)).thenReturn(Optional.of(parkingSpot));
         Ticket ticket = parkingLotManager.park(vipUser, electricMotorcycle);
 
         assertEquals(parkingSpot, ticket.getParkingSpot());
         assertEquals(vipUser, ticket.getUser());
         assertEquals(electricMotorcycle, ticket.getVehicle());
 
-        verify(vipUserParkingStrategy, times(1)).getParkingSpot(electricMotorcycle);
-        verify(parkingStrategyFactory, times(1)).getParkingStrategy(vipUser, parkingSpotRepository);
+        verify(vipUserParkingStrategy, times(1)).getParkingSpot(electricMotorcycle, parkingSpotRepository);
+        verify(parkingStrategyFactory, times(1)).getParkingStrategy(vipUser);
     }
 
     private static Stream<Arguments> generateEachTypeOfParkingSpotWithElectricCharger(){
@@ -238,13 +238,13 @@ class ParkingLotManagerTest {
         User regularUser = new RegularUser("");
         Vehicle electricCar = new Car("", true);
 
-        when(parkingStrategyFactory.getParkingStrategy(regularUser, parkingSpotRepository)).thenReturn(regularUserParkingStrategy);
-        when(regularUserParkingStrategy.getParkingSpot(electricCar)).thenReturn(Optional.empty());
+        when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
+        when(regularUserParkingStrategy.getParkingSpot(electricCar, parkingSpotRepository)).thenReturn(Optional.empty());
 
         assertThrows(ParkingSpotNotFound.class, () -> parkingLotManager.park(regularUser, electricCar));
 
-        verify(regularUserParkingStrategy, times(1)).getParkingSpot(electricCar);
-        verify(parkingStrategyFactory, times(1)).getParkingStrategy(regularUser, parkingSpotRepository);
+        verify(regularUserParkingStrategy, times(1)).getParkingSpot(electricCar, parkingSpotRepository);
+        verify(parkingStrategyFactory, times(1)).getParkingStrategy(regularUser);
     }
 
     @Test
@@ -252,13 +252,13 @@ class ParkingLotManagerTest {
         User vipUser = new VIPUser("");
         Vehicle notElectricTruck = new Truck("", false);
 
-        when(parkingStrategyFactory.getParkingStrategy(vipUser, parkingSpotRepository)).thenReturn(regularUserParkingStrategy);
-        when(regularUserParkingStrategy.getParkingSpot(notElectricTruck)).thenReturn(Optional.empty());
+        when(parkingStrategyFactory.getParkingStrategy(vipUser)).thenReturn(regularUserParkingStrategy);
+        when(regularUserParkingStrategy.getParkingSpot(notElectricTruck, parkingSpotRepository)).thenReturn(Optional.empty());
 
         assertThrows(ParkingSpotNotFound.class, () -> parkingLotManager.park(vipUser, notElectricTruck));
 
-        verify(regularUserParkingStrategy, times(1)).getParkingSpot(notElectricTruck);
-        verify(parkingStrategyFactory, times(1)).getParkingStrategy(vipUser, parkingSpotRepository);
+        verify(regularUserParkingStrategy, times(1)).getParkingSpot(notElectricTruck, parkingSpotRepository);
+        verify(parkingStrategyFactory, times(1)).getParkingStrategy(vipUser);
     }
 
     @Test

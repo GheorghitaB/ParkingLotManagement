@@ -13,35 +13,24 @@ import java.util.*;
 
 public class VipUserParkingStrategy implements ParkingStrategy {
     private static final Map<VehicleType, List<ParkingSpotType>> FITTING_PARKING_SPOTS;
-    private final ParkingSpotRepository parkingSpotRepository;
-
-    public VipUserParkingStrategy(ParkingSpotRepository parkingSpotRepository){
-        this.parkingSpotRepository = parkingSpotRepository;
-    }
 
     static{
         FITTING_PARKING_SPOTS = VipUserStrategyInit.getParkingSpotsFitsFromResource(AppProperty.getProperty(Constants.VIP_USER_STRATEGY_FILEPATH_PROPERTY));
     }
 
-    public
     @Override
-    Optional<ParkingSpot> getParkingSpot(Vehicle vehicle) {
-        return getParkingSpotOptional(vehicle);
-    }
-
-    private Optional<ParkingSpot> getParkingSpotOptional(Vehicle vehicle) {
-        Optional<ParkingSpot> parkingSpotOptional = vehicle.isElectric() ? getEmptyParkingSpotWithElectricChargerForVehicleType(vehicle.getVehicleType())
-
-                                                   : getEmptyParkingSpotWithoutElectricChargerForVehicleType(vehicle.getVehicleType());
+    public Optional<ParkingSpot> getParkingSpot(Vehicle vehicle, ParkingSpotRepository parkingSpotRepository) {
+        Optional<ParkingSpot> parkingSpotOptional = vehicle.isElectric() ? getEmptyParkingSpotWithElectricChargerForVehicleType(vehicle.getVehicleType(), parkingSpotRepository)
+                                                                         : getEmptyParkingSpotWithoutElectricChargerForVehicleType(vehicle.getVehicleType(), parkingSpotRepository);
 
         if(parkingSpotOptional.isEmpty() && vehicle.isElectric()){
-            parkingSpotOptional = getEmptyParkingSpotWithoutElectricChargerForVehicleType(vehicle.getVehicleType());
+            parkingSpotOptional = getEmptyParkingSpotWithoutElectricChargerForVehicleType(vehicle.getVehicleType(), parkingSpotRepository);
         }
 
         return parkingSpotOptional;
     }
 
-    private Optional<ParkingSpot> getEmptyParkingSpotWithElectricChargerForVehicleType(VehicleType vehicleType){
+    private Optional<ParkingSpot> getEmptyParkingSpotWithElectricChargerForVehicleType(VehicleType vehicleType, ParkingSpotRepository parkingSpotRepository){
         List<ParkingSpotType> fittingParkingSpotsList = FITTING_PARKING_SPOTS.get(vehicleType);
 
         return fittingParkingSpotsList
@@ -52,7 +41,7 @@ public class VipUserParkingStrategy implements ParkingStrategy {
                 .findFirst();
     }
 
-    private Optional<ParkingSpot> getEmptyParkingSpotWithoutElectricChargerForVehicleType(VehicleType vehicleType){
+    private Optional<ParkingSpot> getEmptyParkingSpotWithoutElectricChargerForVehicleType(VehicleType vehicleType, ParkingSpotRepository parkingSpotRepository){
         List<ParkingSpotType> fittingParkingSpotsList = FITTING_PARKING_SPOTS.get(vehicleType);
 
         return fittingParkingSpotsList

@@ -30,8 +30,8 @@ public class ParkingLotManager{
 	}
 
 	private Optional<ParkingSpot> getParkingSpot(User user, Vehicle vehicle) {
-		ParkingStrategy parkingStrategy = parkingStrategyFactory.getParkingStrategy(user, parkingSpotRepository);
-		return parkingStrategy.getParkingSpot(vehicle);
+		ParkingStrategy parkingStrategy = parkingStrategyFactory.getParkingStrategy(user);
+		return parkingStrategy.getParkingSpot(vehicle, parkingSpotRepository);
 	}
 
 	public Optional<ParkingSpot> findVehicleByPlateNumber(String plateNumber) {
