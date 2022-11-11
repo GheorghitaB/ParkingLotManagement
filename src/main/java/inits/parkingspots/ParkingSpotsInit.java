@@ -2,7 +2,6 @@ package inits.parkingspots;
 
 import static Utils.TextArgumentParser.*;
 
-import Utils.validators.ArgumentValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import parkingspots.*;
@@ -68,32 +67,42 @@ public class ParkingSpotsInit {
     }
 
     private static boolean validateElectricChargerIsBooleanArgument(int lineNumber, String line, String hasElectricCharger) {
-        if(!hasElectricCharger.equals("0") && !hasElectricCharger.equals("1")){
+        if(hasElectricCharger.equals("0") || hasElectricCharger.equals("1")){
+            return true;
+        } else {
             LOGGER.error("Illegal argument at line " + lineNumber + ": " + line +
                     ". It is allowed to be 0 or 1 (without/with electric charger). It is " + hasElectricCharger);
             return false;
         }
-        return true;
     }
 
     private static boolean validateNumberOfParkingSpotsArgument(int lineNumber, String line, String numberOfParkingSpots) {
-        if(!numberOfParkingSpots.matches("[0-9]+")){
+        if(numberOfParkingSpots.matches("[0-9]+")){
+            return true;
+        } else{
             LOGGER.error("Illegal argument at line " + lineNumber + ": " + line +
                     ". The number of parking spots should be a positive number. It is " + numberOfParkingSpots);
             return false;
         }
-        return true;
     }
 
     private static boolean validateNumberOfArguments(int lineNumber, String line, String[] arguments) {
-        String errorMessage = "Illegal number of arguments at line " + lineNumber + ": "  + line +
-                ". Allowed: " + NUMBER_OF_ALLOWED_ARGUMENTS + ", was " + arguments.length + ". Maybe the split string is not well defined.";
-        return ArgumentValidator.validateNumberOfArguments(arguments, NUMBER_OF_ALLOWED_ARGUMENTS, errorMessage);
+        if(arguments.length == NUMBER_OF_ALLOWED_ARGUMENTS){
+            return true;
+        } else {
+            LOGGER.error("Illegal number of arguments at line " + lineNumber + ": "  + line +". Allowed: "
+                    + NUMBER_OF_ALLOWED_ARGUMENTS + ", was " + arguments.length + ". Maybe the split string is not well defined.");
+            return false;
+        }
     }
 
     private static boolean validateParkingSpotTypeArgument(int lineNumber, String line, String parkingSpotType){
-        String errorMessage = "Illegal arguments at line " + lineNumber + ": "  + line +
-                ". The parking spot type \"" + parkingSpotType + "\" is not valid.";
-        return ArgumentValidator.validateParkingSpotTypeArgument(parkingSpotType, errorMessage);
+        if(ParkingSpotType.containsMember(parkingSpotType)){
+            return true;
+        } else {
+            LOGGER.error("Illegal arguments at line " + lineNumber + ": "  + line + ". The parking spot type \""
+                    + parkingSpotType + "\" is not valid.");
+            return false;
+        }
     }
 }
