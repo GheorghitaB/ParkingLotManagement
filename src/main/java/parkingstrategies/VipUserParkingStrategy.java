@@ -12,7 +12,7 @@ import java.util.*;
 
 
 public class VipUserParkingStrategy implements ParkingStrategy {
-    private static final Map<VehicleType, List<ParkingSpotType>> FITTING_PARKING_SPOTS;
+    private static final Map<VehicleType, Set<ParkingSpotType>> FITTING_PARKING_SPOTS;
 
     static{
         FITTING_PARKING_SPOTS = VipUserStrategyInit.getParkingSpotsFitsFromResource(AppProperty.getProperty(Constants.VIP_USER_STRATEGY_FILEPATH_PROPERTY));
@@ -31,7 +31,7 @@ public class VipUserParkingStrategy implements ParkingStrategy {
     }
 
     private Optional<ParkingSpot> getEmptyParkingSpotWithElectricChargerForVehicleType(VehicleType vehicleType, ParkingSpotRepository parkingSpotRepository){
-        List<ParkingSpotType> fittingParkingSpotsList = FITTING_PARKING_SPOTS.get(vehicleType);
+        Set<ParkingSpotType> fittingParkingSpotsList = FITTING_PARKING_SPOTS.get(vehicleType);
 
         return fittingParkingSpotsList
                 .stream()
@@ -42,7 +42,7 @@ public class VipUserParkingStrategy implements ParkingStrategy {
     }
 
     private Optional<ParkingSpot> getEmptyParkingSpotWithoutElectricChargerForVehicleType(VehicleType vehicleType, ParkingSpotRepository parkingSpotRepository){
-        List<ParkingSpotType> fittingParkingSpotsList = FITTING_PARKING_SPOTS.get(vehicleType);
+        Set<ParkingSpotType> fittingParkingSpotsList = FITTING_PARKING_SPOTS.get(vehicleType);
 
         return fittingParkingSpotsList
                 .stream()

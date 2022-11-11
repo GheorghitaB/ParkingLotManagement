@@ -15,10 +15,10 @@ public class VipUserStrategyInit {
     private static final int NUMBER_OF_MINIMUM_ALLOWED_ARGUMENTS = 2;
     private static final Logger LOGGER = LoggerFactory.getLogger(VipUserStrategyInit.class);
 
-    public static Map<VehicleType, List<ParkingSpotType>> getParkingSpotsFitsFromResource(String resourcePath) {
+    public static Map<VehicleType, Set<ParkingSpotType>> getParkingSpotsFitsFromResource(String resourcePath) {
         List<String> lines = readLines(resourcePath);
         AtomicInteger lineNumber = new AtomicInteger(0);
-        Map<VehicleType, List<ParkingSpotType>> parkingSpotsFits = new LinkedHashMap<>();
+        Map<VehicleType, Set<ParkingSpotType>> parkingSpotsFits = new LinkedHashMap<>();
 
         lines.forEach(line -> {
             lineNumber.getAndIncrement();
@@ -35,14 +35,14 @@ public class VipUserStrategyInit {
         return parkingSpotsFits;
     }
 
-    private static void addListOfParkingSpotFitsForAVehicleType(Map<VehicleType, List<ParkingSpotType>> parkingSpotsFits, int lineNumber, String line, String[] arguments) {
+    private static void addListOfParkingSpotFitsForAVehicleType(Map<VehicleType, Set<ParkingSpotType>> parkingSpotsFits, int lineNumber, String line, String[] arguments) {
         VehicleType vehicleType = VehicleType.valueOf(arguments[0]);
         if (parkingSpotsFits.containsKey(vehicleType)) {
             LOGGER.warn("Vehicle type \"" + vehicleType + "\" is already inserted, therefore line "
                     + lineNumber + ": " + line + " is ignored.");
         } else {
             Set<ParkingSpotType> fittingParkingSpots = getSetOfFittingParkingSpotsFromLineArguments(arguments);
-            parkingSpotsFits.put(vehicleType, new ArrayList<>(fittingParkingSpots));
+            parkingSpotsFits.put(vehicleType, fittingParkingSpots);
         }
     }
 
