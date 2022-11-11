@@ -47,7 +47,7 @@ public class VipUserStrategyInit {
     }
 
     private static Set<ParkingSpotType> getSetOfFittingParkingSpotsFromLineArguments(String[] arguments) {
-        Set<ParkingSpotType> parkingSpotTypes = new HashSet<>();
+        Set<ParkingSpotType> parkingSpotTypes = new LinkedHashSet<>();
         for (int i = 1; i < arguments.length; i++) {
             if (parkingSpotTypes.contains(ParkingSpotType.valueOf(arguments[i]))) {
                 LOGGER.warn("Parking spot type \"" + arguments[i] + "\" is duplicated, therefore it is ignored.");
