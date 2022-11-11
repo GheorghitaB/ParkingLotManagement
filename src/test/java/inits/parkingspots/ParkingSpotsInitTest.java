@@ -59,4 +59,17 @@ class ParkingSpotsInitTest {
             mediumParkingSpots.forEach(e -> assertFalse(e.hasElectricCharger()));
         }
     }
+
+    @Test
+    void getListOfParkingSpotsFromResource_ShouldReturnEmptyListWhenResourcePathIndicatesAnEmptyFile(){
+        String resourcePathIndicatingAnEmptyFile = "mockResourcePath";
+        try(MockedStatic<TextArgumentParser> textArgumentParserMockedStatic = Mockito.mockStatic(TextArgumentParser.class)){
+            textArgumentParserMockedStatic.when( () -> TextArgumentParser.readLines(resourcePathIndicatingAnEmptyFile)).thenReturn(List.of());
+
+            List<ParkingSpot> parkingSpotList = ParkingSpotsInit.getListOfParkingSpotsFromResource(resourcePathIndicatingAnEmptyFile);
+
+            textArgumentParserMockedStatic.verify( () -> TextArgumentParser.readLines(resourcePathIndicatingAnEmptyFile), times(1));
+            assertTrue(parkingSpotList.isEmpty());
+        }
+    }
 }
