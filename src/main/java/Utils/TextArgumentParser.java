@@ -14,20 +14,21 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TextArgumentParser {
-    private static final String DEFAULT_COMMENT_PREFIX = "#";
+    public static final String DEFAULT_COMMENT_PREFIX = "#";
     public static final String DEFAULT_SPLIT_REGEX = " ";
     public static final int UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION = -1;
 
     public static List<String> readLines(String resourcePath) {
         List<String> lines = new ArrayList<>();
-        URL resourcePathURL = TextArgumentParser.class.getClassLoader().getResource(resourcePath);
+        URL resourcePathURL = TextArgumentClassLoader.getClassLoader().getResource(resourcePath);
 
         if(resourcePathURL == null){
             System.out.println("Resource \"" + resourcePath + "\" has not been not found.");
             System.exit(UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION);
         }
 
-        try (Stream<String> stream = Files.lines(Path.of(resourcePathURL.toURI()))) {
+        try {
+            Stream<String> stream = Files.lines(Path.of(resourcePathURL.toURI()));
             lines = stream.collect(Collectors.toList());
         } catch (IOException e) {
             System.out.println("Error reading from resource \"" + resourcePath + "\".");
@@ -36,11 +37,8 @@ public class TextArgumentParser {
             System.out.println("Resource + \"" + resourcePath + "\" could not be read.");
             System.exit(UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION);
         }
-        return lines;
-    }
 
-    public static boolean isComment(String line, String commentPrefix){
-        return StringUtils.startsWith(line, commentPrefix);
+        return lines;
     }
 
     public static boolean notComment(String line){
@@ -48,7 +46,7 @@ public class TextArgumentParser {
     }
 
     public static boolean notComment(String line, String commentPrefix){
-        return !isComment(line, commentPrefix) && !StringUtils.isEmpty(line);
+        return !StringUtils.startsWith(line, commentPrefix) && !StringUtils.isEmpty(line);
     }
 
     public static String prepareLine(String line) {
@@ -68,5 +66,11 @@ public class TextArgumentParser {
                 .map(String::strip)
                 .filter(arg -> !arg.isEmpty())
                 .toArray(String[]::new);
+    }
+}
+
+class TextArgumentClassLoader {
+    public static ClassLoader getClassLoader(){
+        return TextArgumentParser.class.getClassLoader();
     }
 }

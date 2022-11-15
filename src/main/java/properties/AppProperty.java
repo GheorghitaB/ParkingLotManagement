@@ -23,19 +23,11 @@ public class AppProperty {
             String[] arguments = getArgumentsFromLine(line, SPLIT_REGEX);
             validateArguments(arguments);
             arguments = prepareArguments(arguments);
-            addPropertyToMap(arguments);
+            propertiesMap.put(arguments[0], arguments[1]);
         });
     }
 
-    private static void addPropertyToMap(String[] arguments) {
-        propertiesMap.put(arguments[0], arguments[1]);
-    }
-
     private static void validateArguments(String[] arguments) {
-        validateNumberOfArguments(arguments);
-    }
-
-    private static void validateNumberOfArguments(String[] arguments){
         if(arguments.length != 2){
             System.out.println("Illegal number of arguments. It must be " + NUMBER_OF_ALLOWED_ARGUMENTS
                     + ", but it was " + arguments.length);

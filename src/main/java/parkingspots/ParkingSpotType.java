@@ -1,7 +1,6 @@
 package parkingspots;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Arrays;
 
 public enum ParkingSpotType {
 	SMALL,
@@ -9,9 +8,6 @@ public enum ParkingSpotType {
 	LARGE;
 
 	public static boolean containsMember(String parkingSpotType){
-		return Stream.of(ParkingSpotType.values())
-				.map(member -> member.toString().toUpperCase())
-				.collect(Collectors.toList())
-				.contains(parkingSpotType.toUpperCase());
+		return Arrays.toString(ParkingSpotType.values()).contains(parkingSpotType.toUpperCase());
 	}
 }

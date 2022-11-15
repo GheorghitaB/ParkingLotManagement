@@ -1,7 +1,6 @@
 package vehicles;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Arrays;
 
 public enum VehicleType {
 	MOTORCYCLE,
@@ -9,9 +8,6 @@ public enum VehicleType {
 	TRUCK;
 
 	public static boolean containsMember(String vehicleType) {
-		return Stream.of(VehicleType.values())
-				.map(member -> member.toString().toUpperCase())
-				.collect(Collectors.toList())
-				.contains(vehicleType.toUpperCase());
+		return Arrays.toString(VehicleType.values()).contains(vehicleType.toUpperCase());
 	}
 }

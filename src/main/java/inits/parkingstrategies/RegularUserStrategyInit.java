@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class RegularUserStrategyInit {
-    private static final int NUMBER_OF_ARGUMENTS = 2;
+    public static final int NUMBER_OF_ARGUMENTS = 2;
     private static final Logger LOGGER = LoggerFactory.getLogger(RegularUserStrategyInit.class);
 
     public static Map<VehicleType, ParkingSpotType> getMapOfFittingParkingSpotsFromResource(String resourcePath){
@@ -62,7 +62,7 @@ public class RegularUserStrategyInit {
                     && validateParkingSpotTypeArgument(lineNumber, line, arguments);
 
         if(!legalArguments){
-            LOGGER.info("Illegal arguments. The application will be closed.");
+            LOGGER.error("Illegal arguments. The application will be closed.");
             System.exit(UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION);
         }
     }
@@ -72,20 +72,32 @@ public class RegularUserStrategyInit {
                 + line + ". The number of arguments must be " + NUMBER_OF_ARGUMENTS
                 + ". It was " + arguments.length;
 
-        return ArgumentValidator.validateNumberOfArguments(arguments, NUMBER_OF_ARGUMENTS, errorMessage);
+        boolean ok = ArgumentValidator.validateNumberOfArguments(arguments, NUMBER_OF_ARGUMENTS);
+        if(!ok){
+            LOGGER.error(errorMessage);
+        }
+        return ok;
     }
 
     private static boolean validateVehicleTypeArgument(int lineNumber, String line, String[] arguments){
         String errorMessage = "Illegal arguments at line " + lineNumber + ": "  + line +
                 ". The vehicle type \"" + arguments[0] + "\" is not valid.";
 
-        return ArgumentValidator.validateVehicleTypeArgument(arguments[0], errorMessage);
+        boolean ok = ArgumentValidator.validateVehicleTypeArgument(arguments[0]);
+        if(!ok){
+            LOGGER.error(errorMessage);
+        }
+        return ok;
     }
 
     private static boolean validateParkingSpotTypeArgument(int lineNumber, String line, String[] arguments){
         String errorMessage = "Illegal arguments at line: " + lineNumber + ": "
                 + line + ". The parking spot type \"" + arguments[1] + "\" is not valid.";
 
-        return ArgumentValidator.validateParkingSpotTypeArgument(arguments[1], errorMessage);
+        boolean ok = ArgumentValidator.validateParkingSpotTypeArgument(arguments[1]);
+        if(!ok){
+            LOGGER.error(errorMessage);
+        }
+        return ok;
     }
 }

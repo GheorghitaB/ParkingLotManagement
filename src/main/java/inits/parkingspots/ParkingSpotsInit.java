@@ -2,6 +2,7 @@ package inits.parkingspots;
 
 import static Utils.TextArgumentParser.*;
 
+import Utils.validators.ArgumentValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import parkingspots.*;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ParkingSpotsInit {
-    private static final int NUMBER_OF_ALLOWED_ARGUMENTS = 3;
+    public static final int NUMBER_OF_ALLOWED_ARGUMENTS = 3;
     private static final Logger LOGGER = LoggerFactory.getLogger(ParkingSpotsInit.class);
 
     public static List<ParkingSpot> getListOfParkingSpotsFromResource(String resourcePath){
@@ -61,7 +62,7 @@ public class ParkingSpotsInit {
                                 && validateElectricChargerIsBooleanArgument(lineCount, line, arguments[2]);
 
         if(!legalArguments){
-            LOGGER.info("Illegal arguments. The application will be closed.");
+            LOGGER.error("Illegal arguments. The application will be closed.");
             System.exit(UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION);
         }
     }
@@ -87,7 +88,8 @@ public class ParkingSpotsInit {
     }
 
     private static boolean validateNumberOfArguments(int lineNumber, String line, String[] arguments) {
-        if(arguments.length == NUMBER_OF_ALLOWED_ARGUMENTS){
+        boolean ok = ArgumentValidator.validateNumberOfArguments(arguments, ParkingSpotsInit.NUMBER_OF_ALLOWED_ARGUMENTS);
+        if(ok){
             return true;
         } else {
             LOGGER.error("Illegal number of arguments at line " + lineNumber + ": "  + line +". Allowed: "
@@ -97,7 +99,8 @@ public class ParkingSpotsInit {
     }
 
     private static boolean validateParkingSpotTypeArgument(int lineNumber, String line, String parkingSpotType){
-        if(ParkingSpotType.containsMember(parkingSpotType)){
+        boolean ok = ArgumentValidator.validateParkingSpotTypeArgument(parkingSpotType);
+        if(ok){
             return true;
         } else {
             LOGGER.error("Illegal arguments at line " + lineNumber + ": "  + line + ". The parking spot type \""

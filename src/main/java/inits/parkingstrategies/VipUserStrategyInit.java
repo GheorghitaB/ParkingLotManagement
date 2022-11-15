@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class VipUserStrategyInit {
-    private static final int NUMBER_OF_MINIMUM_ALLOWED_ARGUMENTS = 2;
+    public static final int NUMBER_OF_MINIMUM_ALLOWED_ARGUMENTS = 2;
     private static final Logger LOGGER = LoggerFactory.getLogger(VipUserStrategyInit.class);
 
     public static Map<VehicleType, Set<ParkingSpotType>> getParkingSpotsFitsFromResource(String resourcePath) {
@@ -63,14 +63,18 @@ public class VipUserStrategyInit {
                 && validateVehicleTypeArgument(lineNumber, line, arguments);
 
         if (!legalArguments) {
-            LOGGER.info("Illegal arguments. The application will be closed.");
+            LOGGER.error("Illegal arguments. The application will be closed.");
             System.exit(UNSUCCESSFUL_TERMINATION_WITH_EXCEPTION);
         }
     }
 
     private static boolean validateVehicleTypeArgument(int lineNumber, String line, String[] arguments) {
         String errorMessage = "Illegal arguments at line " + lineNumber + ": " + line + ". The vehicle type \"" + arguments[0] + "\" is not valid.";
-        return ArgumentValidator.validateVehicleTypeArgument(arguments[0], errorMessage);
+        boolean ok = ArgumentValidator.validateVehicleTypeArgument(arguments[0]);
+        if(!ok){
+            LOGGER.error(errorMessage);
+        }
+        return ok;
     }
 
     private static boolean validateNumberOfMinimumArguments(int lineNumber, String line, String[] arguments) {
@@ -78,13 +82,19 @@ public class VipUserStrategyInit {
                 + line + ". Minimum number of arguments is " + NUMBER_OF_MINIMUM_ALLOWED_ARGUMENTS
                 + ". It was " + arguments.length;
 
-        return ArgumentValidator.validateNumberOfMinimumArguments(arguments, NUMBER_OF_MINIMUM_ALLOWED_ARGUMENTS, errorMessage);
+        boolean ok = ArgumentValidator.validateNumberOfMinimumArguments(arguments, NUMBER_OF_MINIMUM_ALLOWED_ARGUMENTS);
+        if(!ok){
+            LOGGER.error(errorMessage);
+        }
+        return ok;
     }
 
     private static boolean validateParkingSpotTypeArguments(int lineNumber, String line, String[] arguments) {
         for (int i = 1; i < arguments.length; i++) {
             String errorMessage = "Illegal arguments at line: " + lineNumber + ": " + line + ". The parking spot type \"" + arguments[i] + "\" is not valid.";
-            if (!ArgumentValidator.validateParkingSpotTypeArgument(arguments[i], errorMessage)) {
+            boolean ok = ArgumentValidator.validateParkingSpotTypeArgument(arguments[i]);
+            if(!ok){
+                LOGGER.error(errorMessage);
                 return false;
             }
         }
