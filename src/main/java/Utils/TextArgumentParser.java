@@ -41,6 +41,12 @@ public class TextArgumentParser {
         return lines;
     }
 
+    /**
+     * @param line with or without comment prefix
+     * @return <b>true</b> if the line has a comment prefix
+     * or <b>false</b> if not
+     * <p>The default prefix comment is: {@value DEFAULT_COMMENT_PREFIX} </p>
+     */
     public static boolean notComment(String line){
         return notComment(line, DEFAULT_COMMENT_PREFIX);
     }
@@ -49,6 +55,10 @@ public class TextArgumentParser {
         return !StringUtils.startsWith(line, commentPrefix) && !StringUtils.isEmpty(line);
     }
 
+    /**
+     * @param line the unprepared line
+     * @return the line with leading and trailing white space removed to uppercase
+     */
     public static String prepareLine(String line) {
         return line.strip().toUpperCase();
     }
