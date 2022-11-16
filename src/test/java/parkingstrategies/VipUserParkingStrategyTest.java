@@ -1,6 +1,5 @@
 package parkingstrategies;
 
-import exceptions.ParkingSpotNotFound;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -33,9 +32,10 @@ class VipUserParkingStrategyTest {
     }
 
     @Test
-    void getParkingSpotShouldReturnParkingSpotNotFoundWhenThereIsNotAnyAvailableParkingSpotFittingForMotorcycle() {
-        when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(SMALL)).thenThrow(ParkingSpotNotFound.class);
-        assertThrows(ParkingSpotNotFound.class, () -> parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(SMALL));
+    void getParkingSpotShouldReturnEmptyOptionalWhenThereIsNotAnyAvailableParkingSpotFittingForMotorcycle() {
+        when(parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(SMALL)).thenReturn(Optional.empty());
+        Optional<ParkingSpot> parkingSpotOptional = parkingSpotRepository.getEmptyParkingSpotWithoutElectricChargerOfType(SMALL);
+        assertTrue(parkingSpotOptional.isEmpty());
         verify(parkingSpotRepository, times(1)).getEmptyParkingSpotWithoutElectricChargerOfType(SMALL);
     }
 
