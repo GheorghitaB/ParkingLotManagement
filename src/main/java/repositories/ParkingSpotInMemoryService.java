@@ -5,10 +5,10 @@ import parkingspots.*;
 import java.util.List;
 import java.util.Optional;
 
-public class ParkingSpotInMemoryRepository implements ParkingSpotRepository {
+public class ParkingSpotInMemoryService implements ParkingSpotService {
     private final List<ParkingSpot> parkingSpots;
 
-    public ParkingSpotInMemoryRepository(List<ParkingSpot> parkingSpots){
+    public ParkingSpotInMemoryService(List<ParkingSpot> parkingSpots){
         this.parkingSpots = parkingSpots;
     }
 
