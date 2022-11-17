@@ -1,11 +1,11 @@
 package parkingstrategies;
 
 import parkingspots.ParkingSpot;
-import repositories.ParkingSpotRepository;
+import repositories.ParkingSpotService;
 import vehicles.Vehicle;
 
 import java.util.Optional;
 
 public interface ParkingStrategy {
-    Optional<ParkingSpot> getParkingSpot(Vehicle vehicle, ParkingSpotRepository parkingSpotRepository);
+    Optional<ParkingSpot> getParkingSpot(Vehicle vehicle, ParkingSpotService parkingSpotService);
 }
