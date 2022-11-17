@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import parkingspots.*;
-import repositories.ParkingSpotInMemoryRepository;
+import repositories.ParkingSpotInMemoryService;
 import vehicles.Car;
 import vehicles.Motorcycle;
 import vehicles.Truck;
@@ -33,7 +33,7 @@ class ParkingSpotInMemoryRepositoryTest {
         Vehicle motorcycle = new Motorcycle("", false);
         smallParkingSpot.setVehicle(motorcycle);
 
-        ParkingSpotInMemoryRepository parkingLotInMemoryRepository = new ParkingSpotInMemoryRepository(List.of(smallParkingSpot));
+        ParkingSpotInMemoryService parkingLotInMemoryRepository = new ParkingSpotInMemoryService(List.of(smallParkingSpot));
         Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(motorcycle.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isPresent());
@@ -48,7 +48,7 @@ class ParkingSpotInMemoryRepositoryTest {
         Vehicle motorcycle = new Motorcycle("", true);
         smallParkingSpot.setVehicle(motorcycle);
 
-        ParkingSpotInMemoryRepository parkingLotInMemoryRepository = new ParkingSpotInMemoryRepository(List.of(smallParkingSpot));
+        ParkingSpotInMemoryService parkingLotInMemoryRepository = new ParkingSpotInMemoryService(List.of(smallParkingSpot));
         Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(motorcycle.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isPresent());
@@ -63,7 +63,7 @@ class ParkingSpotInMemoryRepositoryTest {
         Vehicle car = new Car("", true);
         mediumParkingSpot.setVehicle(car);
 
-        ParkingSpotInMemoryRepository parkingLotInMemoryRepository = new ParkingSpotInMemoryRepository(List.of(mediumParkingSpot));
+        ParkingSpotInMemoryService parkingLotInMemoryRepository = new ParkingSpotInMemoryService(List.of(mediumParkingSpot));
         Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(car.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isPresent());
@@ -78,7 +78,7 @@ class ParkingSpotInMemoryRepositoryTest {
         Vehicle car = new Car("", false);
         mediumParkingSpot.setVehicle(car);
 
-        ParkingSpotInMemoryRepository parkingLotInMemoryRepository = new ParkingSpotInMemoryRepository(List.of(mediumParkingSpot));
+        ParkingSpotInMemoryService parkingLotInMemoryRepository = new ParkingSpotInMemoryService(List.of(mediumParkingSpot));
         Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(car.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isPresent());
@@ -93,7 +93,7 @@ class ParkingSpotInMemoryRepositoryTest {
         Vehicle truck = new Car("", true);
         largeParkingSpot.setVehicle(truck);
 
-        ParkingSpotInMemoryRepository parkingLotInMemoryRepository = new ParkingSpotInMemoryRepository(List.of(largeParkingSpot));
+        ParkingSpotInMemoryService parkingLotInMemoryRepository = new ParkingSpotInMemoryService(List.of(largeParkingSpot));
         Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(truck.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isPresent());
@@ -108,7 +108,7 @@ class ParkingSpotInMemoryRepositoryTest {
         Vehicle truck = new Car("", true);
         largeParkingSpot.setVehicle(truck);
 
-        ParkingSpotInMemoryRepository parkingLotInMemoryRepository = new ParkingSpotInMemoryRepository(List.of(largeParkingSpot));
+        ParkingSpotInMemoryService parkingLotInMemoryRepository = new ParkingSpotInMemoryService(List.of(largeParkingSpot));
         Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(truck.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isPresent());
@@ -123,7 +123,7 @@ class ParkingSpotInMemoryRepositoryTest {
         Vehicle motorcycle = new Motorcycle("", true);
         smallParkingSpot.setVehicle(motorcycle);
 
-        ParkingSpotInMemoryRepository parkingLotInMemoryRepository = new ParkingSpotInMemoryRepository(List.of(smallParkingSpot));
+        ParkingSpotInMemoryService parkingLotInMemoryRepository = new ParkingSpotInMemoryService(List.of(smallParkingSpot));
         Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(motorcycle.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isPresent());
@@ -143,7 +143,7 @@ class ParkingSpotInMemoryRepositoryTest {
         parkingSpotList.add(new LargeParkingSpot(false));
         parkingSpotList.add(new LargeParkingSpot(true));
 
-        ParkingSpotInMemoryRepository parkingLotInMemoryRepository = new ParkingSpotInMemoryRepository(parkingSpotList);
+        ParkingSpotInMemoryService parkingLotInMemoryRepository = new ParkingSpotInMemoryService(parkingSpotList);
         Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(vehicle.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isEmpty());
@@ -165,7 +165,7 @@ class ParkingSpotInMemoryRepositoryTest {
         Vehicle motorcycle = new Motorcycle("", true);
         mediumParkingSpot.setVehicle(motorcycle);
 
-        ParkingSpotInMemoryRepository parkingLotInMemoryRepository = new ParkingSpotInMemoryRepository(List.of(mediumParkingSpot));
+        ParkingSpotInMemoryService parkingLotInMemoryRepository = new ParkingSpotInMemoryService(List.of(mediumParkingSpot));
         Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.findVehicleByPlateNumber(motorcycle.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isPresent());
@@ -177,7 +177,7 @@ class ParkingSpotInMemoryRepositoryTest {
     @ParameterizedTest
     @EnumSource(ParkingSpotType.class)
     void getEmptyParkingSpotOfTypeAnyShouldReturnEmptyOptionalIfThereIsNoEmptyParkingSpotOfTheSpecifiedType(ParkingSpotType parkingSpotType){
-        ParkingSpotInMemoryRepository parkingLotInMemoryRepository = new ParkingSpotInMemoryRepository(new ArrayList<>());
+        ParkingSpotInMemoryService parkingLotInMemoryRepository = new ParkingSpotInMemoryService(new ArrayList<>());
         Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.getEmptyParkingSpotWithoutElectricChargerOfType(parkingSpotType);
         assertTrue(parkingSpotOptional.isEmpty());
     }
@@ -190,7 +190,7 @@ class ParkingSpotInMemoryRepositoryTest {
         parkingSpotList.add(new MediumParkingSpot(false));
         parkingSpotList.add(new LargeParkingSpot(false));
 
-        ParkingSpotInMemoryRepository parkingLotInMemoryRepository = new ParkingSpotInMemoryRepository(parkingSpotList);
+        ParkingSpotInMemoryService parkingLotInMemoryRepository = new ParkingSpotInMemoryService(parkingSpotList);
         Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.getEmptyParkingSpotWithoutElectricChargerOfType(parkingSpotType);
 
         assertTrue(parkingSpotOptional.isPresent());
@@ -206,7 +206,7 @@ class ParkingSpotInMemoryRepositoryTest {
         parkingSpotList.add(new MediumParkingSpot(true));
         parkingSpotList.add(new LargeParkingSpot(true));
 
-        ParkingSpotInMemoryRepository parkingLotInMemoryRepository = new ParkingSpotInMemoryRepository(parkingSpotList);
+        ParkingSpotInMemoryService parkingLotInMemoryRepository = new ParkingSpotInMemoryService(parkingSpotList);
         Optional<ParkingSpot> parkingSpotOptional = parkingLotInMemoryRepository.getEmptyParkingSpotWithElectricChargerOfType(parkingSpotType);
 
         assertTrue(parkingSpotOptional.isPresent());
