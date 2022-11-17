@@ -1,3 +1,4 @@
 parking-spots-file-path           = parkingspots/parking-spots.init
 regular-user-strategy-file-path   = parkingstrategies/regular-user-strategy.init
 vip-user-strategy-file-path       = parkingstrategies/vip-user-strategy.init
+ticket-saving-path                = tickets
