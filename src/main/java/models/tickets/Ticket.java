@@ -1,9 +1,13 @@
-package tickets;
+package models.tickets;
 
-import parkingspots.ParkingSpot;
-import users.User;
-import vehicles.Vehicle;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import models.parkings.spots.ParkingSpot;
+import models.users.User;
+import models.vehicles.Vehicle;
 
+@JsonIgnoreProperties(value = {"id"})
+@JsonTypeInfo(include= JsonTypeInfo.As.WRAPPER_OBJECT, use= JsonTypeInfo.Id.NAME)
 public class Ticket {
 
 	private final int ID;
