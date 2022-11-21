@@ -1,11 +1,12 @@
-package properties;
+package services.properties;
 
-import Utils.Constants;
+import utils.Constants;
 
-import static Utils.TextArgumentParser.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static utils.parsers.TextArgumentParser.*;
 
 public class AppProperty {
     private static final int NUMBER_OF_ALLOWED_ARGUMENTS = 2;
