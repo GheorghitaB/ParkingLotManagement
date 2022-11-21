@@ -31,8 +31,8 @@ public class ParkingLotManager{
 		Optional<ParkingSpot> parkingSpotOptional = getParkingSpot(user, vehicle);
 		if(parkingSpotOptional.isPresent()){
 			parkingSpotOptional.get().setVehicle(vehicle);
-			System.out.println(parkingPriceCalculator.getTotalPrice(parkingDurationInMinutes, user, vehicle, parkingSpotOptional.get()));
-			return new Ticket(user, vehicle, parkingSpotOptional.get());
+			double price = parkingPriceCalculator.getTotalPrice(parkingDurationInMinutes, user, vehicle, parkingSpotOptional.get());
+			return new Ticket(user, vehicle, parkingSpotOptional.get(), price, parkingDurationInMinutes);
 		}
 
 		throw new ParkingSpotNotFound("Parking spot not found exception");
