@@ -1,9 +1,10 @@
 package inits.parkingspots;
 
 import com.github.stefanbirkner.systemlambda.SystemLambda;
+import models.parkings.spots.inits.ParkingSpotsInit;
 import org.junit.jupiter.api.Test;
-import parkingspots.ParkingSpot;
-import parkingspots.ParkingSpotType;
+import models.parkings.spots.ParkingSpot;
+import models.parkings.spots.ParkingSpotType;
 
 import java.util.List;
 import java.util.stream.Collectors;

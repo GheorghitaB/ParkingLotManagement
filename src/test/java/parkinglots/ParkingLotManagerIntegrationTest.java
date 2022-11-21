@@ -1,23 +1,32 @@
 package parkinglots;
 
 import exceptions.ParkingSpotNotFound;
+import exceptions.ParkingSpotTypeNotFoundException;
+import exceptions.UserTypeNotFoundException;
+import exceptions.VehicleTypeNotFoundException;
+import services.parkings.lots.ParkingLotManager;
+import models.parkings.spots.LargeParkingSpot;
+import models.parkings.spots.MediumParkingSpot;
+import models.parkings.spots.ParkingSpot;
+import models.parkings.spots.SmallParkingSpot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import parkingspots.*;
-import parkingstrategies.ParkingStrategyFactory;
-import repositories.ParkingSpotInMemoryService;
-import repositories.ParkingSpotService;
-import tickets.Ticket;
-import users.RegularUser;
-import users.User;
-import users.VIPUser;
-import vehicles.Car;
-import vehicles.Motorcycle;
-import vehicles.Truck;
-import vehicles.Vehicle;
+import services.parkings.strategies.ParkingStrategyFactory;
+import services.parkings.spots.ParkingSpotInMemoryService;
+import services.parkings.spots.ParkingSpotService;
+import models.tickets.Ticket;
+import models.users.RegularUser;
+import models.users.User;
+import models.users.VIPUser;
+import models.vehicles.Car;
+import models.vehicles.Motorcycle;
+import models.vehicles.Truck;
+import models.vehicles.Vehicle;
+import services.taxes.ParkingPriceCalculator;
+import services.taxes.implementations.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +52,8 @@ class ParkingLotManagerIntegrationTest {
     private ParkingSpot mediumParkingSpotWithElectricCharger;
     private ParkingSpot largeParkingSpotWithoutElectricCharger;
     private ParkingSpot largeParkingSpotWithElectricCharger;
+    private int parkingDurationTimeInMinutes;
+    private ParkingPriceCalculator parkingPriceCalculator;
 
 
     @BeforeEach
@@ -51,8 +62,13 @@ class ParkingLotManagerIntegrationTest {
         populateParkingSpotList();
         initUsers();
         initVehicles();
+        parkingDurationTimeInMinutes = 60;
         ParkingSpotService parkingSpotService = new ParkingSpotInMemoryService(parkingSpotList);
-        parkingLotManager = new ParkingLotManager(parkingSpotService, ParkingStrategyFactory.getParkingStrategyInstance());
+        parkingPriceCalculator = new ParkingPriceCalculatorImpl(new UserTypePriceImpl(),
+                new VehicleTypePriceImpl(), new ParkingSpotTypePriceImpl(), new DiscountCalculatorImpl());
+
+        parkingLotManager = new ParkingLotManager(parkingSpotService, ParkingStrategyFactory.getParkingStrategyInstance(),
+                parkingPriceCalculator);
     }
 
     private void initParkingSpots(){
@@ -89,8 +105,8 @@ class ParkingLotManagerIntegrationTest {
     }
 
     @Test
-    void parkShouldReturnTicketWithDataAboutRegularUserWhichParkedANonElectricMotorcycleOnAGivenSmallParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound {
-        Ticket ticket = parkingLotManager.park(regularUser, nonElectricMotorcycle);
+    void parkShouldReturnTicketWithDataAboutRegularUserWhichParkedANonElectricMotorcycleOnAGivenSmallParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, nonElectricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
         User ticketUser = ticket.getUser();
         Vehicle ticketVehicle = ticket.getVehicle();
@@ -101,8 +117,8 @@ class ParkingLotManagerIntegrationTest {
     }
 
     @Test
-    void parkShouldReturnTicketWithDataAboutRegularUserWhichParkedAnElectricMotorcycleOnAGivenSmallParkingSpotWithElectricCharger() throws ParkingSpotNotFound {
-        Ticket ticket = parkingLotManager.park(regularUser, electricMotorcycle);
+    void parkShouldReturnTicketWithDataAboutRegularUserWhichParkedAnElectricMotorcycleOnAGivenSmallParkingSpotWithElectricCharger() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, electricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
         User ticketUser = ticket.getUser();
         Vehicle ticketVehicle = ticket.getVehicle();
@@ -113,8 +129,8 @@ class ParkingLotManagerIntegrationTest {
     }
 
     @Test
-    void parkShouldReturnTicketWithDataAboutRegularUserWhichParkedANonElectricCarOnAGivenMediumParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound {
-        Ticket ticket = parkingLotManager.park(regularUser, nonElectricCar);
+    void parkShouldReturnTicketWithDataAboutRegularUserWhichParkedANonElectricCarOnAGivenMediumParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, nonElectricCar);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
         User ticketUser = ticket.getUser();
         Vehicle ticketVehicle = ticket.getVehicle();
@@ -125,8 +141,8 @@ class ParkingLotManagerIntegrationTest {
     }
 
     @Test
-    void parkShouldReturnTicketWithDataAboutRegularUserWhichParkedAnElectricCarOnAGivenMediumParkingSpotWithElectricCharger() throws ParkingSpotNotFound {
-        Ticket ticket = parkingLotManager.park(regularUser, electricCar);
+    void parkShouldReturnTicketWithDataAboutRegularUserWhichParkedAnElectricCarOnAGivenMediumParkingSpotWithElectricCharger() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, electricCar);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
         User ticketUser = ticket.getUser();
         Vehicle ticketVehicle = ticket.getVehicle();
@@ -137,8 +153,8 @@ class ParkingLotManagerIntegrationTest {
     }
 
     @Test
-    void parkShouldReturnTicketWithDataAboutRegularUserWhichParkedANonElectricTruckOnAGivenLargeParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound {
-        Ticket ticket = parkingLotManager.park(regularUser, nonElectricTruck);
+    void parkShouldReturnTicketWithDataAboutRegularUserWhichParkedANonElectricTruckOnAGivenLargeParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, nonElectricTruck);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
         User ticketUser = ticket.getUser();
         Vehicle ticketVehicle = ticket.getVehicle();
@@ -149,8 +165,8 @@ class ParkingLotManagerIntegrationTest {
     }
 
     @Test
-    void parkShouldReturnTicketWithDataAboutRegularUserWhichParkedAnElectricTruckOnAGivenLargeParkingSpotWithElectricCharger() throws ParkingSpotNotFound {
-        Ticket ticket = parkingLotManager.park(regularUser, electricTruck);
+    void parkShouldReturnTicketWithDataAboutRegularUserWhichParkedAnElectricTruckOnAGivenLargeParkingSpotWithElectricCharger() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, electricTruck);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
         User ticketUser = ticket.getUser();
         Vehicle ticketVehicle = ticket.getVehicle();
@@ -163,12 +179,12 @@ class ParkingLotManagerIntegrationTest {
     @Test
     void parkShouldThrowParkingSpotNotFoundExceptionWhenRegularUserWantsToParkANonElectricMotorcycleWhenThereIsNotAnEmptySmallParkingSpotWithoutElectricCharger(){
         parkingSpotList.remove(smallParkingSpotWithoutElectricCharger);
-        assertThrows(ParkingSpotNotFound.class, () -> parkingLotManager.park(regularUser, nonElectricMotorcycle));
+        assertThrows(ParkingSpotNotFound.class, () -> parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, nonElectricMotorcycle));
     }
 
     @Test
-    void parkShouldReturnTicketWithDataAboutVipUserWhichParkedANonElectricMotorcycleOnAGivenSmallParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound {
-        Ticket ticket = parkingLotManager.park(vipUser, nonElectricMotorcycle);
+    void parkShouldReturnTicketWithDataAboutVipUserWhichParkedANonElectricMotorcycleOnAGivenSmallParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, nonElectricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
         User ticketUser = ticket.getUser();
         Vehicle ticketVehicle = ticket.getVehicle();
@@ -179,8 +195,8 @@ class ParkingLotManagerIntegrationTest {
     }
 
     @Test
-    void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenSmallParkingSpotWithElectricCharger() throws ParkingSpotNotFound {
-        Ticket ticket = parkingLotManager.park(vipUser, electricMotorcycle);
+    void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenSmallParkingSpotWithElectricCharger() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
         User ticketUser = ticket.getUser();
         Vehicle ticketVehicle = ticket.getVehicle();
@@ -191,16 +207,16 @@ class ParkingLotManagerIntegrationTest {
     }
 
     @Test
-    void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenMediumParkingSpotWithElectricCharger() throws ParkingSpotNotFound {
+    void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenMediumParkingSpotWithElectricCharger() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
         List<ParkingSpot> newParkingSpotList = new ArrayList<>();
         newParkingSpotList.add(smallParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(mediumParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(mediumParkingSpotWithElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithElectricCharger);
-        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
+        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance(), parkingPriceCalculator);
 
-        Ticket ticket = parkingLotManager.park(vipUser, electricMotorcycle);
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
         User ticketUser = ticket.getUser();
         Vehicle ticketVehicle = ticket.getVehicle();
@@ -211,15 +227,15 @@ class ParkingLotManagerIntegrationTest {
     }
 
     @Test
-    void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenLargeParkingSpotWithElectricCharger() throws ParkingSpotNotFound {
+    void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenLargeParkingSpotWithElectricCharger() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
         List<ParkingSpot> newParkingSpotList = new ArrayList<>();
         newParkingSpotList.add(smallParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(mediumParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithElectricCharger);
-        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
+        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance(), parkingPriceCalculator);
 
-        Ticket ticket = parkingLotManager.park(vipUser, electricMotorcycle);
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
         User ticketUser = ticket.getUser();
         Vehicle ticketVehicle = ticket.getVehicle();
@@ -230,14 +246,14 @@ class ParkingLotManagerIntegrationTest {
     }
 
     @Test
-    void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenSmallParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound {
+    void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenSmallParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
         List<ParkingSpot> newParkingSpotList = new ArrayList<>();
         newParkingSpotList.add(smallParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(mediumParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
-        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
+        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance(), parkingPriceCalculator);
 
-        Ticket ticket = parkingLotManager.park(vipUser, electricMotorcycle);
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
         User ticketUser = ticket.getUser();
         Vehicle ticketVehicle = ticket.getVehicle();
@@ -248,13 +264,13 @@ class ParkingLotManagerIntegrationTest {
     }
 
     @Test
-    void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenMediumParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound {
+    void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenMediumParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
         List<ParkingSpot> newParkingSpotList = new ArrayList<>();
         newParkingSpotList.add(mediumParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
-        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
+        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance(), parkingPriceCalculator);
 
-        Ticket ticket = parkingLotManager.park(vipUser, electricMotorcycle);
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
         User ticketUser = ticket.getUser();
         Vehicle ticketVehicle = ticket.getVehicle();
@@ -265,12 +281,12 @@ class ParkingLotManagerIntegrationTest {
     }
 
     @Test
-    void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenLargeParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound {
+    void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenLargeParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
         List<ParkingSpot> newParkingSpotList = new ArrayList<>();
         newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
-        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
+        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance(), parkingPriceCalculator);
 
-        Ticket ticket = parkingLotManager.park(vipUser, electricMotorcycle);
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
         User ticketUser = ticket.getUser();
         Vehicle ticketVehicle = ticket.getVehicle();
@@ -283,13 +299,13 @@ class ParkingLotManagerIntegrationTest {
     @Test
     void parkShouldThrowParkingSpotNotFoundExceptionWhenVipUserWantsToParkANonElectricMotorcycleAndThereAreNotAnyFittingParkingSpots(){
         List<ParkingSpot> newParkingSpotList = new ArrayList<>();
-        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
-        assertThrows(ParkingSpotNotFound.class, () -> parkingLotManager.park(vipUser, nonElectricMotorcycle));
+        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance(), parkingPriceCalculator);
+        assertThrows(ParkingSpotNotFound.class, () -> parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, nonElectricMotorcycle));
     }
 
     @Test
-    void findVehicleByPlateNumberShouldReturnSmallParkingSpotWithoutElectricChargerWhenRegularUserHasParkedANonElectricMotorcycleOnThatParkingSpot() throws ParkingSpotNotFound {
-        parkingLotManager.park(regularUser, nonElectricMotorcycle);
+    void findVehicleByPlateNumberShouldReturnSmallParkingSpotWithoutElectricChargerWhenRegularUserHasParkedANonElectricMotorcycleOnThatParkingSpot() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
+        parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, nonElectricMotorcycle);
         Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicleByPlateNumber(nonElectricMotorcycle.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isPresent());
@@ -300,8 +316,8 @@ class ParkingLotManagerIntegrationTest {
     }
 
     @Test
-    void findVehicleByPlateNumberShouldReturnSmallParkingSpotWithElectricChargerWhenRegularUserHasParkedAnElectricMotorcycleOnThatParkingSpot() throws ParkingSpotNotFound {
-        parkingLotManager.park(regularUser, electricMotorcycle);
+    void findVehicleByPlateNumberShouldReturnSmallParkingSpotWithElectricChargerWhenRegularUserHasParkedAnElectricMotorcycleOnThatParkingSpot() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
+        parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, electricMotorcycle);
         Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicleByPlateNumber(electricMotorcycle.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isPresent());
@@ -312,16 +328,16 @@ class ParkingLotManagerIntegrationTest {
 
 
     @Test
-    void findVehicleByPlateNumberShouldReturnLargeParkingSpotWithElectricChargerWhenVipUserHasParkedAnElectricCarOnThatParkingSpot() throws ParkingSpotNotFound {
+    void findVehicleByPlateNumberShouldReturnLargeParkingSpotWithElectricChargerWhenVipUserHasParkedAnElectricCarOnThatParkingSpot() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
         List<ParkingSpot> newParkingSpotList = new ArrayList<>();
         newParkingSpotList.add(smallParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(smallParkingSpotWithElectricCharger);
         newParkingSpotList.add(mediumParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithElectricCharger);
-        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
+        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance(), parkingPriceCalculator);
 
-        parkingLotManager.park(vipUser, electricCar);
+        parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricCar);
         Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicleByPlateNumber(electricCar.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isPresent());
@@ -331,15 +347,15 @@ class ParkingLotManagerIntegrationTest {
     }
 
     @Test
-    void findVehicleByPlateNumberShouldReturnMediumParkingSpotWithoutElectricChargerWhenVipUserHasParkedAnElectricCarOnThatParkingSpot() throws ParkingSpotNotFound {
+    void findVehicleByPlateNumberShouldReturnMediumParkingSpotWithoutElectricChargerWhenVipUserHasParkedAnElectricCarOnThatParkingSpot() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
         List<ParkingSpot> newParkingSpotList = new ArrayList<>();
         newParkingSpotList.add(smallParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(smallParkingSpotWithElectricCharger);
         newParkingSpotList.add(mediumParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
-        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
+        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance(), parkingPriceCalculator);
 
-        parkingLotManager.park(vipUser, electricCar);
+        parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricCar);
         Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicleByPlateNumber(electricCar.getPlateNumber());
 
         assertTrue(parkingSpotOptional.isPresent());

@@ -1,21 +1,25 @@
 package parkingstrategies;
 
+import models.parkings.spots.LargeParkingSpot;
+import models.parkings.spots.MediumParkingSpot;
+import models.parkings.spots.ParkingSpot;
+import models.parkings.spots.SmallParkingSpot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import repositories.ParkingSpotService;
-import parkingspots.*;
-import vehicles.Car;
-import vehicles.Motorcycle;
-import vehicles.Truck;
+import services.parkings.spots.ParkingSpotService;
+import models.vehicles.Car;
+import models.vehicles.Motorcycle;
+import models.vehicles.Truck;
+import services.parkings.strategies.VipUserParkingStrategy;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static parkingspots.ParkingSpotType.*;
+import static models.parkings.spots.ParkingSpotType.*;
 
 class VipUserParkingStrategyTest {
     @Mock

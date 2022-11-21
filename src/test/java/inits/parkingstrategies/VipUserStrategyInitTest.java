@@ -1,14 +1,15 @@
 package inits.parkingstrategies;
 
-import Utils.TextArgumentParser;
-import Utils.validators.ArgumentValidator;
+import utils.parsers.TextArgumentParser;
+import utils.validators.ArgumentValidator;
 import com.github.stefanbirkner.systemlambda.SystemLambda;
+import models.parkings.spots.inits.VipUserStrategyInit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
-import parkingspots.ParkingSpotType;
-import vehicles.VehicleType;
+import models.parkings.spots.ParkingSpotType;
+import models.vehicles.VehicleType;
 
 import java.util.HashMap;
 import java.util.List;

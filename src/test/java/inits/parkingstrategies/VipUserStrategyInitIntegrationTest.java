@@ -1,9 +1,10 @@
 package inits.parkingstrategies;
 
 import com.github.stefanbirkner.systemlambda.SystemLambda;
+import models.parkings.spots.inits.VipUserStrategyInit;
 import org.junit.jupiter.api.Test;
-import parkingspots.ParkingSpotType;
-import vehicles.VehicleType;
+import models.parkings.spots.ParkingSpotType;
+import models.vehicles.VehicleType;
 
 import java.util.Map;
 import java.util.Set;

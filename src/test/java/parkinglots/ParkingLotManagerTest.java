@@ -1,6 +1,18 @@
 package parkinglots;
 
 import exceptions.ParkingSpotNotFound;
+import exceptions.ParkingSpotTypeNotFoundException;
+import exceptions.UserTypeNotFoundException;
+import exceptions.VehicleTypeNotFoundException;
+import services.parkings.lots.ParkingLotManager;
+import models.parkings.spots.LargeParkingSpot;
+import models.parkings.spots.MediumParkingSpot;
+import models.parkings.spots.ParkingSpot;
+import models.parkings.spots.SmallParkingSpot;
+import models.vehicles.Car;
+import models.vehicles.Motorcycle;
+import models.vehicles.Truck;
+import models.vehicles.Vehicle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,16 +22,15 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import parkingspots.*;
-import parkingstrategies.ParkingStrategyFactory;
-import parkingstrategies.RegularUserParkingStrategy;
-import parkingstrategies.VipUserParkingStrategy;
-import repositories.ParkingSpotService;
-import tickets.Ticket;
-import users.RegularUser;
-import users.User;
-import users.VIPUser;
-import vehicles.*;
+import services.parkings.strategies.ParkingStrategyFactory;
+import services.parkings.strategies.RegularUserParkingStrategy;
+import services.parkings.strategies.VipUserParkingStrategy;
+import services.parkings.spots.ParkingSpotService;
+import models.tickets.Ticket;
+import models.users.RegularUser;
+import models.users.User;
+import models.users.VIPUser;
+import services.taxes.ParkingPriceCalculator;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -37,24 +48,30 @@ class ParkingLotManagerTest {
     @Mock
     private VipUserParkingStrategy vipUserParkingStrategy;
 
+    @Mock
+    private ParkingPriceCalculator parkingPriceCalculator;
+
+    private int parkingDurationTimeInMinutes;
+
     @InjectMocks
     private ParkingLotManager parkingLotManager;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        parkingLotManager = new ParkingLotManager(parkingSpotService, parkingStrategyFactory);
+        parkingLotManager = new ParkingLotManager(parkingSpotService, parkingStrategyFactory, parkingPriceCalculator);
+        parkingDurationTimeInMinutes = 100;
     }
 
     @Test
-    void park_ShouldReturnTicketForRegularUserWithNotElectricMotorcycleWhenParkedOnASmallParkingSpotWithoutElectricChargerBasedOnUserStrategy() throws ParkingSpotNotFound {
+    void park_ShouldReturnTicketForRegularUserWithNotElectricMotorcycleWhenParkedOnASmallParkingSpotWithoutElectricChargerBasedOnUserStrategy() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
         User regularUser = new RegularUser("");
         Vehicle notElectricMotorcycle = new Motorcycle("", false);
         ParkingSpot smallParkingSpotWithoutElectricCharger = new SmallParkingSpot(false);
 
         when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
         when(regularUserParkingStrategy.getParkingSpot(notElectricMotorcycle, parkingSpotService)).thenReturn(Optional.of(smallParkingSpotWithoutElectricCharger));
-        Ticket ticket = parkingLotManager.park(regularUser, notElectricMotorcycle);
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, notElectricMotorcycle);
 
         assertEquals(smallParkingSpotWithoutElectricCharger, ticket.getParkingSpot());
         assertEquals(regularUser, ticket.getUser());
@@ -65,14 +82,14 @@ class ParkingLotManagerTest {
     }
 
     @Test
-    void park_ShouldReturnTicketForRegularUserWithElectricMotorcycleWhenParkedOnASmallParkingSpotWithElectricChargerBasedOnUserStrategy() throws ParkingSpotNotFound {
+    void park_ShouldReturnTicketForRegularUserWithElectricMotorcycleWhenParkedOnASmallParkingSpotWithElectricChargerBasedOnUserStrategy() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
         User regularUser = new RegularUser("");
         Vehicle electricMotorcycle = new Motorcycle("", true);
         ParkingSpot smallParkingSpotWithElectricCharger = new SmallParkingSpot(true);
 
         when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
         when(regularUserParkingStrategy.getParkingSpot(electricMotorcycle, parkingSpotService)).thenReturn(Optional.of(smallParkingSpotWithElectricCharger));
-        Ticket ticket = parkingLotManager.park(regularUser, electricMotorcycle);
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, electricMotorcycle);
 
         assertEquals(smallParkingSpotWithElectricCharger, ticket.getParkingSpot());
         assertEquals(regularUser, ticket.getUser());
@@ -83,14 +100,14 @@ class ParkingLotManagerTest {
     }
 
     @Test
-    void park_ShouldReturnTicketForRegularUserWithNotElectricCarWhenParkedOnAMediumSmallParkingSpotWithoutElectricChargerBasedOnUserStrategy() throws ParkingSpotNotFound {
+    void park_ShouldReturnTicketForRegularUserWithNotElectricCarWhenParkedOnAMediumSmallParkingSpotWithoutElectricChargerBasedOnUserStrategy() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
         User regularUser = new RegularUser("");
         Vehicle notElectricCar = new Car("", false);
         ParkingSpot mediumParkingSpotWithoutElectricCharger = new MediumParkingSpot(false);
 
         when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
         when(regularUserParkingStrategy.getParkingSpot(notElectricCar, parkingSpotService)).thenReturn(Optional.of(mediumParkingSpotWithoutElectricCharger));
-        Ticket ticket = parkingLotManager.park(regularUser, notElectricCar);
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, notElectricCar);
 
         assertEquals(mediumParkingSpotWithoutElectricCharger, ticket.getParkingSpot());
         assertEquals(regularUser, ticket.getUser());
@@ -101,14 +118,14 @@ class ParkingLotManagerTest {
     }
 
     @Test
-    void park_ShouldReturnTicketForRegularUserWithElectricCarWhenParkedOnAMediumSmallParkingSpotWithoutElectricChargerBasedOnUserStrategy() throws ParkingSpotNotFound {
+    void park_ShouldReturnTicketForRegularUserWithElectricCarWhenParkedOnAMediumSmallParkingSpotWithoutElectricChargerBasedOnUserStrategy() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
         User regularUser = new RegularUser("");
         Vehicle electricCar = new Car("", true);
         ParkingSpot mediumParkingSpotWithoutElectricCharger = new MediumParkingSpot(false);
 
         when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
         when(regularUserParkingStrategy.getParkingSpot(electricCar, parkingSpotService)).thenReturn(Optional.of(mediumParkingSpotWithoutElectricCharger));
-        Ticket ticket = parkingLotManager.park(regularUser, electricCar);
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, electricCar);
 
         assertEquals(mediumParkingSpotWithoutElectricCharger, ticket.getParkingSpot());
         assertEquals(regularUser, ticket.getUser());
@@ -119,14 +136,14 @@ class ParkingLotManagerTest {
     }
 
     @Test
-    void park_ShouldReturnTicketForRegularUserWithElectricCarWhenParkedOnAMediumParkingSpotWithElectricChargerBasedOnUserStrategy() throws ParkingSpotNotFound {
+    void park_ShouldReturnTicketForRegularUserWithElectricCarWhenParkedOnAMediumParkingSpotWithElectricChargerBasedOnUserStrategy() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
         User regularUser = new RegularUser("");
         Vehicle electricCar = new Car("", true);
         ParkingSpot mediumParkingSpotWithElectricCharger = new MediumParkingSpot(true);
 
         when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
         when(regularUserParkingStrategy.getParkingSpot(electricCar, parkingSpotService)).thenReturn(Optional.of(mediumParkingSpotWithElectricCharger));
-        Ticket ticket = parkingLotManager.park(regularUser, electricCar);
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, electricCar);
 
         assertEquals(mediumParkingSpotWithElectricCharger, ticket.getParkingSpot());
         assertEquals(regularUser, ticket.getUser());
@@ -137,7 +154,7 @@ class ParkingLotManagerTest {
     }
 
     @Test
-    void park_ShouldReturnTicketForVipUserWithElectricCarWhenParkedOnAMediumParkingSpotWithoutElectricChargerBasedOnUserStrategy() throws ParkingSpotNotFound {
+    void park_ShouldReturnTicketForVipUserWithElectricCarWhenParkedOnAMediumParkingSpotWithoutElectricChargerBasedOnUserStrategy() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
         User vipUser = new VIPUser("");
         Vehicle electricCar = new Car("", true);
         ParkingSpot mediumParkingSpotWithoutElectricCharger = new MediumParkingSpot(false);
@@ -145,7 +162,7 @@ class ParkingLotManagerTest {
         when(parkingStrategyFactory.getParkingStrategy(vipUser)).thenReturn(vipUserParkingStrategy);
         when(vipUserParkingStrategy.getParkingSpot(electricCar, parkingSpotService)).thenReturn(Optional.of(mediumParkingSpotWithoutElectricCharger));
 
-        Ticket ticket = parkingLotManager.park(vipUser, electricCar);
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricCar);
 
         assertEquals(mediumParkingSpotWithoutElectricCharger, ticket.getParkingSpot());
         assertEquals(vipUser, ticket.getUser());
@@ -156,7 +173,7 @@ class ParkingLotManagerTest {
     }
 
     @Test
-    void park_ShouldReturnTicketForVipUserWithElectricMotorcycleWhenParkedOnAMediumParkingSpotWithoutElectricChargerBasedOnUserStrategy() throws ParkingSpotNotFound {
+    void park_ShouldReturnTicketForVipUserWithElectricMotorcycleWhenParkedOnAMediumParkingSpotWithoutElectricChargerBasedOnUserStrategy() throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
         User vipUser = new VIPUser("");
         Vehicle electricMotorcycle = new Motorcycle("", true);
         ParkingSpot mediumParkingSpotWithoutElectricCharger = new MediumParkingSpot(false);
@@ -164,7 +181,7 @@ class ParkingLotManagerTest {
         when(parkingStrategyFactory.getParkingStrategy(vipUser)).thenReturn(vipUserParkingStrategy);
         when(vipUserParkingStrategy.getParkingSpot(electricMotorcycle, parkingSpotService)).thenReturn(Optional.of(mediumParkingSpotWithoutElectricCharger));
 
-        Ticket ticket = parkingLotManager.park(vipUser, electricMotorcycle);
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricMotorcycle);
 
         assertEquals(mediumParkingSpotWithoutElectricCharger, ticket.getParkingSpot());
         assertEquals(vipUser, ticket.getUser());
@@ -176,7 +193,7 @@ class ParkingLotManagerTest {
 
     @ParameterizedTest
     @MethodSource("generateParkingSpotsWithoutElectricCharger")
-    void park_ShouldReturnTicketForVipUserWithNotMotorcycleWhenParkedOnAParkingSpotBasedOnUserStrategy(ParkingSpot parkingSpot) throws ParkingSpotNotFound {
+    void park_ShouldReturnTicketForVipUserWithNotMotorcycleWhenParkedOnAParkingSpotBasedOnUserStrategy(ParkingSpot parkingSpot) throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
         // this test covers:    vip user strategy -> not electric motorcycle -> small parking spot without EC
         //                      vip user strategy -> not electric motorcycle -> medium parking spot without EC
         //                      vip user strategy -> not electric motorcycle -> large parking spot without EC
@@ -186,7 +203,7 @@ class ParkingLotManagerTest {
 
         when(parkingStrategyFactory.getParkingStrategy(vipUser)).thenReturn(vipUserParkingStrategy);
         when(vipUserParkingStrategy.getParkingSpot(notElectricMotorcycle, parkingSpotService)).thenReturn(Optional.of(parkingSpot));
-        Ticket ticket = parkingLotManager.park(vipUser, notElectricMotorcycle);
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, notElectricMotorcycle);
 
         assertEquals(parkingSpot, ticket.getParkingSpot());
         assertEquals(vipUser, ticket.getUser());
@@ -206,7 +223,7 @@ class ParkingLotManagerTest {
 
     @ParameterizedTest
     @MethodSource("generateEachTypeOfParkingSpotWithElectricCharger")
-    void park_ShouldReturnTicketForVipUserWithElectricMotorcycleWhenParkedOnAParkingSpotBasedOnUserStrategy(ParkingSpot parkingSpot) throws ParkingSpotNotFound {
+    void park_ShouldReturnTicketForVipUserWithElectricMotorcycleWhenParkedOnAParkingSpotBasedOnUserStrategy(ParkingSpot parkingSpot) throws ParkingSpotNotFound, VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException {
         // this test covers:  vip user strategy  ->      electric motorcycle        ->      small parking spot with EC
         //                    vip user strategy  ->      electric motorcycle        ->      medium parking spot with EC
         //                    vip user strategy  ->      electric motorcycle        ->      large parking spot with EC
@@ -215,7 +232,7 @@ class ParkingLotManagerTest {
 
         when(parkingStrategyFactory.getParkingStrategy(vipUser)).thenReturn(vipUserParkingStrategy);
         when(vipUserParkingStrategy.getParkingSpot(electricMotorcycle, parkingSpotService)).thenReturn(Optional.of(parkingSpot));
-        Ticket ticket = parkingLotManager.park(vipUser, electricMotorcycle);
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricMotorcycle);
 
         assertEquals(parkingSpot, ticket.getParkingSpot());
         assertEquals(vipUser, ticket.getUser());
@@ -241,7 +258,7 @@ class ParkingLotManagerTest {
         when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
         when(regularUserParkingStrategy.getParkingSpot(electricCar, parkingSpotService)).thenReturn(Optional.empty());
 
-        assertThrows(ParkingSpotNotFound.class, () -> parkingLotManager.park(regularUser, electricCar));
+        assertThrows(ParkingSpotNotFound.class, () -> parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, electricCar));
 
         verify(regularUserParkingStrategy, times(1)).getParkingSpot(electricCar, parkingSpotService);
         verify(parkingStrategyFactory, times(1)).getParkingStrategy(regularUser);
@@ -255,7 +272,7 @@ class ParkingLotManagerTest {
         when(parkingStrategyFactory.getParkingStrategy(vipUser)).thenReturn(regularUserParkingStrategy);
         when(regularUserParkingStrategy.getParkingSpot(notElectricTruck, parkingSpotService)).thenReturn(Optional.empty());
 
-        assertThrows(ParkingSpotNotFound.class, () -> parkingLotManager.park(vipUser, notElectricTruck));
+        assertThrows(ParkingSpotNotFound.class, () -> parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, notElectricTruck));
 
         verify(regularUserParkingStrategy, times(1)).getParkingSpot(notElectricTruck, parkingSpotService);
         verify(parkingStrategyFactory, times(1)).getParkingStrategy(vipUser);
