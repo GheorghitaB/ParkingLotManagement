@@ -3,9 +3,13 @@ package parkingstrategies;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
-import users.RegularUser;
-import users.User;
-import users.VIPUser;
+import models.users.RegularUser;
+import models.users.User;
+import models.users.VIPUser;
+import services.parkings.strategies.ParkingStrategy;
+import services.parkings.strategies.ParkingStrategyFactory;
+import services.parkings.strategies.RegularUserParkingStrategy;
+import services.parkings.strategies.VipUserParkingStrategy;
 
 import static org.junit.jupiter.api.Assertions.*;
 
