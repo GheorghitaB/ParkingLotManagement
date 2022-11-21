@@ -1,19 +1,24 @@
-import Utils.Constants;
+import exceptions.ParkingSpotTypeNotFoundException;
+import exceptions.UserTypeNotFoundException;
+import exceptions.VehicleTypeNotFoundException;
+import services.taxes.ParkingPriceCalculator;
+import services.taxes.implementations.*;
+import utils.Constants;
 import exceptions.ParkingSpotNotFound;
-import inits.parkingspots.ParkingSpotsInit;
-import repositories.ParkingSpotService;
-import parkinglots.ParkingLotManager;
-import repositories.ParkingSpotInMemoryService;
-import parkingspots.*;
-import parkingstrategies.ParkingStrategyFactory;
-import properties.AppProperty;
-import writers.JsonWriter;
-import tickets.Ticket;
-import users.RegularUser;
-import users.User;
-import users.VIPUser;
-import vehicles.Motorcycle;
-import vehicles.Vehicle;
+import models.parkings.spots.inits.ParkingSpotsInit;
+import models.parkings.spots.ParkingSpot;
+import services.parkings.spots.ParkingSpotService;
+import services.parkings.lots.ParkingLotManager;
+import services.parkings.spots.ParkingSpotInMemoryService;
+import services.parkings.strategies.ParkingStrategyFactory;
+import services.properties.AppProperty;
+import services.writers.JsonWriter;
+import models.tickets.Ticket;
+import models.users.RegularUser;
+import models.users.User;
+import models.users.VIPUser;
+import models.vehicles.Motorcycle;
+import models.vehicles.Vehicle;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,25 +30,31 @@ public class Main {
     public static void main(String[] args) {
         List<ParkingSpot> parkingSpotList = ParkingSpotsInit.getListOfParkingSpotsFromResource(AppProperty.getProperty(Constants.PARKING_SPOTS_FILEPATH_PROPERTY));
         ParkingSpotService parkingSpotService = new ParkingSpotInMemoryService(parkingSpotList);
-        ParkingLotManager parkingLotManager = new ParkingLotManager(parkingSpotService, ParkingStrategyFactory.getParkingStrategyInstance());
+        ParkingPriceCalculator parkingPriceCalculator = new ParkingPriceCalculatorImpl(new UserTypePriceImpl(), new VehicleTypePriceImpl(), new ParkingSpotTypePriceImpl(), new DiscountCalculatorImpl());
+        ParkingLotManager parkingLotManager = new ParkingLotManager(parkingSpotService, ParkingStrategyFactory.getParkingStrategyInstance(), parkingPriceCalculator);
+        File ticketSavingLocation = new File(System.getProperty("user.dir") + "/" + AppProperty.getProperty(Constants.TICKET_SAVING_LOCATION));
 
         User user = new VIPUser("John Smith");
         Vehicle vehicle = new Motorcycle("22BB", true);
+        int parkingDuration = 300;
 
         User anotherUser = new RegularUser("NoName");
         Vehicle anotherVehicle = new Motorcycle("22BC", true);
 
         try {
-            Ticket ticket = parkingLotManager.park(user, vehicle);
-            JsonWriter jsonWriter = new JsonWriter();
-            File ticketLocation = new File(System.getProperty("user.dir") + "/" + AppProperty.getProperty(Constants.TICKET_SAVING_PATH) + "/ticket_" + ticket.getID() + ".json");
-            jsonWriter.write(ticketLocation, ticket);
-            System.out.println("Saved: " + ticketLocation.getName());
+            Ticket ticket = parkingLotManager.park(parkingDuration, user, vehicle);
+            new JsonWriter<Ticket>().writeOrAppendAsArray(ticketSavingLocation, ticket);
         } catch (ParkingSpotNotFound e) {
             System.out.println("Parking spot unavailable (not found) for user type " + user.getUserType()
                                     + " with vehicle type " + vehicle.getVehicleType());
         } catch (IOException e) {
             System.out.println("Ticket could not be printed as json: " + e.getMessage());
+        } catch (VehicleTypeNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (UserTypeNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (ParkingSpotTypeNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
         Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicleByPlateNumber(vehicle.getPlateNumber());
@@ -57,16 +68,19 @@ public class Main {
         System.out.println();
 
         try {
-            Ticket anotherTicket = parkingLotManager.park(anotherUser, anotherVehicle);
-            JsonWriter jsonWriter = new JsonWriter();
-            File ticketLocation = new File(System.getProperty("user.dir") + "/" + AppProperty.getProperty(Constants.TICKET_SAVING_PATH) + "/ticket_" + anotherTicket.getID() + ".json");
-            jsonWriter.write(ticketLocation, anotherTicket);
-            System.out.println("Saved: " + ticketLocation.getName());
+            Ticket anotherTicket = parkingLotManager.park(parkingDuration, anotherUser, anotherVehicle);
+            new JsonWriter<Ticket>().writeOrAppendAsArray(ticketSavingLocation, anotherTicket);
         } catch (ParkingSpotNotFound e) {
             System.out.println("Parking spot unavailable (not found) for user type " + anotherUser.getUserType()
                     + " with vehicle type " + anotherVehicle.getVehicleType());
         } catch (IOException e) {
             System.out.println("Ticket could not be printed as json: " + e.getMessage());
+        } catch (VehicleTypeNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (UserTypeNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (ParkingSpotTypeNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
         Optional<ParkingSpot> anotherParkingSpotOptional = parkingLotManager.findVehicleByPlateNumber(anotherVehicle.getPlateNumber());
