@@ -1,4 +1,4 @@
-package Utils;
+package utils.parsers;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -77,10 +77,10 @@ public class TextArgumentParser {
                 .filter(arg -> !arg.isEmpty())
                 .toArray(String[]::new);
     }
-}
 
-class TextArgumentClassLoader {
-    public static ClassLoader getClassLoader(){
-        return TextArgumentParser.class.getClassLoader();
+    public static class TextArgumentClassLoader {
+        public static ClassLoader getClassLoader(){
+            return TextArgumentParser.class.getClassLoader();
+        }
     }
 }
