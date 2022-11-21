@@ -1,4 +1,4 @@
-package vehicles;
+package models.vehicles;
 
 public class Truck extends Vehicle{
 	public Truck(String plateNumber, boolean isElectric) {
