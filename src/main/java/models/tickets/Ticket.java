@@ -15,11 +15,15 @@ public class Ticket {
 	private final User user;
 	private final Vehicle vehicle;
 	private final ParkingSpot parkingSpot;
+	private final double price;
+	private final int parkingDurationTimeInMinutes;
 	
-	public Ticket(User user, Vehicle vehicle, ParkingSpot parkingSpot) {
+	public Ticket(User user, Vehicle vehicle, ParkingSpot parkingSpot, double price, int parkingDurationTimeInMinutes) {
 		this.user = user;
 		this.vehicle = vehicle;
 		this.parkingSpot = parkingSpot;
+		this.price = price;
+		this.parkingDurationTimeInMinutes = parkingDurationTimeInMinutes;
 		ID = getNextId();
 	}
 
@@ -30,10 +34,12 @@ public class Ticket {
 	@Override
 	public String toString() {
 		return "Ticket{" +
-				"user=" + user +
+				"ID=" + ID +
+				", user=" + user +
 				", vehicle=" + vehicle +
 				", parkingSpot=" + parkingSpot +
-				", ID=" + ID +
+				", price=" + price +
+				", parkingDurationTimeInMinutes=" + parkingDurationTimeInMinutes +
 				'}';
 	}
 
@@ -48,6 +54,15 @@ public class Ticket {
 	public ParkingSpot getParkingSpot(){
 		return parkingSpot;
 	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public int getParkingDurationTimeInMinutes() {
+		return parkingDurationTimeInMinutes;
+	}
+
 	public int getID(){
 		return ID;
 	}
