@@ -22,6 +22,7 @@ import models.vehicles.Vehicle;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,7 @@ public class Main {
         ParkingPriceCalculator parkingPriceCalculator = new ParkingPriceCalculatorImpl(new UserTypePriceImpl(), new VehicleTypePriceImpl(), new ParkingSpotTypePriceImpl(), new DiscountCalculatorImpl());
         ParkingLotManager parkingLotManager = new ParkingLotManager(parkingSpotService, ParkingStrategyFactory.getParkingStrategyInstance(), parkingPriceCalculator);
         File ticketSavingLocation = new File(System.getProperty("user.dir") + "/" + AppProperty.getProperty(Constants.TICKET_SAVING_LOCATION));
+        List<Ticket> tickets = new ArrayList<>();
 
         User user = new VIPUser("John Smith");
         Vehicle vehicle = new Motorcycle("22BB", true);
@@ -43,12 +45,11 @@ public class Main {
 
         try {
             Ticket ticket = parkingLotManager.park(parkingDuration, user, vehicle);
-            new JsonWriter<Ticket>().writeOrAppendAsArray(ticketSavingLocation, ticket);
+            //new JsonWriter<Ticket>().writeOrAppendAsArray(ticketSavingLocation, ticket);
+            tickets.add(ticket);
         } catch (ParkingSpotNotFound e) {
             System.out.println("Parking spot unavailable (not found) for user type " + user.getUserType()
                                     + " with vehicle type " + vehicle.getVehicleType());
-        } catch (IOException e) {
-            System.out.println("Ticket could not be printed as json: " + e.getMessage());
         } catch (VehicleTypeNotFoundException e) {
             throw new RuntimeException(e);
         } catch (UserTypeNotFoundException e) {
@@ -69,12 +70,11 @@ public class Main {
 
         try {
             Ticket anotherTicket = parkingLotManager.park(parkingDuration, anotherUser, anotherVehicle);
-            new JsonWriter<Ticket>().writeOrAppendAsArray(ticketSavingLocation, anotherTicket);
+            //new JsonWriter<Ticket>().writeOrAppendAsArray(ticketSavingLocation, anotherTicket);
+            tickets.add(anotherTicket);
         } catch (ParkingSpotNotFound e) {
             System.out.println("Parking spot unavailable (not found) for user type " + anotherUser.getUserType()
                     + " with vehicle type " + anotherVehicle.getVehicleType());
-        } catch (IOException e) {
-            System.out.println("Ticket could not be printed as json: " + e.getMessage());
         } catch (VehicleTypeNotFoundException e) {
             throw new RuntimeException(e);
         } catch (UserTypeNotFoundException e) {
@@ -89,6 +89,13 @@ public class Main {
                     + " (" + anotherParkingSpotOptional.get().getParkingSpotType()+")");
         } else {
             System.out.printf("Parking spot for plate number %s has not been found.\n", anotherVehicle.getPlateNumber());
+        }
+
+        JsonWriter<Ticket> jsonWriter = new JsonWriter<>();
+        try {
+            jsonWriter.write(ticketSavingLocation, tickets);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

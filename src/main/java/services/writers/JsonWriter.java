@@ -15,7 +15,7 @@ public class JsonWriter<T> {
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
         if(file.length() == 0) {
-            objectMapper.writeValue(file, List.of(object));
+            objectMapper.writeValue(file, object);
         }
          else {
             String jsonObjectAsString = objectMapper.writeValueAsString(object);
@@ -27,5 +27,11 @@ public class JsonWriter<T> {
 
             objectMapper.writeValue(file, values);
         }
+    }
+
+    public void write(File file, List<T> list) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        objectMapper.writeValue(file, list);
     }
 }
