@@ -17,7 +17,8 @@ public class Ticket {
 	private final ParkingSpot parkingSpot;
 	private final double price;
 	private final int parkingDurationTimeInMinutes;
-	
+
+	//TODO Create another method / class to take care of the ID attribute
 	public Ticket(User user, Vehicle vehicle, ParkingSpot parkingSpot, double price, int parkingDurationTimeInMinutes) {
 		this.user = user;
 		this.vehicle = vehicle;
