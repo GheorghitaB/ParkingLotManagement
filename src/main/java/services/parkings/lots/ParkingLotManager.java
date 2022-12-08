@@ -18,10 +18,12 @@ import java.util.Optional;
 public class ParkingLotManager{
 	private final ParkingSpotService parkingSpotService;
 	private final ParkingStrategyFactory parkingStrategyFactory;
+	private final PriceService priceService;
 
-	public ParkingLotManager(ParkingSpotService parkingSpotService, ParkingStrategyFactory parkingStrategyFactory) {
+	public ParkingLotManager(ParkingSpotService parkingSpotService, ParkingStrategyFactory parkingStrategyFactory, PriceService priceService) {
 		this.parkingSpotService = parkingSpotService;
 		this.parkingStrategyFactory = parkingStrategyFactory;
+		this.priceService = priceService;
 	}
 
 	public Ticket park(int parkingDurationInMinutes, User user, Vehicle vehicle) throws ParkingSpotNotFound, PriceException {
@@ -30,7 +32,7 @@ public class ParkingLotManager{
 			ParkingSpot parkingSpot = parkingSpotOptional.get();
 			parkingSpot.setVehicle(vehicle);
 
-			Optional<Price> price = new PriceService().getPrice(parkingDurationInMinutes, user.getUserType(), vehicle.getVehicleType(),
+			Optional<Price> price = priceService.getPrice(parkingDurationInMinutes, user.getUserType(), vehicle.getVehicleType(),
 					parkingSpot.getParkingSpotType(), Currency.EUR);
 
 			if (price.isEmpty()){

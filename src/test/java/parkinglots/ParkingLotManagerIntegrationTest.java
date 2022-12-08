@@ -1,6 +1,8 @@
 package parkinglots;
 
 import exceptions.*;
+import services.api.prices.PriceService;
+import services.api.prices.PriceServiceImpl;
 import services.parkings.lots.ParkingLotManager;
 import models.parkings.spots.LargeParkingSpot;
 import models.parkings.spots.MediumParkingSpot;
@@ -32,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ParkingLotManagerIntegrationTest {
     private ParkingLotManager parkingLotManager;
+
+    private PriceService priceService;
     private User regularUser;
     private User vipUser;
     private Vehicle nonElectricMotorcycle;
@@ -58,7 +62,8 @@ class ParkingLotManagerIntegrationTest {
         initVehicles();
         parkingDurationTimeInMinutes = 60;
         ParkingSpotService parkingSpotService = new ParkingSpotInMemoryService(parkingSpotList);
-        parkingLotManager = new ParkingLotManager(parkingSpotService, ParkingStrategyFactory.getParkingStrategyInstance());
+        priceService = new PriceServiceImpl();
+        parkingLotManager = new ParkingLotManager(parkingSpotService, ParkingStrategyFactory.getParkingStrategyInstance(), priceService);
     }
 
     private void initParkingSpots(){
@@ -204,7 +209,7 @@ class ParkingLotManagerIntegrationTest {
         newParkingSpotList.add(mediumParkingSpotWithElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithElectricCharger);
-        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
+        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance(), priceService);
 
         Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
@@ -223,7 +228,7 @@ class ParkingLotManagerIntegrationTest {
         newParkingSpotList.add(mediumParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithElectricCharger);
-        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
+        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance(), priceService);
 
         Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
@@ -241,7 +246,7 @@ class ParkingLotManagerIntegrationTest {
         newParkingSpotList.add(smallParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(mediumParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
-        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
+        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance(), priceService);
 
         Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
@@ -258,7 +263,7 @@ class ParkingLotManagerIntegrationTest {
         List<ParkingSpot> newParkingSpotList = new ArrayList<>();
         newParkingSpotList.add(mediumParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
-        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
+        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance(), priceService);
 
         Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
@@ -274,7 +279,7 @@ class ParkingLotManagerIntegrationTest {
     void parkShouldReturnTicketWithDataAboutVipUserWhichParkedAnElectricMotorcycleOnAGivenLargeParkingSpotWithoutElectricCharger() throws ParkingSpotNotFound, PriceException {
         List<ParkingSpot> newParkingSpotList = new ArrayList<>();
         newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
-        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
+        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance(), priceService);
 
         Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricMotorcycle);
         ParkingSpot ticketGivenParkingSpot = ticket.getParkingSpot();
@@ -289,7 +294,7 @@ class ParkingLotManagerIntegrationTest {
     @Test
     void parkShouldThrowParkingSpotNotFoundExceptionWhenVipUserWantsToParkANonElectricMotorcycleAndThereAreNotAnyFittingParkingSpots(){
         List<ParkingSpot> newParkingSpotList = new ArrayList<>();
-        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
+        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance(), priceService);
         assertThrows(ParkingSpotNotFound.class, () -> parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, nonElectricMotorcycle));
     }
 
@@ -325,7 +330,7 @@ class ParkingLotManagerIntegrationTest {
         newParkingSpotList.add(mediumParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithElectricCharger);
-        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
+        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance(), priceService);
 
         parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricCar);
         Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicleByPlateNumber(electricCar.getPlateNumber());
@@ -343,7 +348,7 @@ class ParkingLotManagerIntegrationTest {
         newParkingSpotList.add(smallParkingSpotWithElectricCharger);
         newParkingSpotList.add(mediumParkingSpotWithoutElectricCharger);
         newParkingSpotList.add(largeParkingSpotWithoutElectricCharger);
-        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance());
+        parkingLotManager = new ParkingLotManager(new ParkingSpotInMemoryService(newParkingSpotList), ParkingStrategyFactory.getParkingStrategyInstance(), priceService);
 
         parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricCar);
         Optional<ParkingSpot> parkingSpotOptional = parkingLotManager.findVehicleByPlateNumber(electricCar.getPlateNumber());

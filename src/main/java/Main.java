@@ -1,4 +1,6 @@
 import exceptions.*;
+import services.api.prices.PriceService;
+import services.api.prices.PriceServiceImpl;
 import utils.Constants;
 import models.parkings.spots.inits.ParkingSpotsInit;
 import models.parkings.spots.ParkingSpot;
@@ -29,7 +31,8 @@ public class Main {
     public static void main(String[] args) {
         List<ParkingSpot> parkingSpotList = ParkingSpotsInit.getListOfParkingSpotsFromResource(AppProperty.getProperty(Constants.PARKING_SPOTS_FILEPATH_PROPERTY));
         ParkingSpotService parkingSpotService = new ParkingSpotInMemoryService(parkingSpotList);
-        parkingLotManager = new ParkingLotManager(parkingSpotService, ParkingStrategyFactory.getParkingStrategyInstance());
+        PriceService priceService = new PriceServiceImpl();
+        parkingLotManager = new ParkingLotManager(parkingSpotService, ParkingStrategyFactory.getParkingStrategyInstance(), priceService);
 
         File ticketSavingLocation = new File(System.getProperty("user.dir") + "/" + AppProperty.getProperty(Constants.TICKET_SAVING_LOCATION));
         List<Ticket> tickets = new ArrayList<>();
