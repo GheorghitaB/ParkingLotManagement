@@ -67,6 +67,26 @@ class ParkingLotManagerTest {
     }
 
     @Test
+    void park_ShouldThrowPriceExceptionWhenPriceServiceReturnsEmptyOptional() {
+        User regularUser = new RegularUser("");
+        Vehicle notElectricMotorcycle = new Motorcycle("", false);
+        ParkingSpot smallParkingSpotWithoutElectricCharger = new SmallParkingSpot(false);
+
+        when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
+        when(regularUserParkingStrategy.getParkingSpot(notElectricMotorcycle, parkingSpotService)).thenReturn(Optional.of(smallParkingSpotWithoutElectricCharger));
+        when(priceService.getPrice(parkingDurationTimeInMinutes, regularUser.getUserType(), notElectricMotorcycle.getVehicleType(),
+                smallParkingSpotWithoutElectricCharger.getParkingSpotType(), defaultCurrency))
+                .thenReturn(Optional.empty());
+
+        assertThrows(PriceException.class, () -> parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, notElectricMotorcycle));
+
+        verify(regularUserParkingStrategy, times(1)).getParkingSpot(notElectricMotorcycle, parkingSpotService);
+        verify(parkingStrategyFactory, times(1)).getParkingStrategy(regularUser);
+        verify(priceService, times(1)).getPrice(parkingDurationTimeInMinutes, regularUser.getUserType(), notElectricMotorcycle.getVehicleType(),
+                smallParkingSpotWithoutElectricCharger.getParkingSpotType(), defaultCurrency);
+    }
+
+    @Test
     void park_ShouldReturnTicketForRegularUserWithNotElectricMotorcycleWhenParkedOnASmallParkingSpotWithoutElectricChargerBasedOnUserStrategy() throws ParkingSpotNotFound, PriceException {
         User regularUser = new RegularUser("");
         Vehicle notElectricMotorcycle = new Motorcycle("", false);
