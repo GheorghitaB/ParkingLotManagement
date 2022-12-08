@@ -3,6 +3,7 @@ package models.tickets;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import models.parkings.spots.ParkingSpot;
+import models.prices.Price;
 import models.users.User;
 import models.vehicles.Vehicle;
 
@@ -15,11 +16,11 @@ public class Ticket {
 	private final User user;
 	private final Vehicle vehicle;
 	private final ParkingSpot parkingSpot;
-	private final double price;
+	private final Price price;
 	private final int parkingDurationTimeInMinutes;
 
 	//TODO Create another method / class to take care of the ID attribute
-	public Ticket(User user, Vehicle vehicle, ParkingSpot parkingSpot, double price, int parkingDurationTimeInMinutes) {
+	public Ticket(User user, Vehicle vehicle, ParkingSpot parkingSpot, Price price, int parkingDurationTimeInMinutes) {
 		this.user = user;
 		this.vehicle = vehicle;
 		this.parkingSpot = parkingSpot;
@@ -56,7 +57,7 @@ public class Ticket {
 		return parkingSpot;
 	}
 
-	public double getPrice() {
+	public Price getPrice() {
 		return price;
 	}
 

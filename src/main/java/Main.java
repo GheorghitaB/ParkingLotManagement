@@ -1,10 +1,5 @@
-import exceptions.ParkingSpotTypeNotFoundException;
-import exceptions.UserTypeNotFoundException;
-import exceptions.VehicleTypeNotFoundException;
-import services.taxes.ParkingPriceCalculator;
-import services.taxes.implementations.*;
+import exceptions.*;
 import utils.Constants;
-import exceptions.ParkingSpotNotFound;
 import models.parkings.spots.inits.ParkingSpotsInit;
 import models.parkings.spots.ParkingSpot;
 import services.parkings.spots.ParkingSpotService;
@@ -34,8 +29,7 @@ public class Main {
     public static void main(String[] args) {
         List<ParkingSpot> parkingSpotList = ParkingSpotsInit.getListOfParkingSpotsFromResource(AppProperty.getProperty(Constants.PARKING_SPOTS_FILEPATH_PROPERTY));
         ParkingSpotService parkingSpotService = new ParkingSpotInMemoryService(parkingSpotList);
-        ParkingPriceCalculator parkingPriceCalculator = new ParkingPriceCalculatorImpl(new UserTypePriceImpl(), new VehicleTypePriceImpl(), new ParkingSpotTypePriceImpl(), new DiscountCalculatorImpl());
-        parkingLotManager = new ParkingLotManager(parkingSpotService, ParkingStrategyFactory.getParkingStrategyInstance(), parkingPriceCalculator);
+        parkingLotManager = new ParkingLotManager(parkingSpotService, ParkingStrategyFactory.getParkingStrategyInstance());
 
         File ticketSavingLocation = new File(System.getProperty("user.dir") + "/" + AppProperty.getProperty(Constants.TICKET_SAVING_LOCATION));
         List<Ticket> tickets = new ArrayList<>();
@@ -54,12 +48,8 @@ public class Main {
 
         } catch (ParkingSpotNotFound e) {
             System.out.println("There are not available parking spots right now. (" + e.getMessage() + ")");
-        } catch (VehicleTypeNotFoundException e) {
-            System.out.println("Vehicle type has not been found. (" + e.getMessage() + ")");
-        } catch (UserTypeNotFoundException e) {
-            System.out.println("User type has not been found. (" + e.getMessage() + ")");
-        } catch (ParkingSpotTypeNotFoundException e) {
-            System.out.println("Parking spot type has not been found. (" + e.getMessage() + ")");
+        } catch (PriceException e) {
+            System.out.println("Parking unsuccessful. " + "(" + e.getMessage() + ")");
         }
     }
 
@@ -74,7 +64,7 @@ public class Main {
     }
 
     private static Ticket park(User user, Vehicle vehicle, int parkDurationInMinutes)
-            throws VehicleTypeNotFoundException, UserTypeNotFoundException, ParkingSpotTypeNotFoundException, ParkingSpotNotFound {
+            throws ParkingSpotNotFound, PriceException {
         return parkingLotManager.park(parkDurationInMinutes, user, vehicle);
     }
 
