@@ -1,6 +1,8 @@
 package parkinglots;
 
 import exceptions.*;
+import models.prices.Currency;
+import models.prices.Price;
 import services.api.prices.PriceService;
 import services.parkings.lots.ParkingLotManager;
 import models.parkings.spots.LargeParkingSpot;
@@ -49,6 +51,11 @@ class ParkingLotManagerTest {
     private VipUserParkingStrategy vipUserParkingStrategy;
     private int parkingDurationTimeInMinutes;
 
+    @Mock
+    private Price mockPrice;
+
+    private final Currency defaultCurrency = Currency.EUR;
+
     @InjectMocks
     private ParkingLotManager parkingLotManager;
 
@@ -67,6 +74,10 @@ class ParkingLotManagerTest {
 
         when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
         when(regularUserParkingStrategy.getParkingSpot(notElectricMotorcycle, parkingSpotService)).thenReturn(Optional.of(smallParkingSpotWithoutElectricCharger));
+        when(priceService.getPrice(parkingDurationTimeInMinutes, regularUser.getUserType(), notElectricMotorcycle.getVehicleType(),
+                smallParkingSpotWithoutElectricCharger.getParkingSpotType(), defaultCurrency))
+                .thenReturn(Optional.of(mockPrice));
+
         Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, notElectricMotorcycle);
 
         assertEquals(smallParkingSpotWithoutElectricCharger, ticket.getParkingSpot());
@@ -85,6 +96,10 @@ class ParkingLotManagerTest {
 
         when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
         when(regularUserParkingStrategy.getParkingSpot(electricMotorcycle, parkingSpotService)).thenReturn(Optional.of(smallParkingSpotWithElectricCharger));
+        when(priceService.getPrice(parkingDurationTimeInMinutes, regularUser.getUserType(), electricMotorcycle.getVehicleType(),
+                smallParkingSpotWithElectricCharger.getParkingSpotType(), defaultCurrency))
+                .thenReturn(Optional.of(mockPrice));
+
         Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, electricMotorcycle);
 
         assertEquals(smallParkingSpotWithElectricCharger, ticket.getParkingSpot());
@@ -103,6 +118,10 @@ class ParkingLotManagerTest {
 
         when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
         when(regularUserParkingStrategy.getParkingSpot(notElectricCar, parkingSpotService)).thenReturn(Optional.of(mediumParkingSpotWithoutElectricCharger));
+        when(priceService.getPrice(parkingDurationTimeInMinutes, regularUser.getUserType(), notElectricCar.getVehicleType(),
+                mediumParkingSpotWithoutElectricCharger.getParkingSpotType(), defaultCurrency))
+                .thenReturn(Optional.of(mockPrice));
+
         Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, notElectricCar);
 
         assertEquals(mediumParkingSpotWithoutElectricCharger, ticket.getParkingSpot());
@@ -121,6 +140,10 @@ class ParkingLotManagerTest {
 
         when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
         when(regularUserParkingStrategy.getParkingSpot(electricCar, parkingSpotService)).thenReturn(Optional.of(mediumParkingSpotWithoutElectricCharger));
+        when(priceService.getPrice(parkingDurationTimeInMinutes, regularUser.getUserType(), electricCar.getVehicleType(),
+                mediumParkingSpotWithoutElectricCharger.getParkingSpotType(), defaultCurrency))
+                .thenReturn(Optional.of(mockPrice));
+
         Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, electricCar);
 
         assertEquals(mediumParkingSpotWithoutElectricCharger, ticket.getParkingSpot());
@@ -139,6 +162,10 @@ class ParkingLotManagerTest {
 
         when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
         when(regularUserParkingStrategy.getParkingSpot(electricCar, parkingSpotService)).thenReturn(Optional.of(mediumParkingSpotWithElectricCharger));
+        when(priceService.getPrice(parkingDurationTimeInMinutes, regularUser.getUserType(), electricCar.getVehicleType(),
+                mediumParkingSpotWithElectricCharger.getParkingSpotType(), defaultCurrency))
+                .thenReturn(Optional.of(mockPrice));
+
         Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, electricCar);
 
         assertEquals(mediumParkingSpotWithElectricCharger, ticket.getParkingSpot());
@@ -157,6 +184,9 @@ class ParkingLotManagerTest {
 
         when(parkingStrategyFactory.getParkingStrategy(vipUser)).thenReturn(vipUserParkingStrategy);
         when(vipUserParkingStrategy.getParkingSpot(electricCar, parkingSpotService)).thenReturn(Optional.of(mediumParkingSpotWithoutElectricCharger));
+        when(priceService.getPrice(parkingDurationTimeInMinutes, vipUser.getUserType(), electricCar.getVehicleType(),
+                mediumParkingSpotWithoutElectricCharger.getParkingSpotType(), defaultCurrency))
+                .thenReturn(Optional.of(mockPrice));
 
         Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricCar);
 
@@ -176,6 +206,9 @@ class ParkingLotManagerTest {
 
         when(parkingStrategyFactory.getParkingStrategy(vipUser)).thenReturn(vipUserParkingStrategy);
         when(vipUserParkingStrategy.getParkingSpot(electricMotorcycle, parkingSpotService)).thenReturn(Optional.of(mediumParkingSpotWithoutElectricCharger));
+        when(priceService.getPrice(parkingDurationTimeInMinutes, vipUser.getUserType(), electricMotorcycle.getVehicleType(),
+                mediumParkingSpotWithoutElectricCharger.getParkingSpotType(), defaultCurrency))
+                .thenReturn(Optional.of(mockPrice));
 
         Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricMotorcycle);
 
@@ -199,6 +232,10 @@ class ParkingLotManagerTest {
 
         when(parkingStrategyFactory.getParkingStrategy(vipUser)).thenReturn(vipUserParkingStrategy);
         when(vipUserParkingStrategy.getParkingSpot(notElectricMotorcycle, parkingSpotService)).thenReturn(Optional.of(parkingSpot));
+        when(priceService.getPrice(parkingDurationTimeInMinutes, vipUser.getUserType(), notElectricMotorcycle.getVehicleType(),
+                parkingSpot.getParkingSpotType(), defaultCurrency))
+                .thenReturn(Optional.of(mockPrice));
+
         Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, notElectricMotorcycle);
 
         assertEquals(parkingSpot, ticket.getParkingSpot());
@@ -228,6 +265,10 @@ class ParkingLotManagerTest {
 
         when(parkingStrategyFactory.getParkingStrategy(vipUser)).thenReturn(vipUserParkingStrategy);
         when(vipUserParkingStrategy.getParkingSpot(electricMotorcycle, parkingSpotService)).thenReturn(Optional.of(parkingSpot));
+        when(priceService.getPrice(parkingDurationTimeInMinutes, vipUser.getUserType(), electricMotorcycle.getVehicleType(),
+                parkingSpot.getParkingSpotType(), defaultCurrency))
+                .thenReturn(Optional.of(mockPrice));
+
         Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, vipUser, electricMotorcycle);
 
         assertEquals(parkingSpot, ticket.getParkingSpot());
