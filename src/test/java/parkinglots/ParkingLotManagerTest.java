@@ -1,6 +1,7 @@
 package parkinglots;
 
 import exceptions.*;
+import services.api.prices.PriceService;
 import services.parkings.lots.ParkingLotManager;
 import models.parkings.spots.LargeParkingSpot;
 import models.parkings.spots.MediumParkingSpot;
@@ -37,6 +38,9 @@ import static org.mockito.Mockito.*;
 class ParkingLotManagerTest {
     @Mock
     private ParkingSpotService parkingSpotService;
+
+    @Mock
+    private PriceService priceService;
     @Mock
     private ParkingStrategyFactory parkingStrategyFactory;
     @Mock
@@ -51,7 +55,7 @@ class ParkingLotManagerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        parkingLotManager = new ParkingLotManager(parkingSpotService, parkingStrategyFactory);
+        parkingLotManager = new ParkingLotManager(parkingSpotService, parkingStrategyFactory, priceService);
         parkingDurationTimeInMinutes = 100;
     }
 
