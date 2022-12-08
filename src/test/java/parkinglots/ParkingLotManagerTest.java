@@ -87,6 +87,32 @@ class ParkingLotManagerTest {
     }
 
     @Test
+    void park_ShouldTakePriceGivenByPriceServiceAndPutItOnTheTicket() throws PriceException, ParkingSpotNotFound {
+        User regularUser = new RegularUser("");
+        Vehicle electricMotorcycle = new Motorcycle("", true);
+        ParkingSpot smallParkingSpotWithElectricCharger = new SmallParkingSpot(true);
+        Price returnedPriceByPriceService = new Price(10, defaultCurrency);
+
+        when(parkingStrategyFactory.getParkingStrategy(regularUser)).thenReturn(regularUserParkingStrategy);
+        when(regularUserParkingStrategy.getParkingSpot(electricMotorcycle, parkingSpotService)).thenReturn(Optional.of(smallParkingSpotWithElectricCharger));
+        when(priceService.getPrice(parkingDurationTimeInMinutes, regularUser.getUserType(), electricMotorcycle.getVehicleType(),
+                smallParkingSpotWithElectricCharger.getParkingSpotType(), defaultCurrency))
+                .thenReturn(Optional.of(returnedPriceByPriceService));
+
+        Ticket ticket = parkingLotManager.park(parkingDurationTimeInMinutes, regularUser, electricMotorcycle);
+
+        assertEquals(smallParkingSpotWithElectricCharger, ticket.getParkingSpot());
+        assertEquals(regularUser, ticket.getUser());
+        assertEquals(electricMotorcycle, ticket.getVehicle());
+        assertEquals(returnedPriceByPriceService.toString(), ticket.getPrice().toString());
+
+        verify(regularUserParkingStrategy, times(1)).getParkingSpot(electricMotorcycle, parkingSpotService);
+        verify(parkingStrategyFactory, times(1)).getParkingStrategy(regularUser);
+        verify(priceService, times(1)).getPrice(parkingDurationTimeInMinutes, regularUser.getUserType(), electricMotorcycle.getVehicleType(),
+                smallParkingSpotWithElectricCharger.getParkingSpotType(), defaultCurrency);
+    }
+
+    @Test
     void park_ShouldReturnTicketForRegularUserWithNotElectricMotorcycleWhenParkedOnASmallParkingSpotWithoutElectricChargerBasedOnUserStrategy() throws ParkingSpotNotFound, PriceException {
         User regularUser = new RegularUser("");
         Vehicle notElectricMotorcycle = new Motorcycle("", false);
