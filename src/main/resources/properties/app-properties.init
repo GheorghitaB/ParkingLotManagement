@@ -1,0 +1,5 @@
+parking-spots-file-path           = parkingspots/parking-spots.init
+regular-user-strategy-file-path   = parkingstrategies/regular-user-strategy.init
+vip-user-strategy-file-path       = parkingstrategies/vip-user-strategy.init
+tickets-saving-location           = tickets/tickets.json
+service-get-price-url             = http://localhost:8080/taxes/getParkingPrice

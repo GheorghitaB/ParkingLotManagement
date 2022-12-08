@@ -1,0 +1,51 @@
+[ {
+  "user" : {
+    "name" : "John Smith",
+    "userType" : "VIP"
+  },
+  "vehicle" : {
+    "vehicleType" : "MOTORCYCLE",
+    "plateNumber" : "22BB",
+    "electric" : true
+  },
+  "parkingSpot" : {
+    "id" : 0,
+    "vehicle" : {
+      "vehicleType" : "MOTORCYCLE",
+      "plateNumber" : "22BB",
+      "electric" : true
+    },
+    "parkingSpotType" : "SMALL",
+    "empty" : false
+  },
+  "price" : {
+    "units" : 2.75,
+    "currency" : "EUR"
+  },
+  "parkingDurationTimeInMinutes" : 300
+}, {
+  "user" : {
+    "name" : "NoName",
+    "userType" : "REGULAR"
+  },
+  "vehicle" : {
+    "vehicleType" : "MOTORCYCLE",
+    "plateNumber" : "22BC",
+    "electric" : true
+  },
+  "parkingSpot" : {
+    "id" : 1,
+    "vehicle" : {
+      "vehicleType" : "MOTORCYCLE",
+      "plateNumber" : "22BC",
+      "electric" : true
+    },
+    "parkingSpotType" : "SMALL",
+    "empty" : false
+  },
+  "price" : {
+    "units" : 4.800000000000001,
+    "currency" : "EUR"
+  },
+  "parkingDurationTimeInMinutes" : 250
+} ]
